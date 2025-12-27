@@ -1,9 +1,9 @@
-import { Actividad, CreateActividadDto, UpdateActividadDto } from "src/domain";
+import { ActividadEntity, CreateActividadDto, UpdateActividadDto } from "src/domain";
 
 export abstract class ActividadRepository{
-    abstract createActividad(createActividadDto: CreateActividadDto): Promise<Actividad>;
-    abstract getActividadById(id_proyecto: string, id_articulo: string, id_actividad: string): Promise<Actividad>;
-    abstract getAllActividades(id_proyecto: string, id_articulo: string): Promise<Actividad[]>;
-    abstract updateActividad(id_proyecto: string, id_articulo: string, id_actividad: string, updateActividadDto: UpdateActividadDto): Promise<Actividad>;
+    abstract createActividad(createActividadDto: CreateActividadDto): Promise<ActividadEntity>;
+    abstract getActividadById(id_proyecto: string, id_articulo: string, id_actividad: string): Promise<ActividadEntity>;
+    abstract getAllActividades(id_proyecto: string, id_articulo: string): Promise<ActividadEntity[]>;
+    abstract updateActividad(id_proyecto: string, id_articulo: string, id_actividad: string, updateActividadDto: UpdateActividadDto): Promise<ActividadEntity>;
     abstract deleteActividad(id_proyecto: string, id_articulo: string, id_actividad: string): Promise<void>;
 }

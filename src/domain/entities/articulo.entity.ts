@@ -1,5 +1,5 @@
 
-export class Articulo{
+export class ArticuloEntity{
     constructor(
         public id: string,
         public nro_articulo: number,

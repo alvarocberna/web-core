@@ -1,5 +1,5 @@
 
-export class SecArticulo {
+export class SecArticuloEntity {
     constructor(
         public id: string,
         public nro_seccion: number,
