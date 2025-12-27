@@ -1,5 +1,5 @@
 
-export class Proyecto {
+export class ProyectoEntity {
   constructor(
     public id: string,
     public nombre_proyecto: string,

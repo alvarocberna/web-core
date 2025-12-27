@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Proyecto {
+  id              String   @id @default(uuid())
+  nombre_proyecto String
+  descripcion     String
+  cliente         String
+  fecha_inicio    DateTime
+  //REL N:M 
+  usuarios        Usuario[] @relation("fk_usu_pro")
+  articulos       Articulo[] @relation("fk_art_pro")
+}
+
+model Usuario {
+  id            String   @id @default(uuid())
+  nombre        String
+  apellido      String
+  email         String   @unique
+  fechaCreacion DateTime
+  password      String
+  hashedRt      String?
+  rol           String
+  proyecto_id   String
+  //REL M:N
+  proyecto      Proyecto @relation(name: "fk_usu_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+}
+
+model Articulo {
+    id                   String              @id @default(uuid())
+    nro_articulo         Int
+    titulo               String
+    subtitulo            String
+    autor                String
+    fecha_publicacion    DateTime
+    fecha_actualizacion  DateTime?
+    status               String
+    slug                 String              @unique
+    autor_id             String
+    //REL M:N
+    proyectos            Proyecto @relation(name: "fk_art_pro", fields: [autor_id], references: [id], onDelete: Cascade)
+    //REL N:M
+    sec_articulos       SecArticulo[]      @relation("fk_sec_art")
+    actividades         Actividad[]        @relation("fk_act_art")
+}
+
+model SecArticulo {
+    id          String @id @default(uuid())
+    nro_seccion Int
+    titulo      String
+    subtitulo   String
+    contenido   String
+    image       Int
+    articulo_id String
+    proyecto_id String
+    //REL M:N
+    articulo    Articulo @relation(name: "fk_sec_art", fields: [articulo_id], references: [id], onDelete: Cascade)
+}
+
+model Actividad {
+    id                    String   @id @default(uuid())
+    accion                String
+    responsable           String
+    articulo_relacionado  String
+    fecha                 DateTime
+    proyecto_id           String
+    articulo_id           String
+    //REL M:N
+    articulo             Articulo @relation(name: "fk_act_art", fields: [articulo_id], references: [id], onDelete: Cascade)
+}

@@ -1,5 +1,5 @@
 
-export class Usuario {
+export class UsuarioEntity {
   constructor(
     public id: string,
     public nombre: string,
