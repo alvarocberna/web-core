@@ -4,7 +4,7 @@ export abstract class CreateSecArticuloDto{
         abstract titulo: string;
         abstract subtitulo: string;
         abstract contenido: string;
-        abstract image: number;
+        abstract image: string;
 }
 
 export abstract class UpdateSecArticuloDto{
@@ -12,5 +12,5 @@ export abstract class UpdateSecArticuloDto{
         abstract titulo: string;
         abstract subtitulo: string;
         abstract contenido: string;
-        abstract image: number;
+        abstract image: string;
 }

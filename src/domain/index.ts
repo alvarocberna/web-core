@@ -22,3 +22,5 @@ export * from './repository/proyecto.repository';
 export * from './repository/articulo.repository';
 export * from './repository/sec-articulo.repository';
 export * from './repository/actividad.repository';
+//USE-CASES
+export * from './use-cases/create-articulo.use-case';

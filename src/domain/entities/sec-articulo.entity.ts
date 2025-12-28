@@ -6,7 +6,7 @@ export class SecArticuloEntity {
         public titulo: string,
         public subtitulo: string,
         public contenido: string,
-        public image: number,
+        public image: string,
         public articulo_id: string,
         public proyecto_id: string,
     ){}
