@@ -48,10 +48,11 @@ model Articulo {
     fecha_publicacion    DateTime
     fecha_actualizacion  DateTime?
     status               String
-    slug                 String              @unique
+    slug                 String              
     autor_id             String
+    proyecto_id          String
     //REL M:N
-    proyectos            Proyecto @relation(name: "fk_art_pro", fields: [autor_id], references: [id], onDelete: Cascade)
+    proyectos            Proyecto @relation(name: "fk_art_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
     //REL N:M
     sec_articulos       SecArticulo[]      @relation("fk_sec_art")
     actividades         Actividad[]        @relation("fk_act_art")
@@ -63,7 +64,7 @@ model SecArticulo {
     titulo      String
     subtitulo   String
     contenido   String
-    image       Int
+    image       String
     articulo_id String
     proyecto_id String
     //REL M:N

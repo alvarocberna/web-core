@@ -4,16 +4,20 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import {ProyectoDatasource ,ProyectoEntity, CreateProyectoDto, UpdateProyectoDto} from 'src/domain';
 //infrastructure
 import { PrismaService } from 'src/infrastructure/orm/prisma/prisma.service';
+import {UuidService} from '../../adapters/uuid/uuid.service';
 // import { prisma } from '../../../../node_modules/prisma'
 
 @Injectable()
 export class ProyectoDatasourceService implements ProyectoDatasource {
-    constructor(private readonly prismaService: PrismaService) {}
+    constructor(
+        private readonly prismaService: PrismaService,
+        private readonly uuidService: UuidService
+    ) {}
 
     async createProyecto(createProyectoDto: CreateProyectoDto): Promise<ProyectoEntity> {
         const proyecto = this.prismaService.proyecto.create({ 
             data: {
-                id: 'jkfdoikger',
+                id: this.uuidService.generate(),
                 ...createProyectoDto,
                 fecha_inicio: new Date(),
             }

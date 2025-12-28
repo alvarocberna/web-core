@@ -10,4 +10,3 @@ export class CreateProyectoDtoImpl implements CreateProyectoDto {
     @IsString()
     cliente: string;
 }
-
