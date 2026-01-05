@@ -1,37 +1,56 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Req, Get, Post, Body, Patch, Put, Param, Delete, UseGuards } from '@nestjs/common';
 import { ArticuloService } from './articulo.service';
-import { CreateArticuloFullDtoImpl, CreateArticuloDtoImpl, CreateSecArticuloDtoImpl } from './dto/create-articulo.dto';
-
+import { CreateArticuloDtoImpl } from './dto/create-articulo.dto';
 import { UpdateArticuloDtoImpl } from './dto/update-articulo.dto';
+import {JwtAuthGuard} from '../auth/guards/jwt-auth.guard';
 
 @Controller('articulo')
 export class ArticuloController {
   constructor(private readonly articuloService: ArticuloService) {}
 
-  @Post('/:id_proyecto')
+  @UseGuards(JwtAuthGuard)
+  @Post('/crear')
   create(
-    @Param('id_proyecto') id_proyecto: string, 
-    @Body() createArticuloFullDtoImpl: CreateArticuloFullDtoImpl,
+    @Req() req: Request,
+    @Body() createArticuloDtoImpl: CreateArticuloDtoImpl,
   ) {
-    return this.articuloService.create(id_proyecto, createArticuloFullDtoImpl);
+    console.log("intentando crear un articulo")
+    const id_usuario = (req as any).user?.id;
+    console.log("id usuario:" + id_usuario);
+    return this.articuloService.create(id_usuario, createArticuloDtoImpl);
   }
 
-  @Get('/:id_proyecto')
-  findAll(@Param('id_proyecto') id_proyecto: string) {
-    return this.articuloService.findAll(id_proyecto);
+  @UseGuards(JwtAuthGuard)
+  @Get('/ver-todos')
+  findAll(
+    @Req() req: Request,
+  ) {
+    const id_usuario = (req as any).user?.id;
+    console.log("intentando ver todos los articulos")
+    console.log("id usuario: " + id_usuario)
+    return this.articuloService.findAll(id_usuario);
   }
 
-  @Get('/:id_proyecto/:id_articulo')
+  @UseGuards(JwtAuthGuard)
+  @Get('/ver/:id_articulo')
   findOne(
-    @Param('id_proyecto') id_proyecto: string,
+    @Req() req: Request,
     @Param('id_articulo') id_articulo: string
   ) {
-    return this.articuloService.findOne(id_proyecto, id_articulo);
+    const id_usuario = (req as any).user?.id;
+    return this.articuloService.findOne(id_usuario, id_articulo);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateArticuloDto: UpdateArticuloDtoImpl) {
-    return this.articuloService.update(+id, updateArticuloDto);
+  @UseGuards(JwtAuthGuard)
+  @Put('/editar/:id_articulo')
+  update(
+    @Req() req: Request,
+    @Param('id_articulo') id_articulo: string, 
+    @Body() updateArticuloDto: UpdateArticuloDtoImpl
+  ) {
+    console.log("intentando actualizar articulo con id: " + id_articulo)
+    const id_usuario = (req as any).user?.id;
+    return this.articuloService.update(id_usuario, id_articulo, updateArticuloDto);
   }
 
   @Delete(':id')

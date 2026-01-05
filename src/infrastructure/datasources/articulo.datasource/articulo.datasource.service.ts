@@ -13,7 +13,18 @@ export class ArticuloDatasourceService implements ArticuloDatasource {
         private readonly uuidService: UuidService
     ) {}
 
-    async createArticulo(id_proyecto: string, createArticuloDto: CreateArticuloDto): Promise<ArticuloEntity> {
+    async createArticulo(id_usuario: string, createArticuloDto: CreateArticuloDto): Promise<ArticuloEntity> {
+        //extraemos la data
+        const {sec_articulo, ...data} = createArticuloDto;
+        //obtenemos al usuario
+        const user = await this.prismaService.usuario.findUnique({
+            where: {id: id_usuario}
+        })
+        if(!user){
+            throw new NotFoundException("Usuario no encontrado")
+        }
+        const id_proyecto = user.proyecto_id;
+        //obtenemos el nro de articulo
         let nro_articulo: number = 1;
         const count: number = await this.prismaService.articulo.count({
             where: {
@@ -25,23 +36,46 @@ export class ArticuloDatasourceService implements ArticuloDatasource {
         }else if (count > 0){
             nro_articulo = count + 1;
         }
+        //creamos el articulo
         const articulo = this.prismaService.articulo.create({ 
             data: {
                 id: this.uuidService.generate(),
                 nro_articulo: nro_articulo,
-                ...createArticuloDto,
+                ...data,
                 proyecto_id: id_proyecto,
+                sec_articulo: {
+                    create: sec_articulo.map((sec, index) => ({
+                        id: this.uuidService.generate(),
+                        nro_seccion: index + 1,
+                        titulo_sec: sec.titulo_sec,
+                        contenido_sec: sec.contenido_sec,
+                        image: sec.image,
+                        // articulo_id: '',
+                        proyecto_id: id_proyecto,
+                    })),
+        },
             }
         });
         return articulo;
     }
 
-    async getArticuloById(id_proyecto: string, id_articulo: string): Promise<ArticuloEntity | null> {
-        const articulo = this.prismaService.articulo.findUnique({ 
+    async getArticuloById(id_usuario: string, id_articulo: string): Promise<ArticuloEntity | null> {
+        const usuario = await this.prismaService.usuario.findUnique({
+            where: {id: id_usuario},
+            // select: {proyecto_id: true}
+        });
+        const proyecto_id = usuario?.proyecto_id;
+        if(!proyecto_id){
+            throw new NotFoundException('Usuario o proyecto no encontrado');
+        }
+        const articulo = await this.prismaService.articulo.findUnique({ 
             where: { 
                 id: id_articulo,
-                proyecto_id: id_proyecto
-            } 
+                proyecto_id: proyecto_id
+            },
+            include: {
+                sec_articulo: true
+            }
         });
         if (!articulo) {
             throw new NotFoundException('articulo not found');
@@ -49,7 +83,18 @@ export class ArticuloDatasourceService implements ArticuloDatasource {
         return articulo;
     }
 
-    async getAllArticulos(id_proyecto: string): Promise<ArticuloEntity[]> {
+    async getAllArticulos(id_usuario: string): Promise<ArticuloEntity[]> {
+        const user = await this.prismaService.usuario.findFirst({
+            where: {id: id_usuario}
+        })
+        if(!user){
+            console.log("usuario no encontrado")
+            throw new NotFoundException("Usuario no encontrado")
+        }
+        console.log("usuario encontrado: " + user.email)
+        const id_proyecto = user.proyecto_id;
+        console.log("proyecto id:" + id_proyecto)
+
         return this.prismaService.articulo.findMany({
                 where: {
                     proyecto_id: id_proyecto
@@ -57,10 +102,34 @@ export class ArticuloDatasourceService implements ArticuloDatasource {
             });
     }
 
-    async updateArticulo(id_proyecto: string, id_articulo: string, updateArticuloDto: UpdateArticuloDto): Promise<ArticuloEntity> {
+    async updateArticulo(id_usuario: string, id_articulo: string, updateArticuloDto: UpdateArticuloDto): Promise<ArticuloEntity> {
+        console.log("actualizando articulo en datasource")
+        const {sec_articulo, ...data} = updateArticuloDto as UpdateArticuloDto;
+        
+        const user = await this.prismaService.usuario.findUnique({
+            where: {id: id_usuario}
+        });
+        const proyecto_id = user?.proyecto_id;
+        
         const articulo = await this.prismaService.articulo.update({
-            where: { id: id_articulo, proyecto_id: id_proyecto },
-            data: { ...updateArticuloDto },
+            where: { id: id_articulo, autor_id: id_usuario },
+            data: {
+                ...data,
+                ...(sec_articulo && {
+                    sec_articulo: {
+                        deleteMany: {},
+                        createMany: {
+                            data: sec_articulo.map(sec => ({
+                                ...sec,
+                                proyecto_id: proyecto_id!
+                            }))
+                        }
+                    }
+                })
+            },
+            include: {
+                sec_articulo: true
+            }
         });
         return articulo;
     }

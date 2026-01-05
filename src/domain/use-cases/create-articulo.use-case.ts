@@ -3,8 +3,8 @@ import { ArticuloEntity, ArticuloRepository, SecArticuloRepository, CreateArticu
 
 interface CreateArticuloUseCaseInterface{
     execute(
-        id_proyecto: string, 
-        createArticuloFullDto: CreateArticuloFullDto, 
+        id_usuario: string, 
+        createArticuloFullDto: CreateArticuloDto, 
     ): Promise<ArticuloEntity>
 }
 
@@ -14,17 +14,11 @@ export class CreateArticuloUseCase implements CreateArticuloUseCaseInterface{
         private readonly secArticuloRepository: SecArticuloRepository,
     ){}
     public async execute(
-        id_proyecto: string, 
-        createArticuloFullDto: CreateArticuloFullDto, 
+        id_usuario: string, 
+        createArticuloDto: CreateArticuloDto, 
     ): Promise<ArticuloEntity> {
-        //extraemos la información del articulo y sus secciones
-        const createArticuloDto = createArticuloFullDto.articulo;
-        const createSecArticuloDto = createArticuloFullDto.secArticulo;
         //creamos el articulo
-        const articulo = await this.articuloRepository.createArticulo(id_proyecto, createArticuloDto);
-        const id_articulo = articulo.id;
-        //creamos las secciones del articulo
-        await this.secArticuloRepository.createSecArticulo(id_proyecto, id_articulo, createSecArticuloDto);
+        const articulo = await this.articuloRepository.createArticulo(id_usuario, createArticuloDto);
         return articulo;   
     }
 }

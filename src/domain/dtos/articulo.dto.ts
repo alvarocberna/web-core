@@ -1,9 +1,9 @@
 
-import {CreateSecArticuloDto} from 'src/domain';
+import {CreateSecArticuloDto, UpdateSecArticuloDto} from 'src/domain';
 
 export abstract class CreateArticuloFullDto{
         articulo: CreateArticuloDto;
-        secArticulo: CreateSecArticuloDto[]
+        sec_articulo: CreateSecArticuloDto[]
 }
 
 export abstract class CreateArticuloDto{
@@ -15,6 +15,7 @@ export abstract class CreateArticuloDto{
         abstract status: string;
         abstract slug: string;
         abstract autor_id: string;
+        abstract sec_articulo: CreateSecArticuloDto[];
 }
 
 export abstract class UpdateArticuloDto{
@@ -26,4 +27,5 @@ export abstract class UpdateArticuloDto{
         abstract status: string;
         abstract slug: string;  
         abstract autor_id: string;
+        abstract sec_articulo: UpdateSecArticuloDto[]
 }

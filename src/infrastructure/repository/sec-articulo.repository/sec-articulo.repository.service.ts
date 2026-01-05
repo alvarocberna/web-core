@@ -8,8 +8,8 @@ import { SecArticuloDatasourceService } from 'src/infrastructure';
 export class SecArticuloRepositoryService {
     constructor(private readonly secArticuloDatasource: SecArticuloDatasourceService){}
 
-      async createSecArticulo(id_proyecto: string, id_articulo: string, createSecArticuloDto: CreateSecArticuloDto[]): Promise<SecArticuloEntity[]> {
-            return this.secArticuloDatasource.createSecArticulo(id_proyecto, id_articulo, createSecArticuloDto)
+      async createSecArticulo(id_usuario: string, id_articulo: string, createSecArticuloDto: CreateSecArticuloDto[]): Promise<SecArticuloEntity[]> {
+            return this.secArticuloDatasource.createSecArticulo(id_usuario, id_articulo, createSecArticuloDto)
         }
     
         async getSecArticuloById(id_proyecto: string, id_articulo: string, id_sec_articulo: string): Promise<SecArticuloEntity | null> {

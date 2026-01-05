@@ -13,7 +13,16 @@ export class SecArticuloDatasourceService implements SecArticuloDatasource {
         private readonly uuidService: UuidService
     ) {}
 
-    async createSecArticulo(id_proyecto: string, id_articulo: string, createSecArticuloDto: CreateSecArticuloDto[]): Promise<SecArticuloEntity[]> {
+    async createSecArticulo(id_usuario: string, id_articulo: string, createSecArticuloDto: CreateSecArticuloDto[]): Promise<SecArticuloEntity[]> {
+        //obtenemos el user
+        const user = await this.prismaService.usuario.findUnique({
+            where: {id: id_usuario}
+        })
+        if(!user){
+            throw new NotFoundException("Usuario no encontrado")
+        }
+        const id_proyecto = user.proyecto_id;
+        //
         const promises = createSecArticuloDto.map(secArticulo =>
             this.prismaService.secArticulo.create({
             data: {

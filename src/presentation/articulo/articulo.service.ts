@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateArticuloFullDtoImpl } from './dto/create-articulo.dto';
+import { CreateArticuloDtoImpl } from './dto/create-articulo.dto';
 import { UpdateArticuloDtoImpl } from './dto/update-articulo.dto';
 //domain
 import {CreateArticuloUseCase} from 'src/domain';
@@ -14,21 +14,21 @@ export class ArticuloService {
     private readonly secArticuloRepositoryService: SecArticuloRepositoryService
   ){}
 
-  create(id_proyecto: string, createArticuloFullDtoImpl: CreateArticuloFullDtoImpl) {
-    new CreateArticuloUseCase(this.articuloRepository, this.secArticuloRepositoryService).execute(id_proyecto, createArticuloFullDtoImpl)
-    return 'This action adds a new articulo';
+  create(id_usuario: string, createArticuloDto: CreateArticuloDtoImpl) {
+    const nuevoArticulo = new CreateArticuloUseCase(this.articuloRepository, this.secArticuloRepositoryService).execute(id_usuario, createArticuloDto)
+    return nuevoArticulo;
   }
 
-  findAll(id_proyecto: string) {
-    return this.articuloRepository.getAllArticulos(id_proyecto);
+  findAll(id_usuario: string) {
+    return this.articuloRepository.getAllArticulos(id_usuario);
   }
 
-  findOne(id_proyecto: string, id_articulo: string) {
-    return this.articuloRepository.getArticuloById(id_proyecto, id_articulo);
+  findOne(id_usuario: string, id_articulo: string) {
+    return this.articuloRepository.getArticuloById(id_usuario, id_articulo);
   }
 
-  update(id: number, updateArticuloDto: UpdateArticuloDtoImpl) {
-    return `This action updates a #${id} articulo`;
+  update(id_usuario: string, id_articulo: string, updateArticuloDto: UpdateArticuloDtoImpl) {
+    return this.articuloRepository.updateArticulo(id_usuario, id_articulo, updateArticuloDto);
   }
 
   remove(id: number) {
