@@ -45,10 +45,9 @@ CREATE TABLE "public"."Articulo" (
 CREATE TABLE "public"."SecArticulo" (
     "id" TEXT NOT NULL,
     "nro_seccion" INTEGER NOT NULL,
-    "titulo" TEXT NOT NULL,
-    "subtitulo" TEXT NOT NULL,
-    "contenido" TEXT NOT NULL,
-    "image" INTEGER NOT NULL,
+    "titulo_sec" TEXT NOT NULL,
+    "contenido_sec" TEXT NOT NULL,
+    "image" TEXT NOT NULL,
     "articulo_id" TEXT NOT NULL,
     "proyecto_id" TEXT NOT NULL,
 
@@ -71,14 +70,11 @@ CREATE TABLE "public"."Actividad" (
 -- CreateIndex
 CREATE UNIQUE INDEX "Usuario_email_key" ON "public"."Usuario"("email");
 
--- CreateIndex
-CREATE UNIQUE INDEX "Articulo_slug_key" ON "public"."Articulo"("slug");
-
 -- AddForeignKey
 ALTER TABLE "public"."Usuario" ADD CONSTRAINT "Usuario_proyecto_id_fkey" FOREIGN KEY ("proyecto_id") REFERENCES "public"."Proyecto"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."Articulo" ADD CONSTRAINT "Articulo_autor_id_fkey" FOREIGN KEY ("autor_id") REFERENCES "public"."Proyecto"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."Articulo" ADD CONSTRAINT "Articulo_proyecto_id_fkey" FOREIGN KEY ("proyecto_id") REFERENCES "public"."Proyecto"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."SecArticulo" ADD CONSTRAINT "SecArticulo_articulo_id_fkey" FOREIGN KEY ("articulo_id") REFERENCES "public"."Articulo"("id") ON DELETE CASCADE ON UPDATE CASCADE;

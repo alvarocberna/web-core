@@ -1,7 +1,7 @@
 import { SecArticuloEntity, CreateSecArticuloDto, UpdateSecArticuloDto } from "src/domain";
 
 export abstract class SecArticuloDatasource{
-    abstract createSecArticulo(id_proyecto: string, id_articulo: string, createSecArticuloDto: CreateSecArticuloDto[]): Promise<SecArticuloEntity[]>;
+    abstract createSecArticulo(id_usuario: string, id_articulo: string, createSecArticuloDto: CreateSecArticuloDto[]): Promise<SecArticuloEntity[]>;
     abstract getSecArticuloById(id_proyecto: string, id_articulo: string, id_sec_articulo: string): Promise<SecArticuloEntity | null>;
     abstract getAllSecArticulos(id_proyecto: string, id_articulo: string): Promise<SecArticuloEntity[]>;
     abstract updateSecArticulo(id_proyecto: string, id_articulo: string, id_sec_articulo: string, updateSecArticuloDto: UpdateSecArticuloDto): Promise<SecArticuloEntity>;

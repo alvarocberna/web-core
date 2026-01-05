@@ -21,8 +21,8 @@ model Proyecto {
   cliente         String
   fecha_inicio    DateTime
   //REL N:M 
-  usuarios        Usuario[] @relation("fk_usu_pro")
-  articulos       Articulo[] @relation("fk_art_pro")
+  usuario        Usuario[] @relation("fk_usu_pro")
+  articulo       Articulo[] @relation("fk_art_pro")
 }
 
 model Usuario {
@@ -54,16 +54,15 @@ model Articulo {
     //REL M:N
     proyectos            Proyecto @relation(name: "fk_art_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
     //REL N:M
-    sec_articulos       SecArticulo[]      @relation("fk_sec_art")
-    actividades         Actividad[]        @relation("fk_act_art")
+    sec_articulo       SecArticulo[]      @relation("fk_sec_art")
+    actividad         Actividad[]        @relation("fk_act_art")
 }
 
 model SecArticulo {
     id          String @id @default(uuid())
     nro_seccion Int
-    titulo      String
-    subtitulo   String
-    contenido   String
+    titulo_sec      String
+    contenido_sec   String
     image       String
     articulo_id String
     proyecto_id String

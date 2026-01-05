@@ -9,20 +9,20 @@ import { ArticuloDatasourceService } from 'src/infrastructure';
 export class ArticuloRepositoryService implements ArticuloRepository {
     constructor(private readonly articuloDatasource: ArticuloDatasourceService){}
 
-       async createArticulo(id_proyecto: string, createArticuloDto: CreateArticuloDto): Promise<ArticuloEntity> {
-            return this.articuloDatasource.createArticulo(id_proyecto, createArticuloDto)
+       async createArticulo(id_usuario: string, createArticuloDto: CreateArticuloDto): Promise<ArticuloEntity> {
+            return this.articuloDatasource.createArticulo(id_usuario, createArticuloDto)
         }
     
-        async getArticuloById(id_proyecto: string, id_articulo: string): Promise<ArticuloEntity | null> {
-            return this.articuloDatasource.getArticuloById(id_proyecto, id_articulo)
+        async getArticuloById(id_usuario: string, id_articulo: string): Promise<ArticuloEntity | null> {
+            return this.articuloDatasource.getArticuloById(id_usuario, id_articulo)
         }
     
-        async getAllArticulos(id_proyecto: string): Promise<ArticuloEntity[]> {
-            return this.articuloDatasource.getAllArticulos(id_proyecto)
+        async getAllArticulos(id_usuario: string): Promise<ArticuloEntity[]> {
+            return this.articuloDatasource.getAllArticulos(id_usuario)
         }
     
-        async updateArticulo(id_proyecto: string, id_articulo: string, updateArticuloDto: UpdateArticuloDto): Promise<ArticuloEntity> {
-            return this.articuloDatasource.updateArticulo(id_proyecto, id_articulo, updateArticuloDto)
+        async updateArticulo(id_usuario: string, id_articulo: string, updateArticuloDto: UpdateArticuloDto): Promise<ArticuloEntity> {
+            return this.articuloDatasource.updateArticulo(id_usuario, id_articulo, updateArticuloDto)
         }
         
         async deleteArticulo(id_proyecto: string, id_articulo: string): Promise<void> {
