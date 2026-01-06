@@ -134,9 +134,23 @@ export class ArticuloDatasourceService implements ArticuloDatasource {
         return articulo;
     }
     
-    async deleteArticulo(id_proyecto: string, id_articulo: string): Promise<void> {
+    async deleteArticulo(id_usuario: string, id_articulo: string): Promise<void> {
+        const user = await this.prismaService.usuario.findUnique({ where: { id: id_usuario } });
+        const proyecto_id = user?.proyecto_id;
+
+        if (!proyecto_id) {
+            throw new NotFoundException('Usuario o proyecto no encontrado');
+        }
+
         await this.prismaService.articulo.delete({
-            where: { id: id_articulo, proyecto_id: id_proyecto },
+            where: { id: id_articulo, proyecto_id: proyecto_id },
+            include: {
+                sec_articulo: true,
+                actividad: false,
+            }
         });
+
+        return Promise.resolve();
+
     }
 }
