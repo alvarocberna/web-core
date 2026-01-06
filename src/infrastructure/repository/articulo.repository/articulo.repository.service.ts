@@ -24,8 +24,8 @@ export class ArticuloRepositoryService implements ArticuloRepository {
         async updateArticulo(id_usuario: string, id_articulo: string, updateArticuloDto: UpdateArticuloDto): Promise<ArticuloEntity> {
             return this.articuloDatasource.updateArticulo(id_usuario, id_articulo, updateArticuloDto)
         }
-        
-        async deleteArticulo(id_proyecto: string, id_articulo: string): Promise<void> {
-            await this.articuloDatasource.deleteArticulo(id_proyecto, id_articulo)
+
+        async deleteArticulo(id_usuario: string, id_articulo: string): Promise<void> {
+            await this.articuloDatasource.deleteArticulo(id_usuario, id_articulo)
         }
 }

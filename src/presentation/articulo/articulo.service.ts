@@ -31,7 +31,7 @@ export class ArticuloService {
     return this.articuloRepository.updateArticulo(id_usuario, id_articulo, updateArticuloDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} articulo`;
+  delete(id_usuario: string, id_articulo: string) {
+    return this.articuloRepository.deleteArticulo(id_usuario, id_articulo);
   }
 }

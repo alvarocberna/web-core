@@ -53,8 +53,13 @@ export class ArticuloController {
     return this.articuloService.update(id_usuario, id_articulo, updateArticuloDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.articuloService.remove(+id);
+  @UseGuards(JwtAuthGuard)
+  @Delete('/delete/:id_articulo')
+  remove(
+    @Req() req: Request,
+    @Param('id_articulo') id_articulo: string
+  ) {
+    const id_usuario = (req as any).user?.id;
+    return this.articuloService.delete(id_usuario, id_articulo);
   }
 }

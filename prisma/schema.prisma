@@ -74,7 +74,6 @@ model Actividad {
     id                    String   @id @default(uuid())
     accion                String
     responsable           String
-    articulo_relacionado  String
     fecha                 DateTime
     proyecto_id           String
     articulo_id           String
