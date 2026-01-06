@@ -1,15 +1,14 @@
 // import { ArticuloEntity } from "../entities/articulo.entity"
 import { ArticuloEntity, ArticuloRepository, ActividadRepository, UpdateArticuloDto} from "src/domain"
 
-interface UpdateArticuloUseCaseInterface{
+interface DeleteArticuloUseCaseInterface{
     execute(
         id_usuario: string, 
         id_articulo: string,
-        updateArticuloDto: UpdateArticuloDto, 
-    ): Promise<ArticuloEntity>
+    ): Promise<void>
 }
 
-export class UpdateArticuloUseCase implements UpdateArticuloUseCaseInterface{
+export class DeleteArticuloUseCase implements DeleteArticuloUseCaseInterface{
     constructor(
         private readonly articuloRepository: ArticuloRepository,
         private readonly actividadRepository: ActividadRepository,
@@ -17,13 +16,11 @@ export class UpdateArticuloUseCase implements UpdateArticuloUseCaseInterface{
     public async execute(
         id_usuario: string, 
         id_articulo: string,
-        updateArticuloDto: UpdateArticuloDto, 
-    ): Promise<ArticuloEntity> {
-
+    ): Promise<void> {
+        await this.actividadRepository.createActividad(id_usuario, id_articulo, 'articulo eliminado')
         //entregamos la info al repository para actualizar articulo
-        const articulo = await this.articuloRepository.updateArticulo(id_usuario, id_articulo, updateArticuloDto);
+        await this.articuloRepository.deleteArticulo(id_usuario, id_articulo);
         //registramos esta accion
-        await this.actividadRepository.createActividad(id_usuario, articulo.id, 'articulo modificado')
-        return articulo;   
+        return Promise.resolve();   
     }
 }

@@ -145,7 +145,8 @@ export class ArticuloDatasourceService implements ArticuloDatasource {
         await this.prismaService.articulo.delete({
             where: { id: id_articulo, proyecto_id: proyecto_id },
             include: {
-                sec_articulo: true
+                sec_articulo: true,
+                actividad: false,
             }
         });
 

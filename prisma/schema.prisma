@@ -76,7 +76,7 @@ model Actividad {
     responsable           String
     fecha                 DateTime
     proyecto_id           String
-    articulo_id           String
+    articulo_id           String?
     //REL M:N
-    articulo             Articulo @relation(name: "fk_act_art", fields: [articulo_id], references: [id], onDelete: Cascade)
+    articulo             Articulo? @relation(name: "fk_act_art", fields: [articulo_id], references: [id], onDelete: SetNull)
 }
