@@ -21,29 +21,33 @@ export class ActividadDatasourceService implements ActividadDatasource {
         if (!user) {
             throw new NotFoundException('Usuario no encontrado');
         }
-        const proyecto_id = user.proyecto_id;
 
         // Validar que el artículo exista
         const articulo = await this.prismaService.articulo.findUnique({
-            where: { id: id_articulo, proyecto_id }
+            where: { 
+                id: id_articulo, 
+                proyecto_id: user.proyecto_id   
+            }
         });
         if (!articulo) {
             throw new NotFoundException('Artículo no encontrado');
         }
 
         // Crear la actividad
-        const nuevaActividad = await this.prismaService.actividad.create({
+        const actividad = await this.prismaService.actividad.create({
             data: {
                 id: this.uuidService.generate(),
                 accion: accion,
+                titulo_articulo: articulo.titulo,
                 responsable: user.email,
                 fecha: new Date(),
-                proyecto_id: proyecto_id,
                 articulo_id: id_articulo,
+                usuario_id: id_usuario,
+                proyecto_id: user.proyecto_id,
             }
         });
 
-        return nuevaActividad;
+        return actividad;
     }
 
     async getActividadById(id_usuario: string, id_actividad: string): Promise<ActividadEntity | null> {
@@ -58,7 +62,8 @@ export class ActividadDatasourceService implements ActividadDatasource {
         const actividad = await this.prismaService.actividad.findUnique({
             where: {
                 id: id_actividad,
-                proyecto_id
+                usuario_id: user.id,
+                proyecto_id: user.proyecto_id
             }
         });
 
@@ -100,10 +105,14 @@ export class ActividadDatasourceService implements ActividadDatasource {
 
         return this.prismaService.actividad.findMany({
             where: {
-                proyecto_id
+                proyecto_id: user.proyecto_id
             },
             orderBy: {
                 fecha: 'desc'
+            },
+            include: {
+                usuario: true,
+                articulo: true,
             }
         });
     }
@@ -120,7 +129,8 @@ export class ActividadDatasourceService implements ActividadDatasource {
         await this.prismaService.actividad.delete({
             where: {
                 id: id_actividad,
-                proyecto_id
+                usuario_id: user.id,
+                proyecto_id: user.proyecto_id
             }
         });
     }

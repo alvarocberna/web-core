@@ -22,6 +22,12 @@ export class UpdateArticuloDtoImpl implements UpdateArticuloDto {
     @IsString()
     slug: string;
     @IsString()
+    image_url: string | null;
+    @IsString()
+    image_alt: string | null;
+    @IsString()
+    image_position: string | null;
+    @IsString()
     autor_id: string;
     @ValidateNested()
     @Type(() => UpdateSecArticuloDtoImpl)
@@ -37,5 +43,9 @@ export class UpdateSecArticuloDtoImpl implements UpdateSecArticuloDto {
     @IsString()
     contenido_sec: string;
     @IsString()
-    image: string;
+    image_url: string | null;
+    @IsString()
+    image_alt: string | null;
+    @IsString()
+    image_position: string | null;
 }

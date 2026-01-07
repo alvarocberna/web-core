@@ -10,6 +10,9 @@ export class ArticuloEntity{
         public fecha_actualizacion: Date | null,
         public status: string,
         public slug: string,
+        public image_url: string | null,
+        public image_alt: string | null,
+        public image_position: string | null,
         public autor_id: string,
         public proyecto_id: string,
     ){}

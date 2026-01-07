@@ -23,6 +23,7 @@ model Proyecto {
   //REL N:M 
   usuario        Usuario[] @relation("fk_usu_pro")
   articulo       Articulo[] @relation("fk_art_pro")
+  actividad         Actividad[]        @relation("fk_act_pro")
 }
 
 model Usuario {
@@ -35,8 +36,11 @@ model Usuario {
   hashedRt      String?
   rol           String
   proyecto_id   String
+  actividad_id  String?
   //REL M:N
   proyecto      Proyecto @relation(name: "fk_usu_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+  //REL N:M 
+  actividad         Actividad[]        @relation("fk_act_usu")
 }
 
 model Articulo {
@@ -48,7 +52,10 @@ model Articulo {
     fecha_publicacion    DateTime
     fecha_actualizacion  DateTime?
     status               String
-    slug                 String              
+    slug                 String    
+    image_url            String?
+    image_alt            String?
+    image_position       String?         
     autor_id             String
     proyecto_id          String
     //REL M:N
@@ -63,7 +70,9 @@ model SecArticulo {
     nro_seccion Int
     titulo_sec      String
     contenido_sec   String
-    image       String
+    image_url       String?
+    image_alt       String?
+    image_position  String?
     articulo_id String
     proyecto_id String
     //REL M:N
@@ -73,10 +82,14 @@ model SecArticulo {
 model Actividad {
     id                    String   @id @default(uuid())
     accion                String
+    titulo_articulo       String
     responsable           String
     fecha                 DateTime
     proyecto_id           String
+    usuario_id            String?
     articulo_id           String?
     //REL M:N
+    proyecto             Proyecto @relation(name: "fk_act_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+    usuario              Usuario? @relation(name: "fk_act_usu", fields: [usuario_id], references: [id], onDelete: SetNull)
     articulo             Articulo? @relation(name: "fk_act_art", fields: [articulo_id], references: [id], onDelete: SetNull)
 }

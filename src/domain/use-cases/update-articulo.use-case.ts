@@ -23,7 +23,7 @@ export class UpdateArticuloUseCase implements UpdateArticuloUseCaseInterface{
         //entregamos la info al repository para actualizar articulo
         const articulo = await this.articuloRepository.updateArticulo(id_usuario, id_articulo, updateArticuloDto);
         //registramos esta accion
-        await this.actividadRepository.createActividad(id_usuario, articulo.id, 'articulo modificado')
+        await this.actividadRepository.createActividad(id_usuario, articulo.id, 'modificado')
         return articulo;   
     }
 }

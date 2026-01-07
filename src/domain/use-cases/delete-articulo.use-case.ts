@@ -17,7 +17,7 @@ export class DeleteArticuloUseCase implements DeleteArticuloUseCaseInterface{
         id_usuario: string, 
         id_articulo: string,
     ): Promise<void> {
-        await this.actividadRepository.createActividad(id_usuario, id_articulo, 'articulo eliminado')
+        await this.actividadRepository.createActividad(id_usuario, id_articulo, 'eliminado')
         //entregamos la info al repository para actualizar articulo
         await this.articuloRepository.deleteArticulo(id_usuario, id_articulo);
         //registramos esta accion
