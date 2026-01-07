@@ -1,4 +1,4 @@
-import { IsString, IsDate, IsNumber, ValidateNested } from 'class-validator';
+import { IsString, IsDate, IsNumber, ValidateNested, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
 //domain
 import { CreateArticuloFullDto, CreateArticuloDto, CreateSecArticuloDto } from "src/domain";
@@ -46,8 +46,8 @@ export class CreateSecArticuloDtoImpl implements CreateSecArticuloDto {
     titulo_sec: string;
     @IsString()
     contenido_sec: string;
-    @IsString()
-    image_url: string | null;
+    @IsOptional()
+    image_file: File | File[];
     @IsString()
     image_alt: string | null;
     @IsString()
