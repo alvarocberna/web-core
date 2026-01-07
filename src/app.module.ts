@@ -8,6 +8,7 @@ import {ProyectoModule} from './presentation/proyecto/proyecto.module';
 import {ArticuloModule} from './presentation/articulo/articulo.module';
 import { AuthModule } from './presentation/auth/auth.module';
 import { UsuarioModule } from './presentation/usuario/usuario.module';
+import {ActividadModule} from "./presentation/actividad/actividad.module"
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { UsuarioModule } from './presentation/usuario/usuario.module';
        ArticuloModule,
        AuthModule,
        UsuarioModule,
+       ActividadModule,
   ],
   exports: []
 })

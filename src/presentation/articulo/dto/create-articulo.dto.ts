@@ -26,6 +26,12 @@ export class CreateArticuloDtoImpl implements CreateArticuloDto {
     @IsString()
     slug: string;
     @IsString()
+    image_url: string | null;
+    @IsString()
+    image_alt: string | null;
+    @IsString()
+    image_position: string | null;
+    @IsString()
     autor_id: string;
     @ValidateNested()
     @Type(() => CreateSecArticuloDtoImpl)
@@ -41,5 +47,9 @@ export class CreateSecArticuloDtoImpl implements CreateSecArticuloDto {
     @IsString()
     contenido_sec: string;
     @IsString()
-    image: string;
+    image_url: string | null;
+    @IsString()
+    image_alt: string | null;
+    @IsString()
+    image_position: string | null;
 }

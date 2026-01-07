@@ -20,7 +20,7 @@ export class CreateArticuloUseCase implements CreateArticuloUseCaseInterface{
         //creamos el articulo
         const articulo = await this.articuloRepository.createArticulo(id_usuario, createArticuloDto);
         //registramos esta accion
-        await this.actividadRepository.createActividad(id_usuario, articulo.id, 'articulo creado')
+        await this.actividadRepository.createActividad(id_usuario, articulo.id, 'creado')
         //retornamos
         return articulo;   
     }
