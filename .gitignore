@@ -62,3 +62,7 @@ doc.md
 /generated/prisma
 
 /generated/prisma
+
+# Archivos subidos (desarrollo)
+uploads/
+!uploads/.gitkeep

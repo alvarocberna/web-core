@@ -10,7 +10,6 @@ export class ActividadController {
   @Get('all')
   findAll(@Req() req: Request,) {
     const id_usuario = (req as any).user?.id;
-    // const id_usuario = "261cfaeb-0d3f-4191-9e91-8563b32206b0";
     return this.actividadService.findAll(id_usuario);
   }
 

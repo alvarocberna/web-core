@@ -55,7 +55,6 @@ export class UsuarioDatasourceService implements UsuarioDatasource {
     }
 
     async getUsuarioByEmail(email: string): Promise<UsuarioEntity | null> {
-        console.log('intentando getUsuarioByEmail con email: ' + email);
         const usuario = this.prismaService.usuario.findUnique({ 
             where: { 
                 email: email

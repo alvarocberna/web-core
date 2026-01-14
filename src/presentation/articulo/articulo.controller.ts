@@ -1,4 +1,5 @@
-import { Controller, Req, Get, Post, Body, Patch, Put, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Req, Get, Post, Body, Patch, Put, Param, Delete, UseGuards, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ArticuloService } from './articulo.service';
 import { CreateArticuloDtoImpl } from './dto/create-articulo.dto';
 import { UpdateArticuloDtoImpl } from './dto/update-articulo.dto';
@@ -10,14 +11,34 @@ export class ArticuloController {
 
   @UseGuards(JwtAuthGuard)
   @Post('/crear')
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'image_file', maxCount: 1 },
+      { name: 'sec_images', maxCount: 20 },
+    ])
+  )
   create(
     @Req() req: Request,
-    @Body() createArticuloDtoImpl: CreateArticuloDtoImpl,
+    @Body('data') dataString: string,
+    @UploadedFiles() files: {
+        image_file?: Express.Multer.File[],
+        sec_images?: Express.Multer.File[]
+    },
   ) {
-    console.log("intentando crear un articulo")
+    //obtener id usuario de las cookies
     const id_usuario = (req as any).user?.id;
-    console.log("id usuario:" + id_usuario);
-    return this.articuloService.create(id_usuario, createArticuloDtoImpl);
+    // Validar que dataString existe
+    if (!dataString) {
+      throw new Error('El campo "data" es requerido en el FormData');
+    }
+    // Parsear el JSON del campo 'data'
+    let createArticuloDtoImpl: CreateArticuloDtoImpl;
+    try {
+      createArticuloDtoImpl = JSON.parse(dataString);
+    } catch (error) {
+      throw new Error(`Error al parsear JSON: ${error.message}`);
+    }
+    return this.articuloService.create(id_usuario, createArticuloDtoImpl, files);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -26,8 +47,6 @@ export class ArticuloController {
     @Req() req: Request,
   ) {
     const id_usuario = (req as any).user?.id;
-    console.log("intentando ver todos los articulos")
-    console.log("id usuario: " + id_usuario)
     return this.articuloService.findAll(id_usuario);
   }
 
@@ -43,14 +62,37 @@ export class ArticuloController {
 
   @UseGuards(JwtAuthGuard)
   @Put('/editar/:id_articulo')
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'image_file', maxCount: 1 },
+      { name: 'sec_images', maxCount: 20 },
+    ])
+  )
   update(
     @Req() req: Request,
-    @Param('id_articulo') id_articulo: string, 
-    @Body() updateArticuloDto: UpdateArticuloDtoImpl
+    @Param('id_articulo') id_articulo: string,
+    @Body('data') dataString: string,
+    @UploadedFiles() files: {
+        image_file?: Express.Multer.File[],
+        sec_images?: Express.Multer.File[]
+    },
   ) {
-    console.log("intentando actualizar articulo con id: " + id_articulo)
     const id_usuario = (req as any).user?.id;
-    return this.articuloService.update(id_usuario, id_articulo, updateArticuloDto);
+    
+    // Validar que dataString existe
+    if (!dataString) {
+      throw new Error('El campo "data" es requerido en el FormData');
+    }
+    
+    // Parsear el JSON del campo 'data'
+    let updateArticuloDto: UpdateArticuloDtoImpl;
+    try {
+      updateArticuloDto = JSON.parse(dataString);
+    } catch (error) {
+      throw new Error(`Error al parsear JSON: ${error.message}`);
+    }
+    
+    return this.articuloService.update(id_usuario, id_articulo, updateArticuloDto, files);
   }
 
   @UseGuards(JwtAuthGuard)

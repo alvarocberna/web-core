@@ -21,10 +21,13 @@ export class UpdateArticuloDtoImpl implements UpdateArticuloDto {
     status: string;
     @IsString()
     slug: string;
+    @IsOptional()
     @IsString()
     image_url: string | null;
+    @IsOptional()
     @IsString()
     image_alt: string | null;
+    @IsOptional()
     @IsString()
     image_position: string | null;
     @IsString()
@@ -35,6 +38,8 @@ export class UpdateArticuloDtoImpl implements UpdateArticuloDto {
 }
 
 export class UpdateSecArticuloDtoImpl implements UpdateSecArticuloDto {
+    @IsString()
+    id: string;
     @Type(() => Number)
     @IsNumber()
     nro_seccion: number;
@@ -43,9 +48,12 @@ export class UpdateSecArticuloDtoImpl implements UpdateSecArticuloDto {
     @IsString()
     contenido_sec: string;
     @IsOptional()
-    image_file: File | File[];
+    @IsString()
+    image_url: string | null;
+    @IsOptional()
     @IsString()
     image_alt: string | null;
+    @IsOptional()
     @IsString()
     image_position: string | null;
 }

@@ -25,10 +25,13 @@ export class CreateArticuloDtoImpl implements CreateArticuloDto {
     status: string;
     @IsString()
     slug: string;
+    @IsOptional()
     @IsString()
     image_url: string | null;
+    @IsOptional()
     @IsString()
     image_alt: string | null;
+    @IsOptional()
     @IsString()
     image_position: string | null;
     @IsString()
@@ -47,9 +50,12 @@ export class CreateSecArticuloDtoImpl implements CreateSecArticuloDto {
     @IsString()
     contenido_sec: string;
     @IsOptional()
-    image_file: File | File[];
+    @IsString()
+    image_url: string | null;
+    @IsOptional()
     @IsString()
     image_alt: string | null;
+    @IsOptional()
     @IsString()
     image_position: string | null;
 }

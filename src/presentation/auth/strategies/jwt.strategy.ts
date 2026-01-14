@@ -17,10 +17,8 @@ import { UsuarioRepositoryService } from '../../../infrastructure/repository/usu
 //extraemos el token desde las cookies cada vez que se hace un request
 const cookieExtractor = (req: any) => {
   if (req && req.cookies) {
-    console.log('hay cookies:' + req.cookies);
     return req.cookies['access_token']; // el nombre debe coincidir con el que setearon en el login
   }
-  console.log('no hay cookies');
   return null;
 };
 
