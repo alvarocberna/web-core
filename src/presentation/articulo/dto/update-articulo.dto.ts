@@ -1,4 +1,4 @@
-import { IsString, IsDate, IsNumber, ValidateNested } from 'class-validator';
+import { IsString, IsDate, IsNumber, ValidateNested, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
 //domain
 import { UpdateArticuloDto, UpdateSecArticuloDto } from "src/domain";
@@ -21,10 +21,13 @@ export class UpdateArticuloDtoImpl implements UpdateArticuloDto {
     status: string;
     @IsString()
     slug: string;
+    @IsOptional()
     @IsString()
     image_url: string | null;
+    @IsOptional()
     @IsString()
     image_alt: string | null;
+    @IsOptional()
     @IsString()
     image_position: string | null;
     @IsString()
@@ -35,6 +38,8 @@ export class UpdateArticuloDtoImpl implements UpdateArticuloDto {
 }
 
 export class UpdateSecArticuloDtoImpl implements UpdateSecArticuloDto {
+    @IsString()
+    id: string;
     @Type(() => Number)
     @IsNumber()
     nro_seccion: number;
@@ -42,10 +47,13 @@ export class UpdateSecArticuloDtoImpl implements UpdateSecArticuloDto {
     titulo_sec: string;
     @IsString()
     contenido_sec: string;
+    @IsOptional()
     @IsString()
     image_url: string | null;
+    @IsOptional()
     @IsString()
     image_alt: string | null;
+    @IsOptional()
     @IsString()
     image_position: string | null;
 }

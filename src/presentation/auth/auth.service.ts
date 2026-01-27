@@ -11,7 +11,6 @@ import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
-
     constructor(
       private usuarioService: UsuarioRepositoryService,
       private jwtService: JwtService,
@@ -21,13 +20,10 @@ export class AuthService {
   async validateUserByPassword(email: string, pass: string) {
     const user = await this.usuarioService.getUsuarioByEmail(email);
     if (!user) {
-      console.log("no hay user")
       return null;
     }
-    if (user) console.log('obtenemos el user:' + user.nombre + " " + user.apellido)
     const matches = await bcrypt.compare(pass, user.password);
     if (!matches) {
-      console.log("password no coincide")
       return null;
     }
     // omit password when returning
@@ -45,14 +41,11 @@ export class AuthService {
       secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
       expiresIn: this.configService.get<string>('JWT_ACCESS_EXPIRATION'),
     });
-    if(accessToken) console.log('access token obtenido')
     const refreshToken = this.jwtService.sign(payload, {
       secret: process.env.JWT_REFRESH_SECRET,
       expiresIn: process.env.JWT_REFRESH_EXPIRATION,
     });
-    if(refreshToken) console.log('refresh token obtenido')
     // hash refresh token and store in DB
-    // const saltRounds = this.configService.get<number>('BCRYPT_SALT_OR_ROUNDS');
     const saltRounds = this.configService.get<number>('BCRYPT_SALT_OR_ROUNDS');
     const hashedRt = await bcrypt.hash(refreshToken, +saltRounds!);
     await this.usuarioService.setRefreshToken(user.id, hashedRt);
@@ -64,12 +57,8 @@ export class AuthService {
   }
 
   async refresh(userId: string, rt: string) {
-    console.log("ejecutando fn refresh de authService")
     const user = await this.usuarioService.getUsuarioById(userId);
-    console.log("user: " + user)
-    console.log("user hashed rt: " + user!.hashedRt)
     if (!user || !user.hashedRt){ //el user.hashdRt es NULL ! AQUI ESTÁ EL ERROR
-        console.log("no hay usuario o user.hashedRt")
         throw new UnauthorizedException();
     } 
     const isMatch = await bcrypt.compare(rt, user.hashedRt);

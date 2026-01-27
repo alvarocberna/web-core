@@ -9,6 +9,7 @@ export abstract class CreateSecArticuloDto{
 }
 
 export abstract class UpdateSecArticuloDto{
+        abstract id: string;
         abstract nro_seccion: number;
         abstract titulo_sec: string;
         abstract contenido_sec: string;

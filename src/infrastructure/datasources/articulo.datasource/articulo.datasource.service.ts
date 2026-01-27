@@ -89,12 +89,9 @@ export class ArticuloDatasourceService implements ArticuloDatasource {
             where: {id: id_usuario}
         })
         if(!user){
-            console.log("usuario no encontrado")
             throw new NotFoundException("Usuario no encontrado")
         }
-        console.log("usuario encontrado: " + user.email)
         const id_proyecto = user.proyecto_id;
-        console.log("proyecto id:" + id_proyecto)
 
         return this.prismaService.articulo.findMany({
                 where: {
@@ -104,9 +101,30 @@ export class ArticuloDatasourceService implements ArticuloDatasource {
     }
 
     async updateArticulo(id_usuario: string, id_articulo: string, updateArticuloDto: UpdateArticuloDto): Promise<ArticuloEntity> {
-        console.log("actualizando articulo en datasource")
         const {sec_articulo, ...data} = updateArticuloDto as UpdateArticuloDto;
-        
+
+        //que no elimine la url antigua
+        const data_old = await this.prismaService.articulo.findUnique({ 
+            where: { 
+                id: id_articulo,
+            },
+            include: {
+                sec_articulo: true
+            }
+        });
+        if(data_old?.image_url && !data.image_url){
+            data.image_url = data_old.image_url;
+        }
+        //lo mismo pero sub sec
+        data_old?.sec_articulo.forEach(sec_old => {
+            sec_articulo.forEach((sec_new) => {
+                if(sec_new.id === sec_old.id){
+                    if(sec_old?.image_url && !sec_new?.image_url){
+                        sec_new.image_url = sec_old.image_url;
+                    }
+                }
+            })
+        })
         const user = await this.prismaService.usuario.findUnique({
             where: {id: id_usuario}
         });
@@ -121,7 +139,13 @@ export class ArticuloDatasourceService implements ArticuloDatasource {
                         deleteMany: {},
                         createMany: {
                             data: sec_articulo.map(sec => ({
-                                ...sec,
+                                // ...sec,
+                                nro_seccion: sec.nro_seccion + 1,
+                                titulo_sec: sec.titulo_sec,
+                                contenido_sec: sec.contenido_sec,
+                                image_url: sec.image_url,
+                                image_alt: sec.image_alt,
+                                image_position: sec.image_position,
                                 proyecto_id: proyecto_id!
                             }))
                         }
