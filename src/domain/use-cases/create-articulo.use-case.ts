@@ -8,7 +8,9 @@ interface CreateArticuloUseCaseInterface{
     ): Promise<ArticuloEntity>
 }
 
+//test: se debe crear una instancia de la clase caso de uso
 export class CreateArticuloUseCase implements CreateArticuloUseCaseInterface{
+    //test: tenemos inyecciópn de dependencias, x lo q se debe inicializar en el test
     constructor(
         private readonly articuloRepository: ArticuloRepository,
         private readonly actividadRepository: ActividadRepository,

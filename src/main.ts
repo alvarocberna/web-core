@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { join } from 'path';
 var cookieParser = require('cookie-parser')
+const rateLimit = require('express-rate-limit');
 import {HttpExceptionFilter} from './presentation/filters/http-exception.filter';
 import helmet from 'helmet';
 
@@ -24,6 +25,18 @@ async function bootstrap() {
   });
 
   app.use(cookieParser());
+
+  const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 10, // limit each IP to 10 requests per window per route
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: 'Too many requests from this IP, please try again later.'
+  });
+
+  // Apply limiter to sensitive auth routes
+  app.use('/auth/login', authLimiter);
+  app.use('/auth/create-user', authLimiter);
 
   app.enableCors({
     origin: configService.get<string>('URL_FRONTEND'), 
