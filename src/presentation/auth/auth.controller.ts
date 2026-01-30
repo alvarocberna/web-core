@@ -1,11 +1,12 @@
 //nest
-import { Controller, Req, Res, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Req, Res, Post, Body, Query, UseGuards } from '@nestjs/common';
 //express
 import type { Response, Request } from 'express';
 //presentation
 import { AuthService } from './auth.service';
 import { CreateUsuarioDtoImpl } from './dto/create-user.dto';
 import {JwtAuthGuard} from '../auth/guards/jwt-auth.guard';
+import {RefreshTokenGuard} from './guards/refresh-token.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -41,9 +42,16 @@ export class AuthController {
 
   
  @Post('create-user')
-  async createUser(@Body() createUsuarioDto: CreateUsuarioDtoImpl, @Req() req: Request) {
-    // const id_proyecto = (req as any).user?.proyecto_id;
-    const id_proyecto = "dc11d6f6-d092-4bcd-aec9-a7cd0347a16e";
+  async createUser(
+    @Body() createUsuarioDto: CreateUsuarioDtoImpl, 
+    @Req() req: Request,
+    @Query('proyecto_id') proyecto_id: string) {
+    let id_proyecto = '';
+    if(proyecto_id){
+      id_proyecto = proyecto_id;
+    }else{
+      id_proyecto = (req as any).user?.proyecto_id;
+    }
     return this.authService.createUser(id_proyecto, createUsuarioDto);
   }
 
@@ -81,7 +89,7 @@ export class AuthController {
     return res.json({ ok: true });
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(RefreshTokenGuard)
   @Post('refresh')
   async refresh(@Req() req: Request, @Res() res: Response) {
     // lee refresh token desde cookie

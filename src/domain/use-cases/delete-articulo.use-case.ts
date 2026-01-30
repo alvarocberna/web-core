@@ -1,5 +1,5 @@
 // import { ArticuloEntity } from "../entities/articulo.entity"
-import { ArticuloEntity, ArticuloRepository, ActividadRepository, UpdateArticuloDto} from "src/domain"
+import { ArticuloRepository, ActividadRepository } from "src/domain"
 
 interface DeleteArticuloUseCaseInterface{
     execute(
