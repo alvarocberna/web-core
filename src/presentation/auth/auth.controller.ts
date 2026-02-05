@@ -65,6 +65,7 @@ export class AuthController {
       return res.status(401).json({ message: 'Credenciales inválidas' });
     }
 
+    console.log('usuario autenticado')
     const tokens = await this.authService.login({ id: (validated as any).id, email: body.email });
 
     res.cookie('access_token', tokens.accessToken, {
@@ -81,7 +82,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   async logout(@Req() req: Request, @Res() res: Response) {
-    // suponiendo que tienes un middleware que setea req.user con sub
     const userId = (req as any).user?.sub;
     if (userId) await this.authService.logout(userId);
     res.clearCookie('access_token');
@@ -89,10 +89,10 @@ export class AuthController {
     return res.json({ ok: true });
   }
 
-  @UseGuards(RefreshTokenGuard)
+  // @UseGuards(RefreshTokenGuard)
   @Post('refresh')
   async refresh(@Req() req: Request, @Res() res: Response) {
-    // lee refresh token desde cookie
+    // lee refresh token desde las cookies
     const rt = req.cookies?.refresh_token;
     if (!rt) {
       return res.status(401).json({ message: 'No refresh token' });
@@ -102,6 +102,8 @@ export class AuthController {
       const decoded: any = await this.authService['jwtService'].verify(rt, { secret: process.env.JWT_REFRESH_SECRET });
       const userId = decoded.sub;
       const tokens = await this.authService.refresh(userId, rt);
+
+      console.log('token refresh')
 
       res.cookie('access_token', tokens.accessToken, {
         httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 15*60*1000
