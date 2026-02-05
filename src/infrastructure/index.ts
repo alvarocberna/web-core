@@ -7,6 +7,10 @@ export * from './datasources/sec-articulo.datasource/sec-articulo.datasource.mod
 export * from './datasources/sec-articulo.datasource/sec-articulo.datasource.service';
 export * from './datasources/actividad.datasource/actividad.datasource.module';
 export * from './datasources/actividad.datasource/actividad.datasource.service';
+export * from './datasources/aws-storage.datasource/aws-storage.datasource.module';
+export * from './datasources/aws-storage.datasource/aws-storage.datasource.service';
+export * from './datasources/local-storage.datasource/local-storage.datasource.module';
+export * from './datasources/local-storage.datasource/local-storage.datasource.service';
 
 //REPOSITORIES
 export * from './repository/proyecto.repository/proyecto.repository.module';
@@ -17,3 +21,5 @@ export * from './repository/sec-articulo.repository/sec-articulo.repository.modu
 export * from './repository/sec-articulo.repository/sec-articulo.repository.service';
 export * from './repository/actividad.repository/actividad.repository.module';
 export * from './repository/actividad.repository/actividad.repository.service';
+export * from './repository/image-storage.repository/image-storage.repository.module';
+export * from './repository/image-storage.repository/image-storage.repository.service';

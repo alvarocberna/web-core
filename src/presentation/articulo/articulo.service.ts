@@ -1,11 +1,11 @@
-import { Delete, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateArticuloDtoImpl } from './dto/create-articulo.dto';
 import { UpdateArticuloDtoImpl } from './dto/update-articulo.dto';
 import { ImageStorageService } from './image-storage.service';
 //domain
 import {CreateArticuloUseCase, UpdateArticuloUseCase, DeleteArticuloUseCase} from 'src/domain';
 //infrastructure
-import { ArticuloRepositoryService, ActividadRepositoryService } from 'src/infrastructure';
+import { ArticuloRepositoryService, ActividadRepositoryService, ImageStorageRepositoryService } from 'src/infrastructure';
 
 @Injectable()
 export class ArticuloService {
@@ -13,10 +13,11 @@ export class ArticuloService {
   constructor(
     private readonly articuloRepository: ArticuloRepositoryService,
     private readonly actividadRepository: ActividadRepositoryService,
-    private readonly imageStorage: ImageStorageService,
+    // private readonly imageStorage: ImageStorageService,
+    private readonly imageStorage: ImageStorageRepositoryService,
   ){}
 
-  create(
+  async create(
     id_usuario: string, 
     createArticuloDto: CreateArticuloDtoImpl,
     files?: {
@@ -26,39 +27,30 @@ export class ArticuloService {
   ) {
     // Procesar imagen principal del artículo si existe
     if (files?.image_file?.[0]) {
-      const imageUrl = this.imageStorage.saveImage(files.image_file[0]);
+      const imageUrl = await this.imageStorage.saveImage(files.image_file[0]);
       createArticuloDto.image_url = imageUrl;
     }
 
     // Procesar imágenes de las secciones si existen
-    // if (files?.sec_images && createArticuloDto.sec_articulo) {
-    //   files.sec_images.forEach((file, index) => {
-    //     if (createArticuloDto.sec_articulo[index]) {
-    //       const imageUrl = this.imageStorage.saveImage(file);
-    //       createArticuloDto.sec_articulo[index].image_url = imageUrl;
-    //     }
-    //   });
-    // }
-    // Procesar imágenes de las secciones si existen
     if (files?.sec_images && createArticuloDto.sec_articulo) {
-      files.sec_images.forEach((file, index) => {
-        if (!createArticuloDto.sec_articulo[index]) return;
+      for (const [index, file] of files.sec_images.entries()) {
+        if (!createArticuloDto.sec_articulo[index]) continue;
 
         // Ignorar placeholders/archivos vacíos
         if (typeof file.size === 'number') {
-          if (file.size === 0) return;
+          if (file.size === 0) continue;
         } else if (file.buffer) {
-          if ((file.buffer as Buffer).length === 0) return;
+          if ((file.buffer as Buffer).length === 0) continue;
         } else {
-          return;
+          continue;
         }
 
-        const imageUrl = this.imageStorage.saveImage(file);
+        const imageUrl = await this.imageStorage.saveImage(file);
         createArticuloDto.sec_articulo[index].image_url = imageUrl;
-      });
+      }
     }
 
-    const nuevoArticulo = new CreateArticuloUseCase(this.articuloRepository, this.actividadRepository).execute(id_usuario, createArticuloDto)
+    const nuevoArticulo = await new CreateArticuloUseCase(this.articuloRepository, this.actividadRepository).execute(id_usuario, createArticuloDto)
     return nuevoArticulo;
   }
 
@@ -70,7 +62,7 @@ export class ArticuloService {
     return this.articuloRepository.getArticuloById(id_usuario, id_articulo);
   }
 
-  update(
+  async update(
     id_usuario: string, 
     id_articulo: string, 
     updateArticuloDto: UpdateArticuloDtoImpl,
@@ -81,7 +73,7 @@ export class ArticuloService {
   ) {
     // Procesar imagen principal del artículo si existe
     if (files?.image_file?.[0]) {
-      const imageUrl = this.imageStorage.saveImage(files.image_file[0]);
+      const imageUrl = await this.imageStorage.saveImage(files.image_file[0]);
       updateArticuloDto.image_url = imageUrl;
     }
 
@@ -95,30 +87,30 @@ export class ArticuloService {
     //   });
     // }
     // Procesar imágenes de las secciones si existen
-  if (files?.sec_images && updateArticuloDto.sec_articulo) {
-    files.sec_images.forEach((file, index) => {
-      if (!updateArticuloDto.sec_articulo[index]) return;
+    if (files?.sec_images && updateArticuloDto.sec_articulo) {
+      for (const [index, file] of files.sec_images.entries()) {
+        if (!updateArticuloDto.sec_articulo[index]) continue;
 
       // Ignorar placeholders/archivos vacíos
-      if (typeof file.size === 'number') {
-        if (file.size === 0) return;
-      } else if (file.buffer) {
-        if ((file.buffer as Buffer).length === 0) return;
-      } else {
-        return;
+        if (typeof file.size === 'number') {
+          if (file.size === 0) continue;
+        } else if (file.buffer) {
+          if ((file.buffer as Buffer).length === 0) continue;
+        } else {
+          continue;
+        }
+
+        const imageUrl = await this.imageStorage.saveImage(file);
+        updateArticuloDto.sec_articulo[index].image_url = imageUrl;
       }
+    }
 
-      const imageUrl = this.imageStorage.saveImage(file);
-      updateArticuloDto.sec_articulo[index].image_url = imageUrl;
-    });
-  }
-
-    const editarArticulo = new UpdateArticuloUseCase(this.articuloRepository, this.actividadRepository).execute(id_usuario, id_articulo, updateArticuloDto);
+    const editarArticulo = await new UpdateArticuloUseCase(this.articuloRepository, this.actividadRepository).execute(id_usuario, id_articulo, updateArticuloDto);
     return editarArticulo;
   }
 
   delete(id_usuario: string, id_articulo: string) {
-    const deleteArticulo = new DeleteArticuloUseCase(this.articuloRepository, this.actividadRepository).execute(id_usuario, id_articulo)
+    const deleteArticulo = new DeleteArticuloUseCase(this.articuloRepository, this.actividadRepository, this.imageStorage).execute(id_usuario, id_articulo)
     // return this.articuloRepository.deleteArticulo(id_usuario, id_articulo);
     return deleteArticulo;
   }
