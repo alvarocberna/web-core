@@ -41,7 +41,7 @@ async function bootstrap() {
   app.use('/auth/create-user', authLimiter);
 
   app.enableCors({
-    origin: configService.get<string>('URL_FRONTEND'), 
+    origin: [configService.get<string>('URL_FRONTEND')!, 'http://localhost:3000'], 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
