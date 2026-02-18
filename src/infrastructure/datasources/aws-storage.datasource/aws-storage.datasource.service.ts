@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import * as path from 'path';
@@ -15,7 +15,12 @@ export class AwsStorageDatasourceService implements ImageStorageDatasource{
     private publicBaseUrl: string;
 
     //inyectamos instancia de la dependencia ConfigService
-    constructor(private configService: ConfigService, private readonly prismaService: PrismaService) {
+    constructor(
+        @Inject(ConfigService)
+        private configService: ConfigService, 
+        @Inject(PrismaService)
+        private readonly prismaService: PrismaService
+    ) {
         //inicializamos propiedades internas
         this.region = this.configService.get<string>('AWS_REGION') || 'us-east-1';
         this.bucketName = this.configService.get<string>('AWS_S3_BUCKET') || '';
