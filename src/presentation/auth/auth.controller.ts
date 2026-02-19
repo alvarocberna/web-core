@@ -102,7 +102,7 @@ export class AuthController {
     @Res() res: Response
   ) {
 
-    const nodeEnv = this.configService.get<string>('NODE_ENV');
+    const nodeEnv = (this.configService.get<string>('NODE_ENV'))?.toLowerCase();
     const isProd = nodeEnv === 'production';
     const cookieSameSite: 'none' | 'lax' = isProd ? 'none' : 'lax';
     const cookieSecure = isProd;
