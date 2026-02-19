@@ -1,5 +1,5 @@
 //nest
-import { Controller, Req, Res, Post, Body, Query, UseGuards } from '@nestjs/common';
+import { Controller, Req, Res, Post, Body, Query, UseGuards, Logger } from '@nestjs/common';
 //express
 import type { Response, Request } from 'express';
 //presentation
@@ -10,9 +10,47 @@ import {RefreshTokenGuard} from './guards/refresh-token.guard';
 
 @Controller('auth')
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
+
   constructor(
     private readonly authService: AuthService,
   ) {}
+
+  private isHttpsRequest(req: Request): boolean {
+    const forwardedProto = req.headers['x-forwarded-proto'];
+
+    if (Array.isArray(forwardedProto)) {
+      return forwardedProto.some((value) => value.toLowerCase().includes('https'));
+    }
+
+    if (typeof forwardedProto === 'string') {
+      return forwardedProto
+        .split(',')
+        .map((value) => value.trim().toLowerCase())
+        .includes('https');
+    }
+
+    return req.secure;
+  }
+
+  private logCookieDiagnostics(context: 'login' | 'refresh', req: Request) {
+    const nodeEnv = process.env.NODE_ENV ?? 'undefined';
+    const secureCookie = nodeEnv === 'production';
+    const forwardedProto = req.headers['x-forwarded-proto'];
+    const forwardedProtoValue = Array.isArray(forwardedProto)
+      ? forwardedProto.join(',')
+      : forwardedProto ?? 'n/a';
+
+    this.logger.log(
+      `[${context}] NODE_ENV=${nodeEnv} secureCookie=${secureCookie} sameSite=lax req.secure=${req.secure} x-forwarded-proto=${forwardedProtoValue}`,
+    );
+
+    if (secureCookie && !this.isHttpsRequest(req)) {
+      this.logger.warn(
+        `[${context}] Cookie segura en producción, pero la request no parece HTTPS. El navegador puede no reenviar la cookie.`,
+      );
+    }
+  }
 
 
   //este endpoint me parece que no se está utilizando
@@ -58,22 +96,28 @@ export class AuthController {
   @Post('login')
   async login(
     @Body() body: { email: string; password: string }, 
+    @Req() req: Request,
     @Res() res: Response
   ) {
     const validated = await this.authService.validateUserByPassword(body.email, body.password);
     if (!validated) {
       return res.status(401).json({ message: 'Credenciales inválidas' });
     }
-
-    console.log('usuario autenticado')
+    console.log('usuario validado ' + validated.nombre + ' ' + validated.apellido)
     const tokens = await this.authService.login({ id: (validated as any).id, email: body.email });
 
+    this.logCookieDiagnostics('login', req);
+
     res.cookie('access_token', tokens.accessToken, {
-      httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 15*60*1000
+      httpOnly: true, sameSite: 'none', secure: true, maxAge: 15*60*1000
     });
     res.cookie('refresh_token', tokens.refreshToken, {
-      httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 7*24*60*60*1000
+      httpOnly: true, sameSite: 'none', secure: true, maxAge: 7*24*60*60*1000
     });
+
+    const setCookieHeader = res.getHeader('set-cookie');
+    const setCookieCount = Array.isArray(setCookieHeader) ? setCookieHeader.length : setCookieHeader ? 1 : 0;
+    this.logger.log(`[login] Set-Cookie headers enviados: ${setCookieCount}`);
 
     return res.json({ id: (validated as any).id, email: body.email, tokens: tokens });
   }
@@ -105,12 +149,19 @@ export class AuthController {
 
       console.log('token refresh')
 
+      this.logCookieDiagnostics('refresh', req);
+
       res.cookie('access_token', tokens.accessToken, {
         httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 15*60*1000
       });
       res.cookie('refresh_token', tokens.refreshToken, {
         httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 7*24*60*60*1000
       });
+
+      const setCookieHeader = res.getHeader('set-cookie');
+      const setCookieCount = Array.isArray(setCookieHeader) ? setCookieHeader.length : setCookieHeader ? 1 : 0;
+      this.logger.log(`[refresh] Set-Cookie headers enviados: ${setCookieCount}`);
+
       return res.json({ ok: true });
     } catch (err) {
       return res.status(401).json({ message: 'Refresh token inválido' });

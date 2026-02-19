@@ -13,7 +13,9 @@ import {ActividadModule} from "./presentation/actividad/actividad.module"
 @Module({
   imports: [
        PrismaModule, //prisma disponible globalmente
-       ConfigModule,
+       ConfigModule.forRoot({
+          isGlobal: true,
+        }),
        ProyectoModule,
        ArticuloModule,
        AuthModule,
