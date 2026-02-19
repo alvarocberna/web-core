@@ -106,6 +106,7 @@ export class AuthController {
     const isProd = nodeEnv === 'production';
     const cookieSameSite: 'none' | 'lax' = isProd ? 'none' : 'lax';
     const cookieSecure = isProd;
+    console.log('cookieSameSite: ' + cookieSameSite + ' - ' + 'cookieSecure: ' + cookieSecure);
 
 
     const validated = await this.authService.validateUserByPassword(body.email, body.password);
