@@ -14,12 +14,19 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.set('trust proxy', 1);
+  
+  const configService = app.get(ConfigService);
+
+  app.enableCors({
+    origin: [configService.get<string>('URL_FRONTEND')!, 'http://localhost:3000'], 
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
 
   //helmet - corregimos headers vulnerables
   app.disable('x-powered-by');
   app.use(helmet());
 
-  const configService = app.get(ConfigService);
 
   // Servir archivos estáticos desde uploads
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {
@@ -29,24 +36,21 @@ async function bootstrap() {
   app.use(cookieParser());
 
   const authLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 10, // limit each IP to 10 requests per window per route
-    standardHeaders: true,
-    legacyHeaders: false,
-    message: 'Too many requests from this IP, please try again later.'
+    // windowMs: 15 * 60 * 1000, // 15 minutes
+    // max: 10, // limit each IP to 10 requests per window per route
+    // standardHeaders: true,
+    // legacyHeaders: false,
+    // message: 'Too many requests from this IP, please try again later.'
+      windowMs: 15 * 60 * 1000,
+      max: 10,
+      standardHeaders: true,
+      legacyHeaders: false,
+      skip: (req) => req.method === 'OPTIONS', // 👈 CLAVE
   });
 
   // Apply limiter to sensitive auth routes
   app.use('/auth/login', authLimiter);
   app.use('/auth/create-user', authLimiter);
-
-  app.enableCors({
-    origin: [configService.get<string>('URL_FRONTEND')!, 'http://localhost:3000'], 
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-  });
-
-  app.useGlobalFilters(new HttpExceptionFilter());
 
     //habilitamos Prisma Filter personalizado para manejar exceptions de Prisma
   app.useGlobalFilters(new HttpExceptionFilter());
