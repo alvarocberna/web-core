@@ -22,10 +22,12 @@ export class AuthService {
     if (!user) {
       return null;
     }
+    console.log('user encontrado: ' + user.nombre + ' ' + user.apellido)
     const matches = await bcrypt.compare(pass, user.password);
     if (!matches) {
       return null;
     }
+    console.log('hay match en el password')
     // omit password when returning
     const { password, hashedRt, ...rest } = user;
     return rest;
