@@ -109,10 +109,10 @@ export class AuthController {
     this.logCookieDiagnostics('login', req);
 
     res.cookie('access_token', tokens.accessToken, {
-      httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 15*60*1000
+      httpOnly: true, sameSite: 'none', secure: true, maxAge: 15*60*1000
     });
     res.cookie('refresh_token', tokens.refreshToken, {
-      httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 7*24*60*60*1000
+      httpOnly: true, sameSite: 'none', secure: true, maxAge: 7*24*60*60*1000
     });
 
     const setCookieHeader = res.getHeader('set-cookie');
