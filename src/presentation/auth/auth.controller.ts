@@ -102,8 +102,11 @@ export class AuthController {
     @Res() res: Response
   ) {
 
-    const node_env = this.configService.get<string>('NODE_ENV');
-    console.log(node_env)
+    const nodeEnv = this.configService.get<string>('NODE_ENV');
+    const isProd = nodeEnv === 'production';
+    const cookieSameSite: 'none' | 'lax' = isProd ? 'none' : 'lax';
+    const cookieSecure = isProd;
+
 
     const validated = await this.authService.validateUserByPassword(body.email, body.password);
     if (!validated) {
@@ -114,19 +117,19 @@ export class AuthController {
 
     this.logCookieDiagnostics('login', req);
 
-    // res.cookie('access_token', tokens.accessToken, {
-    //   httpOnly: true, sameSite: node_env === 'production' ? 'none': 'lax', secure: node_env === 'production' ? true: false, maxAge: 15*60*1000
-    // });
-    // res.cookie('refresh_token', tokens.refreshToken, {
-    //   httpOnly: true, sameSite: node_env === 'production' ? 'none': 'lax', secure: node_env === 'production' ? true: false, maxAge: 7*24*60*60*1000
-    // });
-
     res.cookie('access_token', tokens.accessToken, {
-      httpOnly: true, sameSite: 'none', secure: true, maxAge: 15*60*1000
+      httpOnly: true, sameSite: cookieSameSite, secure: cookieSecure, maxAge: 15*60*1000
     });
     res.cookie('refresh_token', tokens.refreshToken, {
-      httpOnly: true, sameSite: 'none', secure: true, maxAge: 7*24*60*60*1000
+      httpOnly: true, sameSite: cookieSameSite, secure: cookieSecure, maxAge: 7*24*60*60*1000
     });
+
+    // res.cookie('access_token', tokens.accessToken, {
+    //   httpOnly: true, sameSite: 'none', secure: true, maxAge: 15*60*1000
+    // });
+    // res.cookie('refresh_token', tokens.refreshToken, {
+    //   httpOnly: true, sameSite: 'none', secure: true, maxAge: 7*24*60*60*1000
+    // });
 
     const setCookieHeader = res.getHeader('set-cookie');
     const setCookieCount = Array.isArray(setCookieHeader) ? setCookieHeader.length : setCookieHeader ? 1 : 0;
