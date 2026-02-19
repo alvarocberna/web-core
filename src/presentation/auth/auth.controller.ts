@@ -115,10 +115,10 @@ export class AuthController {
     this.logCookieDiagnostics('login', req);
 
     res.cookie('access_token', tokens.accessToken, {
-      httpOnly: true, sameSite: node_env === 'PRODUCTION' ? 'none': 'lax', secure: node_env === 'production' ? true: false, maxAge: 15*60*1000
+      httpOnly: true, sameSite: node_env === 'production' ? 'none': 'lax', secure: node_env === 'production' ? true: false, maxAge: 15*60*1000
     });
     res.cookie('refresh_token', tokens.refreshToken, {
-      httpOnly: true, sameSite: node_env === 'PRODUCTION' ? 'none': 'lax', secure: node_env === 'production' ? true: false, maxAge: 7*24*60*60*1000
+      httpOnly: true, sameSite: node_env === 'production' ? 'none': 'lax', secure: node_env === 'production' ? true: false, maxAge: 7*24*60*60*1000
     });
 
     const setCookieHeader = res.getHeader('set-cookie');
