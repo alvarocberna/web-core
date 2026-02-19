@@ -1,5 +1,6 @@
 //nest
 import { Controller, Req, Res, Post, Body, Query, UseGuards, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 //express
 import type { Response, Request } from 'express';
 //presentation
@@ -14,6 +15,7 @@ export class AuthController {
 
   constructor(
     private readonly authService: AuthService,
+    private readonly configService: ConfigService,
   ) {}
 
   private isHttpsRequest(req: Request): boolean {
@@ -99,6 +101,10 @@ export class AuthController {
     @Req() req: Request,
     @Res() res: Response
   ) {
+
+    const node_env = this.configService.get<string>('NODE_ENV');
+    console.log(node_env)
+
     const validated = await this.authService.validateUserByPassword(body.email, body.password);
     if (!validated) {
       return res.status(401).json({ message: 'Credenciales inválidas' });
@@ -109,10 +115,10 @@ export class AuthController {
     this.logCookieDiagnostics('login', req);
 
     res.cookie('access_token', tokens.accessToken, {
-      httpOnly: true, sameSite: 'none', secure: true, maxAge: 15*60*1000
+      httpOnly: true, sameSite: node_env === 'PRODUCTION' ? 'none': 'lax', secure: node_env === 'production' ? true: false, maxAge: 15*60*1000
     });
     res.cookie('refresh_token', tokens.refreshToken, {
-      httpOnly: true, sameSite: 'none', secure: true, maxAge: 7*24*60*60*1000
+      httpOnly: true, sameSite: node_env === 'PRODUCTION' ? 'none': 'lax', secure: node_env === 'production' ? true: false, maxAge: 7*24*60*60*1000
     });
 
     const setCookieHeader = res.getHeader('set-cookie');
