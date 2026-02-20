@@ -125,7 +125,7 @@ export class AuthController {
       sameSite: cookieSameSite, 
       secure: cookieSecure, 
       maxAge: 15*60*1000,
-      domain: 'https://web-admin-panel-beta.vercel.app',
+      domain: 'web-admin-panel-beta.vercel.app',
       path: '/',
     });
     res.cookie('refresh_token', tokens.refreshToken, {
@@ -133,7 +133,7 @@ export class AuthController {
       sameSite: cookieSameSite, 
       secure: cookieSecure, 
       maxAge: 7*24*60*60*1000,
-      domain: 'https://web-admin-panel-beta.vercel.app',
+      domain: 'web-admin-panel-beta.vercel.app',
       path: '/',
     });
 
