@@ -122,19 +122,19 @@ export class AuthController {
 
     res.cookie('access_token', tokens.accessToken, {
       httpOnly: true, 
-      sameSite: 'lax', 
+      sameSite: 'none', 
       secure: cookieSecure, 
       maxAge: 15*60*1000,
-      // domain: url_frontend_domain,
-      // path: '/',
+      domain: 'web-admin-panel-production-6f15.up.railway.app',
+      path: '/',
     });
     res.cookie('refresh_token', tokens.refreshToken, {
       httpOnly: true, 
       sameSite: 'none', 
       secure: cookieSecure, 
       maxAge: 7*24*60*60*1000,
-      // domain: url_frontend_domain,
-      // path: '/',
+      domain: 'web-admin-panel-production-6f15.up.railway.app',
+      path: '/',
     });
 
     // res.cookie('access_token', tokens.accessToken, {
