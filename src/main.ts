@@ -17,8 +17,10 @@ async function bootstrap() {
   
   const configService = app.get(ConfigService);
 
+  const url_frontend = configService.get<string>('URL_FRONTEND');
+
   app.enableCors({
-    origin: [configService.get<string>('URL_FRONTEND')!, 'http://localhost:3000'], 
+    origin: ['https://web-admin-panel-beta.vercel.app', 'http://localhost:3000'], 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
