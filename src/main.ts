@@ -20,7 +20,7 @@ async function bootstrap() {
   const url_frontend = configService.get<string>('URL_FRONTEND');
 
   app.enableCors({
-    origin: 'https://web-admin-panel-production-6f15.up.railway.app', 
+    origin: url_frontend, 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
