@@ -120,23 +120,23 @@ export class AuthController {
 
     this.logCookieDiagnostics('login', req);
 
-    // const url_frontend_domain = this.configService.get<string>('URL_FRONTEND_DOMAIN');
+    const urlFrontDomain = this.configService.get<string>('URL_FRONTEND_DOMAIN');
 
     res.cookie('access_token', tokens.accessToken, {
       httpOnly: true, 
       sameSite: cookieSameSite, 
       secure: cookieSecure, 
       maxAge: 15*60*1000,
-      // domain: 'web-admin-panel-production-6f15.up.railway.app',
-      // path: '/',
+      domain: urlFrontDomain,
+      path: '/',
     });
     res.cookie('refresh_token', tokens.refreshToken, {
       httpOnly: true, 
       sameSite: cookieSameSite, 
       secure: cookieSecure, 
       maxAge: 7*24*60*60*1000,
-      // domain: 'web-admin-panel-production-6f15.up.railway.app',
-      // path: '/',
+      domain: urlFrontDomain,
+      path: '/',
     });
 
     // res.cookie('access_token', tokens.accessToken, {
