@@ -118,23 +118,23 @@ export class AuthController {
 
     this.logCookieDiagnostics('login', req);
 
-    const url_frontend = this.configService.get<string>('URL_FRONTEND');
+    const url_frontend_domain = this.configService.get<string>('URL_FRONTEND_DOMAIN');
 
     res.cookie('access_token', tokens.accessToken, {
       httpOnly: true, 
-      sameSite: cookieSameSite, 
+      sameSite: 'lax', 
       secure: cookieSecure, 
       maxAge: 15*60*1000,
-      domain: 'web-admin-panel-beta.vercel.app',
-      path: '/',
+      // domain: url_frontend_domain,
+      // path: '/',
     });
     res.cookie('refresh_token', tokens.refreshToken, {
       httpOnly: true, 
-      sameSite: cookieSameSite, 
+      sameSite: 'lax', 
       secure: cookieSecure, 
       maxAge: 7*24*60*60*1000,
-      domain: 'web-admin-panel-beta.vercel.app',
-      path: '/',
+      // domain: url_frontend_domain,
+      // path: '/',
     });
 
     // res.cookie('access_token', tokens.accessToken, {
