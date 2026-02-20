@@ -130,7 +130,7 @@ export class AuthController {
     });
     res.cookie('refresh_token', tokens.refreshToken, {
       httpOnly: true, 
-      sameSite: 'lax', 
+      sameSite: 'none', 
       secure: cookieSecure, 
       maxAge: 7*24*60*60*1000,
       // domain: url_frontend_domain,
