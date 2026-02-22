@@ -88,10 +88,12 @@ export class ArticuloDatasourceService implements ArticuloDatasource {
         const user = await this.prismaService.usuario.findFirst({
             where: {id: id_usuario}
         })
+        console.log('id usuario: ' + id_usuario)
         if(!user){
             throw new NotFoundException("Usuario no encontrado")
         }
         const id_proyecto = user.proyecto_id;
+        console.log('id proyecto: ' + id_proyecto)
 
         return this.prismaService.articulo.findMany({
                 where: {

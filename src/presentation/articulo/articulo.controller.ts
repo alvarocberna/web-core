@@ -1,4 +1,5 @@
-import { Controller, Req, Get, Post, Body, Patch, Put, Param, Delete, UseGuards, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { Controller, Req, Get, Post, Body, Patch, Put, Param, Delete, UseGuards, UseInterceptors, UploadedFiles, Query } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ArticuloService } from './articulo.service';
 import { CreateArticuloDtoImpl } from './dto/create-articulo.dto';
@@ -103,5 +104,25 @@ export class ArticuloController {
   ) {
     const id_usuario = (req as any).user?.id;
     return this.articuloService.delete(id_usuario, id_articulo);
+  }
+
+  @Get('/ver-todos-x')
+  findAll2(
+    @Req() req: Request,
+    @Query('id_usuario') id_usuario: string,
+  ) {
+    if(!id_usuario){
+      throw new BadRequestException("id de usuario no encontrado")
+    }
+    return this.articuloService.findAll(id_usuario);
+  }
+
+  @Get('/ver-x/:id_articulo')
+  findOne2(
+    @Req() req: Request,
+    @Query('id_usuario') id_usuario: string,
+    @Param('id_articulo') id_articulo: string
+  ) {
+    return this.articuloService.findOne(id_usuario, id_articulo);
   }
 }
