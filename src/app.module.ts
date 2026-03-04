@@ -16,9 +16,9 @@ import {ActividadModule} from "./presentation/actividad/actividad.module"
        ConfigModule.forRoot({
           isGlobal: true,
         }),
+       AuthModule,
        ProyectoModule,
        ArticuloModule,
-       AuthModule,
        UsuarioModule,
        ActividadModule,
   ],
