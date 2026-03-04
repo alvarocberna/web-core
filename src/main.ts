@@ -20,7 +20,7 @@ async function bootstrap() {
   const url_frontend = configService.get<string>('URL_FRONTEND');
 
   app.enableCors({
-    origin: ["https://web-admin-panel-beta.vercel.app", "https://www.ciclolegal.cl"], 
+    origin: ["https://web-admin-panel-beta.vercel.app", "https://www.ciclolegal.cl", "http://localhost:3000"], 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
