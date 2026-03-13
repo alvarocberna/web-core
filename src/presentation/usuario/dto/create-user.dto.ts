@@ -1,7 +1,7 @@
-import { IsString, IsDate, IsNumber } from 'class-validator';
+import { IsString } from 'class-validator';
 import {CreateUsuarioDto} from 'src/domain'
 
-export class CreateUsuarioDtoImpl{
+export class CreateUsuarioDtoImpl implements CreateUsuarioDto {
     @IsString()
     nombre: string;
     @IsString()

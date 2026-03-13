@@ -13,18 +13,4 @@ export class ActividadController {
     return this.actividadService.findAll(id_usuario);
   }
 
-  @Get(':id')
-  findByArticulo(@Param('id') id: string) {
-    return this.actividadService.findByArticulo(+id);
-  }
-
-  @Get(':id')
-  findOneById(@Param('id') id: string) {
-    return this.actividadService.findOneById(+id);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.actividadService.remove(+id);
-  }
 }

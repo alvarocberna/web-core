@@ -5,7 +5,6 @@ import { ConfigService } from '@nestjs/config';
 import type { Response, Request } from 'express';
 //presentation
 import { AuthService } from './auth.service';
-import { CreateUsuarioDtoImpl } from './dto/create-user.dto';
 import {JwtAuthGuard} from '../auth/guards/jwt-auth.guard';
 import {RefreshTokenGuard} from './guards/refresh-token.guard';
 
@@ -18,6 +17,7 @@ export class AuthController {
     private readonly configService: ConfigService,
   ) {}
 
+  //que hace esto?
   private isHttpsRequest(req: Request): boolean {
     const forwardedProto = req.headers['x-forwarded-proto'];
 
@@ -35,6 +35,7 @@ export class AuthController {
     return req.secure;
   }
 
+  //que hace esto?
   private logCookieDiagnostics(context: 'login' | 'refresh', req: Request) {
     const nodeEnv = process.env.NODE_ENV ?? 'undefined';
     const secureCookie = nodeEnv === 'production';
@@ -79,21 +80,6 @@ export class AuthController {
 
   //   return res.json({ id: user.id, email: user.correo, name: user.nombre_primero + ' ' + user.apellido_paterno});
   // }
-
-  
- @Post('create-user')
-  async createUser(
-    @Body() createUsuarioDto: CreateUsuarioDtoImpl, 
-    @Req() req: Request,
-    @Query('proyecto_id') proyecto_id: string) {
-    let id_proyecto = '';
-    if(proyecto_id){
-      id_proyecto = proyecto_id;
-    }else{
-      id_proyecto = (req as any).user?.proyecto_id;
-    }
-    return this.authService.createUser(id_proyecto, createUsuarioDto);
-  }
 
   @Post('login')
   async login(

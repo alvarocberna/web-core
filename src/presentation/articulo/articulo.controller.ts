@@ -106,7 +106,7 @@ export class ArticuloController {
     return this.articuloService.delete(id_usuario, id_articulo);
   }
 
-  @Get('/ver-todos-x')
+  @Get('project//ver-todos')
   findAll2(
     @Req() req: Request,
     @Query('id_usuario') id_usuario: string,
@@ -117,7 +117,7 @@ export class ArticuloController {
     return this.articuloService.findAll(id_usuario);
   }
 
-  @Get('/ver-x/:id_articulo')
+  @Get('project/ver/:id_articulo')
   findOne2(
     @Req() req: Request,
     @Query('id_usuario') id_usuario: string,

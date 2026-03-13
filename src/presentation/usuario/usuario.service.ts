@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-// import { CreateUsuarioDto } from './dto/create-usuario.dto';
-// import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { CreateUsuarioDtoImpl } from './dto/create-user.dto';
 import { UsuarioRepositoryService } from 'src/infrastructure/repository/usuario.repository/usuario.repository.service';
 
 @Injectable()
@@ -9,8 +8,8 @@ export class UsuarioService {
     private readonly usuarioService: UsuarioRepositoryService
   ){}
 
-  create(createUsuarioDto: any) {
-    return 'This action adds a new usuario';
+  async create(id_proyecto: string, createUsuarioDto: CreateUsuarioDtoImpl){
+    await this.usuarioService.createUsuario(id_proyecto, createUsuarioDto)
   }
 
   findAll() {

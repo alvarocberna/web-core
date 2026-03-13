@@ -3,7 +3,6 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 //presentation
-import { CreateUsuarioDtoImpl } from './dto/create-user.dto';
 //infrastructure
 import { UsuarioRepositoryService } from 'src/infrastructure/repository/usuario.repository/usuario.repository.service';
 //paquetes
@@ -31,10 +30,6 @@ export class AuthService {
     // omit password when returning
     const { password, hashedRt, ...rest } = user;
     return rest;
-  }
-
-  async createUser(id_proyecto: string, createUsuarioDto: CreateUsuarioDtoImpl){
-    await this.usuarioService.createUsuario(id_proyecto, createUsuarioDto)
   }
 
   async login(user: { id: string; email: string }) {

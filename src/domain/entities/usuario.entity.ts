@@ -12,3 +12,5 @@ export class UsuarioEntity {
     public proyecto_id: string,
   ){} 
 }
+
+type rol = 'USER' | 'ADMIN' | 'SUPERADMIN';

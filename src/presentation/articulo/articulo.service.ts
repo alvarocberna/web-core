@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateArticuloDtoImpl } from './dto/create-articulo.dto';
 import { UpdateArticuloDtoImpl } from './dto/update-articulo.dto';
-import { ImageStorageService } from './image-storage.service';
 //domain
 import {CreateArticuloUseCase, UpdateArticuloUseCase, DeleteArticuloUseCase} from 'src/domain';
 //infrastructure
@@ -13,7 +12,6 @@ export class ArticuloService {
   constructor(
     private readonly articuloRepository: ArticuloRepositoryService,
     private readonly actividadRepository: ActividadRepositoryService,
-    // private readonly imageStorage: ImageStorageService,
     private readonly imageStorage: ImageStorageRepositoryService,
   ){}
 
