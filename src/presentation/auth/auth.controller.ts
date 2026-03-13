@@ -1,6 +1,7 @@
 //nest
 import { Controller, Req, Res, Post, Body, Query, UseGuards, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 //express
 import type { Response, Request } from 'express';
 //presentation
@@ -8,6 +9,7 @@ import { AuthService } from './auth.service';
 import {JwtAuthGuard} from '../auth/guards/jwt-auth.guard';
 import {RefreshTokenGuard} from './guards/refresh-token.guard';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
@@ -81,42 +83,52 @@ export class AuthController {
   //   return res.json({ id: user.id, email: user.correo, name: user.nombre_primero + ' ' + user.apellido_paterno});
   // }
 
+  @ApiOperation({ summary: 'Iniciar sesión' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: { type: 'string', example: 'usuario@example.com' },
+        password: { type: 'string', example: 'password123' },
+      },
+      required: ['email', 'password'],
+    },
+  })
+  @ApiResponse({ status: 200, description: 'Login exitoso. Devuelve tokens y establece cookies.' })
+  @ApiResponse({ status: 401, description: 'Credenciales inválidas' })
   @Post('login')
   async login(
-    @Body() body: { email: string; password: string }, 
+    @Body() body: { email: string; password: string },
     @Req() req: Request,
     @Res() res: Response
   ) {
 
     const nodeEnv = (this.configService.get<string>('NODE_ENV'))?.toLowerCase();
-    console.log('nodeEnv es: ' + nodeEnv)
     const isProd = nodeEnv === 'production';
-    console.log('is production: ' + isProd)
     const cookieSameSite: 'none' | 'lax' = isProd ? 'none' : 'lax';
     const cookieSecure = isProd;
-    console.log('cookieSameSite: ' + cookieSameSite + ' - ' + 'cookieSecure: ' + cookieSecure);
-
 
     const validated = await this.authService.validateUserByPassword(body.email, body.password);
     if (!validated) {
+      this.logger.warn(`[login] Intento fallido para: ${body.email}`);
       return res.status(401).json({ message: 'Credenciales inválidas' });
     }
-    console.log('usuario validado ' + validated.nombre + ' ' + validated.apellido)
+    this.logger.log(`[login] Login exitoso: ${body.email}`);
     const tokens = await this.authService.login({ id: (validated as any).id, email: body.email });
 
     this.logCookieDiagnostics('login', req);
 
     res.cookie('access_token', tokens.accessToken, {
-      httpOnly: true, 
-      sameSite: 'lax', 
-      secure: cookieSecure, 
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: cookieSecure,
       maxAge: 15*60*1000,
       // path: '/',
     });
     res.cookie('refresh_token', tokens.refreshToken, {
-      httpOnly: true, 
-      sameSite: 'lax', 
-      secure: cookieSecure, 
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: cookieSecure,
       maxAge: 7*24*60*60*1000,
       // path: '/auth/refresh',
     });
@@ -136,17 +148,27 @@ export class AuthController {
   }
 
 
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Cerrar sesión' })
+  @ApiResponse({ status: 200, description: 'Sesión cerrada. Cookies eliminadas.' })
+  @ApiResponse({ status: 401, description: 'No autorizado' })
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   async logout(@Req() req: Request, @Res() res: Response) {
     const userId = (req as any).user?.sub;
-    if (userId) await this.authService.logout(userId);
+    if (userId) {
+      await this.authService.logout(userId);
+      this.logger.log(`[logout] Sesión cerrada para userId: ${userId}`);
+    }
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
     return res.json({ ok: true });
   }
 
   // @UseGuards(RefreshTokenGuard)
+  @ApiOperation({ summary: 'Renovar access token usando refresh token (cookie)' })
+  @ApiResponse({ status: 200, description: 'Tokens renovados. Nuevas cookies establecidas.' })
+  @ApiResponse({ status: 401, description: 'Refresh token inválido o ausente' })
   @Post('refresh')
   async refresh(@Req() req: Request, @Res() res: Response) {
     // lee refresh token desde las cookies
@@ -156,12 +178,14 @@ export class AuthController {
     }
     // decodifica el token para obtener sub
     try {
-      const decoded: any = await this.authService['jwtService'].verify(rt, { secret: process.env.JWT_REFRESH_SECRET });
+      const decoded = this.authService.verifyRefreshToken(rt);
       const userId = decoded.sub;
+      if (!userId) {
+        return res.status(401).json({ message: 'Refresh token inválido' });
+      }
       const tokens = await this.authService.refresh(userId, rt);
 
-      console.log('token refresh')
-
+      this.logger.log(`[refresh] Token renovado para userId: ${userId}`);
       this.logCookieDiagnostics('refresh', req);
 
       res.cookie('access_token', tokens.accessToken, {
@@ -177,6 +201,7 @@ export class AuthController {
 
       return res.json({ ok: true });
     } catch (err) {
+      this.logger.warn(`[refresh] Token inválido o expirado: ${(err as Error).message}`);
       return res.status(401).json({ message: 'Refresh token inválido' });
     }
   }

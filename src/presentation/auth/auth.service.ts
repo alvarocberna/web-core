@@ -53,6 +53,12 @@ export class AuthService {
     await this.usuarioService.removeRefreshToken(userId);
   }
 
+  verifyRefreshToken(rt: string): { sub: string; email: string } {
+    const secret = this.configService.get<string>('JWT_REFRESH_SECRET');
+    if (!secret) throw new UnauthorizedException('JWT_REFRESH_SECRET no configurado');
+    return this.jwtService.verify<{ sub: string; email: string }>(rt, { secret });
+  }
+
   async refresh(userId: string, rt: string) {
     const user = await this.usuarioService.getUsuarioById(userId);
     if (!user || !user.hashedRt){ //el user.hashdRt es NULL ! AQUI ESTÁ EL ERROR

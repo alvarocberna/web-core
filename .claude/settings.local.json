@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd \"C:\\\\Users\\\\cbern\\\\OneDrive\\\\Desktop\\\\PROYECTOS\\\\PRODUCTOS\\\\web-core-root\\\\web-core\" && npm install @nestjs/swagger swagger-ui-express)"
+    ]
+  }
+}

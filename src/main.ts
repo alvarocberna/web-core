@@ -4,6 +4,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { join } from 'path';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 var cookieParser = require('cookie-parser')
 const rateLimit = require('express-rate-limit');
 import {HttpExceptionFilter} from './presentation/filters/http-exception.filter';
@@ -17,10 +18,13 @@ async function bootstrap() {
   
   const configService = app.get(ConfigService);
 
-  const url_frontend = configService.get<string>('URL_FRONTEND');
+  const corsOrigins = configService.get<string>('CORS_ORIGINS', '')
+    .split(',')
+    .map(o => o.trim())
+    .filter(o => o.length > 0);
 
   app.enableCors({
-    origin: ["https://web-admin-panel-beta.vercel.app", "https://www.ciclolegal.cl", "http://localhost:3000"], 
+    origin: corsOrigins,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
@@ -68,6 +72,17 @@ async function bootstrap() {
       }),
   );
   
+  // Swagger
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('web-core API')
+    .setDescription('Documentación de la API')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('api/docs', app, document);
+
   await app.listen(process.env.PORT ?? 3001);
 }
 bootstrap();
