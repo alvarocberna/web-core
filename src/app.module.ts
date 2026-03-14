@@ -1,7 +1,10 @@
 //nest
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config'; //permite llamar env var
 import * as Joi from 'joi';
+//guards
+import { CsrfGuard } from './presentation/guards/csrf.guard';
 //infrastructure
 import { PrismaModule } from './infrastructure/orm/prisma/prisma.module';
 //presentation
@@ -56,6 +59,9 @@ const envValidationSchema = Joi.object({
        UsuarioModule,
        ActividadModule,
        HealthModule,
+  ],
+  providers: [
+    { provide: APP_GUARD, useClass: CsrfGuard },
   ],
   exports: []
 })

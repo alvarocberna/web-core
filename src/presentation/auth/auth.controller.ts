@@ -7,6 +7,7 @@ import type { Response, Request } from 'express';
 //presentation
 import { AuthService } from './auth.service';
 import {JwtAuthGuard} from '../auth/guards/jwt-auth.guard';
+import { SkipCsrfCheck } from '../decorators/skip-csrf.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -95,6 +96,7 @@ export class AuthController {
   })
   @ApiResponse({ status: 200, description: 'Login exitoso. Devuelve tokens y establece cookies.' })
   @ApiResponse({ status: 401, description: 'Credenciales inválidas' })
+  @SkipCsrfCheck()
   @Post('login')
   async login(
     @Body() body: { email: string; password: string },
