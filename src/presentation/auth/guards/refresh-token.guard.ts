@@ -3,6 +3,12 @@ import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 
+/*
+Verifica 1) si el RT existe, y 2) si la firma del RT
+(JWT_REFRESH_SECRET) coincide con la definida en el backend.
+Si todo coincide, devuelve la info del usuario
+*/
+
 @Injectable()
 export class RefreshTokenGuard implements CanActivate {
   constructor(

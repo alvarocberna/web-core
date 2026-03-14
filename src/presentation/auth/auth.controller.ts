@@ -133,13 +133,6 @@ export class AuthController {
       // path: '/auth/refresh',
     });
 
-    // res.cookie('access_token', tokens.accessToken, {
-    //   httpOnly: true, sameSite: 'none', secure: true, maxAge: 15*60*1000
-    // });
-    // res.cookie('refresh_token', tokens.refreshToken, {
-    //   httpOnly: true, sameSite: 'none', secure: true, maxAge: 7*24*60*60*1000
-    // });
-
     const setCookieHeader = res.getHeader('set-cookie');
     const setCookieCount = Array.isArray(setCookieHeader) ? setCookieHeader.length : setCookieHeader ? 1 : 0;
     this.logger.log(`[login] Set-Cookie headers enviados: ${setCookieCount}`);
@@ -176,18 +169,20 @@ export class AuthController {
     if (!rt) {
       return res.status(401).json({ message: 'No refresh token' });
     }
-    // decodifica el token para obtener sub
     try {
+      //verifica que el secret coincida
       const decoded = this.authService.verifyRefreshToken(rt);
       const userId = decoded.sub;
       if (!userId) {
         return res.status(401).json({ message: 'Refresh token inválido' });
       }
+      //verifica que haya usuario, y compara el RT con el Hashed RT, devolviendo nuevos AT y RT.
       const tokens = await this.authService.refresh(userId, rt);
 
       this.logger.log(`[refresh] Token renovado para userId: ${userId}`);
       this.logCookieDiagnostics('refresh', req);
 
+      //devuelve tokens en las cookies
       res.cookie('access_token', tokens.accessToken, {
         httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 15*60*1000
       });

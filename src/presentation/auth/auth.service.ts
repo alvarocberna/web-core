@@ -61,7 +61,7 @@ export class AuthService {
 
   async refresh(userId: string, rt: string) {
     const user = await this.usuarioService.getUsuarioById(userId);
-    if (!user || !user.hashedRt){ //el user.hashdRt es NULL ! AQUI ESTÁ EL ERROR
+    if (!user || !user.hashedRt){ 
         throw new UnauthorizedException();
     } 
     const isMatch = await bcrypt.compare(rt, user.hashedRt);
