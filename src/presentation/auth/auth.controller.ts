@@ -1,5 +1,5 @@
 //nest
-import { Controller, Req, Res, Post, Body, Query, UseGuards, Logger } from '@nestjs/common';
+import { Controller, Req, Res, Post, Body, UseGuards, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 //express
@@ -7,7 +7,6 @@ import type { Response, Request } from 'express';
 //presentation
 import { AuthService } from './auth.service';
 import {JwtAuthGuard} from '../auth/guards/jwt-auth.guard';
-import {RefreshTokenGuard} from './guards/refresh-token.guard';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -114,20 +113,20 @@ export class AuthController {
       return res.status(401).json({ message: 'Credenciales inválidas' });
     }
     this.logger.log(`[login] Login exitoso: ${body.email}`);
-    const tokens = await this.authService.login({ id: (validated as any).id, email: body.email });
+    const tokens = await this.authService.login({ id: validated.id, email: body.email });
 
     this.logCookieDiagnostics('login', req);
 
     res.cookie('access_token', tokens.accessToken, {
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: cookieSameSite,
       secure: cookieSecure,
       maxAge: 15*60*1000,
       // path: '/',
     });
     res.cookie('refresh_token', tokens.refreshToken, {
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: cookieSameSite,
       secure: cookieSecure,
       maxAge: 7*24*60*60*1000,
       // path: '/auth/refresh',
@@ -137,7 +136,7 @@ export class AuthController {
     const setCookieCount = Array.isArray(setCookieHeader) ? setCookieHeader.length : setCookieHeader ? 1 : 0;
     this.logger.log(`[login] Set-Cookie headers enviados: ${setCookieCount}`);
 
-    return res.json({ id: (validated as any).id, email: body.email, tokens: tokens });
+    return res.json({ id: validated.id, email: body.email });
   }
 
 
@@ -158,13 +157,13 @@ export class AuthController {
     return res.json({ ok: true });
   }
 
-  // @UseGuards(RefreshTokenGuard)
   @ApiOperation({ summary: 'Renovar access token usando refresh token (cookie)' })
   @ApiResponse({ status: 200, description: 'Tokens renovados. Nuevas cookies establecidas.' })
   @ApiResponse({ status: 401, description: 'Refresh token inválido o ausente' })
   @Post('refresh')
   async refresh(@Req() req: Request, @Res() res: Response) {
     // lee refresh token desde las cookies
+    this.logger.log('ruta refresh activada')
     const rt = req.cookies?.refresh_token;
     if (!rt) {
       return res.status(401).json({ message: 'No refresh token' });
@@ -183,11 +182,13 @@ export class AuthController {
       this.logCookieDiagnostics('refresh', req);
 
       //devuelve tokens en las cookies
+      const nodeEnvRefresh = this.configService.get<string>('NODE_ENV')?.toLowerCase();
+      const isProdRefresh = nodeEnvRefresh === 'production';
       res.cookie('access_token', tokens.accessToken, {
-        httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 15*60*1000
+        httpOnly: true, sameSite: isProdRefresh ? 'none' : 'lax', secure: isProdRefresh, maxAge: 15*60*1000
       });
       res.cookie('refresh_token', tokens.refreshToken, {
-        httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 7*24*60*60*1000
+        httpOnly: true, sameSite: isProdRefresh ? 'none' : 'lax', secure: isProdRefresh, maxAge: 7*24*60*60*1000
       });
 
       const setCookieHeader = res.getHeader('set-cookie');

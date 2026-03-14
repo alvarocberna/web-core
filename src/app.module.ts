@@ -37,6 +37,7 @@ const envValidationSchema = Joi.object({
 
   // CORS
   URL_FRONTEND: Joi.string().uri().optional(),
+  CORS_ORIGINS: Joi.string().optional(),
 });
 
 @Module({

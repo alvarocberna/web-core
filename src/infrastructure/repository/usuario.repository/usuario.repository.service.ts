@@ -36,11 +36,11 @@ export class UsuarioRepositoryService implements UsuarioRepository{
     }
 
     async setRefreshToken(id_usuario: string, hashedRt: string) {
-        this.usuarioDatasource.setRefreshToken(id_usuario, hashedRt);
+        await this.usuarioDatasource.setRefreshToken(id_usuario, hashedRt);
     }
 
     async removeRefreshToken(id_usuario: string) {
-        this.usuarioDatasource.removeRefreshToken(id_usuario);
+        await this.usuarioDatasource.removeRefreshToken(id_usuario);
     }
 
 }

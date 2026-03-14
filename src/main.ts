@@ -56,7 +56,8 @@ async function bootstrap() {
 
   // Apply limiter to sensitive auth routes
   app.use('/auth/login', authLimiter);
-  app.use('/auth/create-user', authLimiter);
+  app.use('/usuario/admin/create-user', authLimiter);
+  app.use('/usuario/user/create-user', authLimiter);
 
     //habilitamos Prisma Filter personalizado para manejar exceptions de Prisma
   app.useGlobalFilters(new HttpExceptionFilter());

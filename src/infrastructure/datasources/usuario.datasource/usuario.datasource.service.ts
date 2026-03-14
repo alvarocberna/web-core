@@ -34,7 +34,7 @@ export class UsuarioDatasourceService implements UsuarioDatasource {
                 email: createUsuarioDto.email,
                 fechaCreacion: new Date(),
                 password: await this.passHasherService.hash(createUsuarioDto.password),
-                hashedRt: '',
+                hashedRt: null,
                 rol: createUsuarioDto.rol,
                 proyecto_id: id_proyecto,
             }
@@ -43,10 +43,10 @@ export class UsuarioDatasourceService implements UsuarioDatasource {
     }
 
     async getUsuarioById(id_usuario: string): Promise<UsuarioEntity | null> {
-        const usuario = this.prismaService.usuario.findFirst({ 
-            where: { 
+        const usuario = await this.prismaService.usuario.findFirst({
+            where: {
                 id: id_usuario
-            } 
+            }
         });
         if (!usuario) {
             throw new NotFoundException('Usuario not found');
@@ -55,10 +55,10 @@ export class UsuarioDatasourceService implements UsuarioDatasource {
     }
 
     async getUsuarioByEmail(email: string): Promise<UsuarioEntity | null> {
-        const usuario = this.prismaService.usuario.findUnique({ 
-            where: { 
+        const usuario = await this.prismaService.usuario.findUnique({
+            where: {
                 email: email
-            } 
+            }
         });
         if (!usuario) {
             throw new NotFoundException('Usuario not found');
