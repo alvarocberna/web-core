@@ -1,7 +1,9 @@
-import { Controller, Get, Req, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Req, Post, Body, Patch, Param, Delete, UseGuards, Query, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery, ApiParam } from '@nestjs/swagger';
 import { UsuarioService } from './usuario.service';
 import { CreateUsuarioDtoImpl } from './dto/create-user.dto';
+import { UpdateUsuarioInfoDtoImpl } from './dto/update-user-info.dto';
+import { UpdateUsuarioPasswordDtoImpl } from './dto/update-user-password.dto';
 import {JwtAuthGuard} from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('usuario')
@@ -74,6 +76,30 @@ export class UsuarioController {
   findOne(@Req() req: Request) {
     const id_usuario = (req as any).user?.id;
     return this.usuarioService.findOne(id_usuario);
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Actualizar información del usuario autenticado (nombre, apellido, correo)' })
+  @ApiResponse({ status: 200, description: 'Información del usuario actualizada' })
+  @ApiResponse({ status: 400, description: 'El correo ya está en uso' })
+  @ApiResponse({ status: 401, description: 'No autorizado' })
+  @UseGuards(JwtAuthGuard)
+  @Patch('me/info')
+  updateInfo(@Req() req: Request, @Body() updateUsuarioInfoDto: UpdateUsuarioInfoDtoImpl) {
+    const id_usuario = (req as any).user?.id;
+    return this.usuarioService.updateInfo(id_usuario, updateUsuarioInfoDto);
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Cambiar contraseña del usuario autenticado' })
+  @ApiResponse({ status: 204, description: 'Contraseña actualizada' })
+  @ApiResponse({ status: 401, description: 'Contraseña actual incorrecta o no autorizado' })
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Patch('me/password')
+  updatePassword(@Req() req: Request, @Body() updateUsuarioPasswordDto: UpdateUsuarioPasswordDtoImpl) {
+    const id_usuario = (req as any).user?.id;
+    return this.usuarioService.updatePassword(id_usuario, updateUsuarioPasswordDto);
   }
 
   @ApiOperation({ summary: 'Actualizar usuario por ID' })

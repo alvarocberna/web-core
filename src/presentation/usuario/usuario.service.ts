@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUsuarioDtoImpl } from './dto/create-user.dto';
+import { UpdateUsuarioInfoDtoImpl } from './dto/update-user-info.dto';
+import { UpdateUsuarioPasswordDtoImpl } from './dto/update-user-password.dto';
 import { UsuarioRepositoryService } from 'src/infrastructure/repository/usuario.repository/usuario.repository.service';
 
 @Injectable()
@@ -18,6 +20,14 @@ export class UsuarioService {
 
   findOne(id_usuario: string) {
     return this.usuarioService.getUsuarioById(id_usuario)
+  }
+
+  updateInfo(id_usuario: string, updateUsuarioInfoDto: UpdateUsuarioInfoDtoImpl) {
+    return this.usuarioService.updateUsuarioInfo(id_usuario, updateUsuarioInfoDto);
+  }
+
+  updatePassword(id_usuario: string, updateUsuarioPasswordDto: UpdateUsuarioPasswordDtoImpl) {
+    return this.usuarioService.updateUsuarioPassword(id_usuario, updateUsuarioPasswordDto);
   }
 
   update(id: number, updateUsuarioDto: any) {

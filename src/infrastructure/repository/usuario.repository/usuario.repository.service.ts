@@ -1,7 +1,7 @@
 //nest
 import { Injectable } from '@nestjs/common';
 //domain
-import {UsuarioRepository, UsuarioEntity, CreateUsuarioDto, UpdateUsuarioDto} from 'src/domain';
+import {UsuarioRepository, UsuarioEntity, CreateUsuarioDto, UpdateUsuarioDto, UpdateUsuarioInfoDto, UpdateUsuarioPasswordDto} from 'src/domain';
 //infrastructure
 import { UsuarioDatasourceService } from 'src/infrastructure/datasources/usuario.datasource/usuario.datasource.service';
 
@@ -31,6 +31,14 @@ export class UsuarioRepositoryService implements UsuarioRepository{
         return this.usuarioDatasource.updateUsuario(id_proyecto, id_usuario, updateUsuarioDto)
     }
     
+    async updateUsuarioInfo(id_usuario: string, updateUsuarioInfoDto: UpdateUsuarioInfoDto): Promise<UsuarioEntity> {
+        return this.usuarioDatasource.updateUsuarioInfo(id_usuario, updateUsuarioInfoDto);
+    }
+
+    async updateUsuarioPassword(id_usuario: string, updateUsuarioPasswordDto: UpdateUsuarioPasswordDto): Promise<void> {
+        return this.usuarioDatasource.updateUsuarioPassword(id_usuario, updateUsuarioPasswordDto);
+    }
+
     async deleteUsuario(id_proyecto: string, id_usuario: string): Promise<void> {
         return this.usuarioDatasource.deleteUsuario(id_proyecto, id_usuario)
     }

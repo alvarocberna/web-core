@@ -1,7 +1,7 @@
 //nest
-import { Injectable, NotFoundException, BadRequestException} from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, UnauthorizedException } from '@nestjs/common';
 //domain
-import {UsuarioDatasource, UsuarioEntity, CreateUsuarioDto, UpdateUsuarioDto} from 'src/domain';
+import {UsuarioDatasource, UsuarioEntity, CreateUsuarioDto, UpdateUsuarioDto, UpdateUsuarioInfoDto, UpdateUsuarioPasswordDto} from 'src/domain';
 //infrastructure
 import { PrismaService } from 'src/infrastructure/orm/prisma/prisma.service';
 import {UuidService} from '../../adapters/uuid/uuid.service';
@@ -85,6 +85,39 @@ export class UsuarioDatasourceService implements UsuarioDatasource {
         return usuario;
     }
     
+    async updateUsuarioInfo(id_usuario: string, updateUsuarioInfoDto: UpdateUsuarioInfoDto): Promise<UsuarioEntity> {
+        const usuario = await this.prismaService.usuario.findUnique({ where: { id: id_usuario } });
+        if (!usuario) throw new NotFoundException('Usuario not found');
+
+        if (updateUsuarioInfoDto.email && updateUsuarioInfoDto.email !== usuario.email) {
+            const emailExists = await this.prismaService.usuario.findUnique({ where: { email: updateUsuarioInfoDto.email } });
+            if (emailExists) throw new BadRequestException(`El correo ${updateUsuarioInfoDto.email} ya está en uso`);
+        }
+
+        return this.prismaService.usuario.update({
+            where: { id: id_usuario },
+            data: {
+                ...(updateUsuarioInfoDto.nombre && { nombre: updateUsuarioInfoDto.nombre }),
+                ...(updateUsuarioInfoDto.apellido && { apellido: updateUsuarioInfoDto.apellido }),
+                ...(updateUsuarioInfoDto.email && { email: updateUsuarioInfoDto.email }),
+            },
+        });
+    }
+
+    async updateUsuarioPassword(id_usuario: string, updateUsuarioPasswordDto: UpdateUsuarioPasswordDto): Promise<void> {
+        const usuario = await this.prismaService.usuario.findUnique({ where: { id: id_usuario } });
+        if (!usuario) throw new NotFoundException('Usuario not found');
+
+        const isPasswordValid = await this.passHasherService.compare(updateUsuarioPasswordDto.currentPassword, usuario.password);
+        if (!isPasswordValid) throw new UnauthorizedException('La contraseña actual es incorrecta');
+
+        const hashedPassword = await this.passHasherService.hash(updateUsuarioPasswordDto.newPassword);
+        await this.prismaService.usuario.update({
+            where: { id: id_usuario },
+            data: { password: hashedPassword },
+        });
+    }
+
     async deleteUsuario(id_proyecto: string, id_usuario: string): Promise<void> {
         await this.prismaService.usuario.delete({
             where: { 

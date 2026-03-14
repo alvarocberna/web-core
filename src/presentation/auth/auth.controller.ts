@@ -1,7 +1,8 @@
 //nest
-import { Controller, Req, Res, Post, Body, UseGuards, Logger } from '@nestjs/common';
+import { Controller, Req, Res, Get, Post, Body, UseGuards, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
+import { randomBytes } from 'crypto';
 //express
 import type { Response, Request } from 'express';
 //presentation
@@ -83,6 +84,24 @@ export class AuthController {
   //   return res.json({ id: user.id, email: user.correo, name: user.nombre_primero + ' ' + user.apellido_paterno});
   // }
 
+  @ApiOperation({ summary: 'Obtener CSRF token (cookie + valor para header x-csrf-token)' })
+  @ApiResponse({ status: 200, description: 'Token CSRF emitido en cookie y en body.' })
+  @SkipCsrfCheck()
+  @Get('csrf-token')
+  getCsrfToken(@Req() req: Request, @Res() res: Response) {
+    const nodeEnv = (this.configService.get<string>('NODE_ENV'))?.toLowerCase();
+    const isProd = nodeEnv === 'production';
+
+    const token = randomBytes(32).toString('hex');
+    (res as any).cookie('csrf_token', token, {
+      httpOnly: false,          // debe ser legible por el cliente
+      sameSite: isProd ? 'none' : 'lax',
+      secure: isProd,
+      maxAge: 60 * 60 * 1000,  // 1 hora
+    });
+    return (res as any).json({ csrfToken: token });
+  }
+
   @ApiOperation({ summary: 'Iniciar sesión' })
   @ApiBody({
     schema: {
@@ -146,6 +165,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Cerrar sesión' })
   @ApiResponse({ status: 200, description: 'Sesión cerrada. Cookies eliminadas.' })
   @ApiResponse({ status: 401, description: 'No autorizado' })
+  @SkipCsrfCheck()
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   async logout(@Req() req: Request, @Res() res: Response) {
@@ -162,6 +182,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Renovar access token usando refresh token (cookie)' })
   @ApiResponse({ status: 200, description: 'Tokens renovados. Nuevas cookies establecidas.' })
   @ApiResponse({ status: 401, description: 'Refresh token inválido o ausente' })
+  @SkipCsrfCheck()
   @Post('refresh')
   async refresh(@Req() req: Request, @Res() res: Response) {
     // lee refresh token desde las cookies
