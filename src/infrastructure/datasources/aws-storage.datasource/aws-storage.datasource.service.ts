@@ -65,8 +65,6 @@ export class AwsStorageDatasourceService implements ImageStorageDatasource{
 
     async deleteImage(id_usuario: string, id_articulo: string): Promise<void> {
 
-        console.log('id articulo a eliminar: ' + id_articulo)
-
         const articulo = await this.prismaService.articulo.findUnique({
             where: {
                 id: id_articulo,
@@ -100,25 +98,27 @@ export class AwsStorageDatasourceService implements ImageStorageDatasource{
             }
         }
         //eliminamos imagenes de las secciones
-        articulo.sec_articulo.forEach(async (sec_articulo) => {
-            const imageUrl = sec_articulo.image_url;
-            if(imageUrl){
-                try {
-                    const url = new URL(imageUrl);
-                    const key = url.pathname.replace(/^\//, '');
-        
-                    if (!key) return;
-        
-                    await this.s3.send(
-                        new DeleteObjectCommand({
-                            Bucket: this.bucketName,
-                            Key: key,
-                        })
-                    );
-                } catch (error) {
-                    throw new InternalServerErrorException('Error al eliminar la imagen en S3');
+        await Promise.all(
+            articulo.sec_articulo.map(async (sec_articulo) => {
+                const imageUrl = sec_articulo.image_url;
+                if(imageUrl){
+                    try {
+                        const url = new URL(imageUrl);
+                        const key = url.pathname.replace(/^\//, '');
+
+                        if (!key) return;
+
+                        await this.s3.send(
+                            new DeleteObjectCommand({
+                                Bucket: this.bucketName,
+                                Key: key,
+                            })
+                        );
+                    } catch (error) {
+                        throw new InternalServerErrorException('Error al eliminar la imagen en S3');
+                    }
                 }
-            }
-        })
+            })
+        );
     }
 }

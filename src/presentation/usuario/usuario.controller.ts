@@ -9,9 +9,12 @@ import {JwtAuthGuard} from '../auth/guards/jwt-auth.guard';
 export class UsuarioController {
   constructor(private readonly usuarioService: UsuarioService) {}
 
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Crear usuario con rol ADMIN' })
   @ApiQuery({ name: 'proyecto_id', required: false, description: 'ID del proyecto al que pertenece el usuario' })
   @ApiResponse({ status: 201, description: 'Usuario admin creado' })
+  @ApiResponse({ status: 401, description: 'No autorizado' })
+  @UseGuards(JwtAuthGuard)
   @Post('admin/create-user')
     async createAdminUser(
       @Body() createUsuarioDto: CreateUsuarioDtoImpl,
@@ -29,9 +32,12 @@ export class UsuarioController {
       return this.usuarioService.create(id_proyecto, createUsuarioDto);
     }
 
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Crear usuario con rol USER' })
   @ApiQuery({ name: 'proyecto_id', required: false, description: 'ID del proyecto al que pertenece el usuario' })
   @ApiResponse({ status: 201, description: 'Usuario creado' })
+  @ApiResponse({ status: 401, description: 'No autorizado' })
+  @UseGuards(JwtAuthGuard)
   @Post('user/create-user')
     async createUser(
       @Body() createUsuarioDto: CreateUsuarioDtoImpl,
@@ -49,8 +55,11 @@ export class UsuarioController {
       return this.usuarioService.create(id_proyecto, createUsuarioDto);
   }
 
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Obtener todos los usuarios' })
   @ApiResponse({ status: 200, description: 'Lista de usuarios' })
+  @ApiResponse({ status: 401, description: 'No autorizado' })
+  @UseGuards(JwtAuthGuard)
   @Get('all')
   findAll() {
     return this.usuarioService.findAll();

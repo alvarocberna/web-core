@@ -22,7 +22,7 @@ export class RefreshTokenGuard implements CanActivate {
     if (!rt) throw new UnauthorizedException('No refresh token');
 
     try {
-      const secret = this.configService.get<string>('JWT_REFRESH_SECRET') || process.env.JWT_REFRESH_SECRET;
+      const secret = this.configService.get<string>('JWT_REFRESH_SECRET');
       const decoded = this.jwtService.verify(rt, { secret });
       (req as any).user = decoded; // attach decoded payload (sub, email)
       return true;

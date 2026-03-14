@@ -52,14 +52,14 @@ export class ArticuloController {
     const id_usuario = (req as any).user?.id;
     // Validar que dataString existe
     if (!dataString) {
-      throw new Error('El campo "data" es requerido en el FormData');
+      throw new BadRequestException('El campo "data" es requerido en el FormData');
     }
     // Parsear el JSON del campo 'data'
     let createArticuloDtoImpl: CreateArticuloDtoImpl;
     try {
       createArticuloDtoImpl = JSON.parse(dataString);
     } catch (error) {
-      throw new Error(`Error al parsear JSON: ${error.message}`);
+      throw new BadRequestException('El campo "data" no es un JSON válido');
     }
     return this.articuloService.create(id_usuario, createArticuloDtoImpl, files);
   }
@@ -134,7 +134,7 @@ export class ArticuloController {
 
     // Validar que dataString existe
     if (!dataString) {
-      throw new Error('El campo "data" es requerido en el FormData');
+      throw new BadRequestException('El campo "data" es requerido en el FormData');
     }
 
     // Parsear el JSON del campo 'data'
@@ -142,7 +142,7 @@ export class ArticuloController {
     try {
       updateArticuloDto = JSON.parse(dataString);
     } catch (error) {
-      throw new Error(`Error al parsear JSON: ${error.message}`);
+      throw new BadRequestException('El campo "data" no es un JSON válido');
     }
 
     return this.articuloService.update(id_usuario, id_articulo, updateArticuloDto, files);

@@ -37,8 +37,8 @@ export class AuthService {
       expiresIn: this.configService.get<string>('JWT_ACCESS_EXPIRATION'),
     });
     const refreshToken = this.jwtService.sign(payload, {
-      secret: process.env.JWT_REFRESH_SECRET,
-      expiresIn: process.env.JWT_REFRESH_EXPIRATION,
+      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+      expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRATION'),
     });
     // hash refresh token and store in DB
     const saltRounds = this.configService.get<number>('BCRYPT_SALT_OR_ROUNDS');
@@ -67,12 +67,12 @@ export class AuthService {
     // create new tokens
     const payload = { sub: user.id, email: user.email };
     const accessToken = this.jwtService.sign(payload, {
-      secret: process.env.JWT_ACCESS_SECRET,
-      expiresIn: process.env.JWT_ACCESS_EXPIRATION,
+      secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
+      expiresIn: this.configService.get<string>('JWT_ACCESS_EXPIRATION'),
     });
     const refreshToken = this.jwtService.sign(payload, {
-      secret: process.env.JWT_REFRESH_SECRET,
-      expiresIn: process.env.JWT_REFRESH_EXPIRATION,
+      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+      expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRATION'),
     });
     const saltRounds = this.configService.get<number>('BCRYPT_SALT_OR_ROUNDS');
     const newHashedRt = await bcrypt.hash(refreshToken, +saltRounds!);

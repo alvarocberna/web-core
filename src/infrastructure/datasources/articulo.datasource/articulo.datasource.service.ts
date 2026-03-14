@@ -37,7 +37,7 @@ export class ArticuloDatasourceService implements ArticuloDatasource {
             nro_articulo = count + 1;
         }
         //creamos el articulo
-        const articulo = this.prismaService.articulo.create({ 
+        const articulo = await this.prismaService.articulo.create({
             data: {
                 id: this.uuidService.generate(),
                 nro_articulo: nro_articulo,
@@ -88,12 +88,10 @@ export class ArticuloDatasourceService implements ArticuloDatasource {
         const user = await this.prismaService.usuario.findFirst({
             where: {id: id_usuario}
         })
-        console.log('id usuario: ' + id_usuario)
         if(!user){
             throw new NotFoundException("Usuario no encontrado")
         }
         const id_proyecto = user.proyecto_id;
-        console.log('id proyecto: ' + id_proyecto)
 
         return this.prismaService.articulo.findMany({
                 where: {
