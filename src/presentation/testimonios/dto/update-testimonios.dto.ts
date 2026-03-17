@@ -1,0 +1,21 @@
+import { IsString, IsBoolean, IsOptional, MinLength, MaxLength } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { UpdateTestimoniosDto } from 'src/domain';
+
+export class UpdateTestimoniosDtoImpl implements UpdateTestimoniosDto {
+    @ApiProperty({ example: 'Lo que dicen nuestros clientes' })
+    @IsString()
+    @MinLength(1)
+    @MaxLength(200)
+    titulo: string;
+
+    @ApiPropertyOptional({ example: 'Opiniones de clientes satisfechos' })
+    @IsOptional()
+    @IsString()
+    @MaxLength(500)
+    descripcion: string | null;
+
+    @ApiProperty({ example: true })
+    @IsBoolean()
+    activo: boolean;
+}

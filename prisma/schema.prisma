@@ -148,7 +148,7 @@ model Testimonios {
   //REL M:N
   proyecto              Proyecto @relation(name: "fk_tes_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
   //REL N:M
-  testimonios           Testimonio[] @relation("fk_tes_tes")
+  testimonio            Testimonio[] @relation("fk_tes_tes")
 }
 
 model Testimonio {

@@ -11,6 +11,8 @@ export * from './datasources/aws-storage.datasource/aws-storage.datasource.modul
 export * from './datasources/aws-storage.datasource/aws-storage.datasource.service';
 export * from './datasources/local-storage.datasource/local-storage.datasource.module';
 export * from './datasources/local-storage.datasource/local-storage.datasource.service';
+export * from './datasources/testimonios.datasource/testimonios.datasource.module';
+export * from './datasources/testimonios.datasource/testimonios.datasource.service';
 
 //REPOSITORIES
 export * from './repository/proyecto.repository/proyecto.repository.module';
@@ -23,3 +25,5 @@ export * from './repository/actividad.repository/actividad.repository.module';
 export * from './repository/actividad.repository/actividad.repository.service';
 export * from './repository/image-storage.repository/image-storage.repository.module';
 export * from './repository/image-storage.repository/image-storage.repository.service';
+export * from './repository/testimonios.repository/testimonios.repository.module';
+export * from './repository/testimonios.repository/testimonios.repository.service';
