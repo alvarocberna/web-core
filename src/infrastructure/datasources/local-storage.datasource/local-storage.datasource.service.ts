@@ -40,7 +40,7 @@ export class LocalStorageDatasourceService {
         const articulo = await this.prismaService.articulo.findUnique({
             where: {
                 id: id_articulo,
-                autor_id: id_usuario,
+                usuario_id: id_usuario,
             },
             include: {
                 sec_articulo: true,

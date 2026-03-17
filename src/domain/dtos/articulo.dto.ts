@@ -17,7 +17,6 @@ export abstract class CreateArticuloDto{
         abstract image_url: string | null;
         abstract image_alt: string | null;
         abstract image_position: string | null;
-        abstract autor_id: string;
         abstract sec_articulo: CreateSecArticuloDto[];
 }
 
@@ -32,6 +31,5 @@ export abstract class UpdateArticuloDto{
         abstract image_url: string | null;
         abstract image_alt: string | null;
         abstract image_position: string | null;
-        abstract autor_id: string;
         abstract sec_articulo: UpdateSecArticuloDto[]
 }

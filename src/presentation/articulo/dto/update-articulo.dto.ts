@@ -84,10 +84,6 @@ export class UpdateArticuloDtoImpl implements UpdateArticuloDto {
     @IsString()
     image_position: string | null;
 
-    @ApiProperty({ example: 'uuid-del-autor' })
-    @IsString()
-    autor_id: string;
-
     @ApiProperty({ type: [UpdateSecArticuloDtoImpl] })
     @ValidateNested()
     @Type(() => UpdateSecArticuloDtoImpl)

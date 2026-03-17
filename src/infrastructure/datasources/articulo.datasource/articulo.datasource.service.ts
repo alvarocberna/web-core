@@ -42,6 +42,7 @@ export class ArticuloDatasourceService implements ArticuloDatasource {
                 id: this.uuidService.generate(),
                 nro_articulo: nro_articulo,
                 ...data,
+                usuario_id: id_usuario,
                 proyecto_id: id_proyecto,
                 sec_articulo: {
                     create: sec_articulo.map((sec, index) => ({
@@ -52,7 +53,6 @@ export class ArticuloDatasourceService implements ArticuloDatasource {
                         image_url: sec.image_url,
                         image_alt: sec.image_alt,
                         image_position: sec.image_position,
-                        proyecto_id: id_proyecto,
                     })),
         },
             }
@@ -131,7 +131,7 @@ export class ArticuloDatasourceService implements ArticuloDatasource {
         const proyecto_id = user?.proyecto_id;
         
         const articulo = await this.prismaService.articulo.update({
-            where: { id: id_articulo, autor_id: id_usuario },
+            where: { id: id_articulo, usuario_id: id_usuario },
             data: {
                 ...data,
                 ...(sec_articulo && {
@@ -146,7 +146,6 @@ export class ArticuloDatasourceService implements ArticuloDatasource {
                                 image_url: sec.image_url,
                                 image_alt: sec.image_alt,
                                 image_position: sec.image_position,
-                                proyecto_id: proyecto_id!
                             }))
                         }
                     }

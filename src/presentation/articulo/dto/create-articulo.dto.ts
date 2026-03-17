@@ -94,10 +94,6 @@ export class CreateArticuloDtoImpl implements CreateArticuloDto {
     @IsString()
     image_position: string | null;
 
-    @ApiProperty({ example: 'uuid-del-autor' })
-    @IsString()
-    autor_id: string;
-
     @ApiProperty({ type: [CreateSecArticuloDtoImpl] })
     @ValidateNested()
     @Type(() => CreateSecArticuloDtoImpl)

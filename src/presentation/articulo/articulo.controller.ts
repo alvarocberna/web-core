@@ -167,7 +167,7 @@ export class ArticuloController {
   @ApiQuery({ name: 'id_usuario', required: true, description: 'ID del usuario' })
   @ApiResponse({ status: 200, description: 'Lista de artículos' })
   @ApiResponse({ status: 400, description: 'id de usuario no encontrado' })
-  @Get('project//ver-todos')
+  @Get('project/ver-todos')
   findAll2(
     @Req() req: Request,
     @Query('id_usuario') id_usuario: string,

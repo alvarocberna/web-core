@@ -29,7 +29,6 @@ export class SecArticuloDatasourceService implements SecArticuloDatasource {
                 id: this.uuidService.generate(),
                 ...secArticulo,
                 articulo_id: id_articulo,
-                proyecto_id: id_proyecto,
             }
             })
         );
@@ -42,7 +41,6 @@ export class SecArticuloDatasourceService implements SecArticuloDatasource {
             where: { 
                 id: id_sec_articulo,
                 articulo_id: id_articulo,
-                proyecto_id: id_proyecto
             } 
         });
         if (!sec_articulo) {
@@ -55,7 +53,6 @@ export class SecArticuloDatasourceService implements SecArticuloDatasource {
         return this.prismaService.secArticulo.findMany({
                 where: {
                     articulo_id: id_articulo,
-                    proyecto_id: id_proyecto
                 }
             });
     }
@@ -65,7 +62,6 @@ export class SecArticuloDatasourceService implements SecArticuloDatasource {
             where: { 
                 id: id_sec_articulo, 
                 articulo_id: id_articulo,
-                proyecto_id: id_proyecto 
             },
             data: { ...updateSecArticuloDto },
         });
@@ -77,7 +73,7 @@ export class SecArticuloDatasourceService implements SecArticuloDatasource {
             where: { 
                 id: id_sec_articulo, 
                 articulo_id: id_articulo,
-                proyecto_id: id_proyecto },
+            },
         });
     }
 }

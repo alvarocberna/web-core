@@ -13,7 +13,7 @@ export class ArticuloEntity{
         public image_url: string | null,
         public image_alt: string | null,
         public image_position: string | null,
-        public autor_id: string,
+        public usuario_id: string,
         public proyecto_id: string,
     ){}
 }

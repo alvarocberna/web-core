@@ -1,8 +1,8 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
 
 datasource db {
   provider = "postgresql"
@@ -10,32 +10,35 @@ datasource db {
 }
 
 model Proyecto {
-  id              String   @id @default(uuid())
-  nombre_proyecto String
-  descripcion     String
-  cliente         String
-  fecha_inicio    DateTime
+  id                      String   @id @default(uuid())
+  nombre_proyecto         String
+  descripcion             String
+  cliente                 String
+  fecha_inicio            DateTime
   //REL N:M 
-  usuario        Usuario[] @relation("fk_usu_pro")
-  articulo       Articulo[] @relation("fk_art_pro")
-  actividad         Actividad[]        @relation("fk_act_pro")
+  usuario                 Usuario[] @relation("fk_usu_pro")
+  articulo                Articulo[] @relation("fk_art_pro")
+  actividad               Actividad[] @relation("fk_act_pro")
+  equipo                  Equipo[] @relation("fk_equ_pro")
+  servicios               Servicios[] @relation("fk_ser_pro")
+  testimonios             Testimonios[] @relation("fk_tes_pro")
 }
 
 model Usuario {
-  id            String   @id @default(uuid())
-  nombre        String
-  apellido      String
-  email         String   @unique
-  fechaCreacion DateTime
-  password      String
-  hashedRt      String?
-  rol           String
-  proyecto_id   String
-  actividad_id  String?
+  id                     String   @id @default(uuid())
+  nombre                 String
+  apellido               String
+  email                  String   @unique
+  fechaCreacion          DateTime
+  password               String
+  hashedRt               String?
+  rol                    String
+  proyecto_id            String
   //REL M:N
-  proyecto      Proyecto @relation(name: "fk_usu_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+  proyecto               Proyecto @relation(name: "fk_usu_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
   //REL N:M 
-  actividad         Actividad[]        @relation("fk_act_usu")
+  actividad              Actividad[]        @relation("fk_act_usu")
+  articulo               Articulo[]         @relation("fk_art_usu")
 }
 
 model Articulo {
@@ -51,27 +54,115 @@ model Articulo {
     image_url            String?
     image_alt            String?
     image_position       String?         
-    autor_id             String
+    usuario_id           String
     proyecto_id          String
     //REL M:N
-    proyectos            Proyecto @relation(name: "fk_art_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+    proyecto             Proyecto @relation(name: "fk_art_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+    usuario              Usuario @relation(name: "fk_art_usu", fields: [usuario_id], references: [id], onDelete: Cascade)
     //REL N:M
-    sec_articulo       SecArticulo[]      @relation("fk_sec_art")
-    actividad         Actividad[]        @relation("fk_act_art")
+    sec_articulo         SecArticulo[]      @relation("fk_sec_art")
+    actividad            Actividad[]        @relation("fk_act_art")
 }
 
 model SecArticulo {
-    id          String @id @default(uuid())
-    nro_seccion Int
-    titulo_sec      String
-    contenido_sec   String
-    image_url       String?
-    image_alt       String?
-    image_position  String?
-    articulo_id String
-    proyecto_id String
+    id                   String    @id @default(uuid())
+    nro_seccion          Int
+    titulo_sec           String
+    contenido_sec        String
+    image_url            String?
+    image_alt            String?
+    image_position       String?
+    articulo_id          String
     //REL M:N
-    articulo    Articulo @relation(name: "fk_sec_art", fields: [articulo_id], references: [id], onDelete: Cascade)
+    articulo             Articulo @relation(name: "fk_sec_art", fields: [articulo_id], references: [id], onDelete: Cascade)
+}
+
+model Equipo {
+  id                     String     @id @default(uuid())
+  titulo                 String
+  descripcion            String?
+  activo                 Boolean
+  proyecto_id            String
+  //REL M:N
+  proyecto               Proyecto @relation(name: "fk_equ_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+  //REL N:M
+  empleado               Empleado[] @relation("fk_emp_equ")
+}
+
+model Empleado {
+  id                     String  @id @default(uuid())
+  nombre_primero         String
+  nombre_segundo         String?
+  apellido_paterno       String
+  apellido_materno       String?
+  profesion              String
+  especialidad           String?
+  descripcion            String?
+  orden                  String?
+  activo                 String
+  img_url                String
+  img_alt                String
+  slug                   String?
+  equipo_id              String
+  //REL M:N
+  equipo                 Equipo @relation(name: "fk_emp_equ", fields: [equipo_id], references: [id], onDelete: Cascade)
+}
+
+model Servicios {
+  id                    String     @id @default(uuid())
+  titulo                String
+  descripcion           String?
+  icono                 String?
+  activo                String
+  proyecto_id           String
+  //REL M:N
+  proyecto              Proyecto @relation(name: "fk_ser_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+  //REL N:M
+  servicio              Servicio[] @relation("fk_ser_ser")
+}
+
+model Servicio {
+  id                    String   @id @default(uuid())
+  nombre_servicio       String
+  descripcion           String?
+  valor                 String?
+  nombre_promocion      String?
+  porcentaje_descuento  String?
+  destacado             Boolean?
+  icono                 String?
+  orden                 String?
+  activo                String
+  img_url               String
+  img_alt               String
+  servicios_id          String
+  //REL M:N
+  servicios             Servicios @relation(name: "fk_ser_ser", fields: [servicios_id], references: [id], onDelete: Cascade)
+}
+
+model Testimonios {
+  id                    String      @id @default(uuid())
+  titulo                String
+  descripcion           String?
+  activo                Boolean
+  proyecto_id           String
+  //REL M:N
+  proyecto              Proyecto @relation(name: "fk_tes_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+  //REL N:M
+  testimonios           Testimonio[] @relation("fk_tes_tes")
+}
+
+model Testimonio {
+  id              String     @id @default(uuid())
+  nombre          String
+  apellido        String
+  correo          String
+  descripcion     String
+  calificacion    Int?
+  aprobado        Boolean
+  fecha_creacion  DateTime
+  testimonios_id  String
+  //REL M:N
+  testimonios     Testimonios @relation(name: "fk_tes_tes", fields: [testimonios_id], references: [id], onDelete: Cascade)
 }
 
 model Actividad {
@@ -84,7 +175,7 @@ model Actividad {
     usuario_id            String?
     articulo_id           String?
     //REL M:N
-    proyecto             Proyecto @relation(name: "fk_act_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
-    usuario              Usuario? @relation(name: "fk_act_usu", fields: [usuario_id], references: [id], onDelete: SetNull)
-    articulo             Articulo? @relation(name: "fk_act_art", fields: [articulo_id], references: [id], onDelete: SetNull)
+    proyecto              Proyecto @relation(name: "fk_act_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+    usuario               Usuario? @relation(name: "fk_act_usu", fields: [usuario_id], references: [id], onDelete: SetNull)
+    articulo              Articulo? @relation(name: "fk_act_art", fields: [articulo_id], references: [id], onDelete: SetNull)
 }
