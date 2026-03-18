@@ -15,6 +15,8 @@ export * from './datasources/testimonios.datasource/testimonios.datasource.modul
 export * from './datasources/testimonios.datasource/testimonios.datasource.service';
 export * from './datasources/equipo.datasource/equipo.datasource.module';
 export * from './datasources/equipo.datasource/equipo.datasource.service';
+export * from './datasources/servicios.datasource/servicios.datasource.module';
+export * from './datasources/servicios.datasource/servicios.datasource.service';
 
 //REPOSITORIES
 export * from './repository/proyecto.repository/proyecto.repository.module';
@@ -31,3 +33,5 @@ export * from './repository/testimonios.repository/testimonios.repository.module
 export * from './repository/testimonios.repository/testimonios.repository.service';
 export * from './repository/equipo.repository/equipo.repository.module';
 export * from './repository/equipo.repository/equipo.repository.service';
+export * from './repository/servicios.repository/servicios.repository.module';
+export * from './repository/servicios.repository/servicios.repository.service';

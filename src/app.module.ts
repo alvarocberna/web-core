@@ -16,6 +16,7 @@ import {ActividadModule} from "./presentation/actividad/actividad.module"
 import { HealthModule } from './presentation/health/health.module'
 import { TestimoniosModule } from './presentation/testimonios/testimonios.module'
 import { EquipoModule } from './presentation/equipo/equipo.module'
+import { ServiciosModule } from './presentation/servicios/servicios.module'
 
 const envValidationSchema = Joi.object({
   // Server
@@ -63,6 +64,7 @@ const envValidationSchema = Joi.object({
        HealthModule,
        TestimoniosModule,
        EquipoModule,
+       ServiciosModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: CsrfGuard },
