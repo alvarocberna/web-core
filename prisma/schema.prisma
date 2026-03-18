@@ -17,7 +17,7 @@ model Proyecto {
   fecha_inicio            DateTime
   //REL N:M 
   usuario                 Usuario[] @relation("fk_usu_pro")
-  articulo                Articulo[] @relation("fk_art_pro")
+  articulos               Articulos[] @relation("fk_arts_pro")
   actividad               Actividad[] @relation("fk_act_pro")
   equipo                  Equipo[] @relation("fk_equ_pro")
   servicios               Servicios[] @relation("fk_ser_pro")
@@ -41,23 +41,37 @@ model Usuario {
   articulo               Articulo[]         @relation("fk_art_usu")
 }
 
+model Articulos {
+  id                    String     @id @default(uuid())
+  titulo                String     @default("Articulos")
+  descripcion           String?
+  activo                Boolean    @default(true)
+  aprobar               Boolean    @default(false)   
+  proyecto_id           String
+  //REL M:N
+  proyecto              Proyecto @relation(name: "fk_arts_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+  //REL N:M
+  articulo              Articulo[] @relation("fk_art_arts")   
+}
+
 model Articulo {
     id                   String              @id @default(uuid())
     nro_articulo         Int
     titulo               String
-    subtitulo            String
+    subtitulo            String?
     autor                String
     fecha_publicacion    DateTime
     fecha_actualizacion  DateTime?
     status               String
+    activo               Boolean
     slug                 String    
     image_url            String?
     image_alt            String?
     image_position       String?         
+    articulos_id         String
     usuario_id           String
-    proyecto_id          String
     //REL M:N
-    proyecto             Proyecto @relation(name: "fk_art_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+    articulos            Articulos @relation(name: "fk_art_arts", fields: [articulos_id], references: [id], onDelete: Cascade)
     usuario              Usuario @relation(name: "fk_art_usu", fields: [usuario_id], references: [id], onDelete: Cascade)
     //REL N:M
     sec_articulo         SecArticulo[]      @relation("fk_sec_art")
@@ -79,9 +93,9 @@ model SecArticulo {
 
 model Equipo {
   id                     String     @id @default(uuid())
-  titulo                 String
-  descripcion            String?
-  activo                 Boolean
+  titulo                 String     @default("Equipo")
+  descripcion            String?  
+  activo                 Boolean    @default(true)
   proyecto_id            String
   //REL M:N
   proyecto               Proyecto @relation(name: "fk_equ_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
@@ -98,8 +112,8 @@ model Empleado {
   profesion              String
   especialidad           String?
   descripcion            String?
-  orden                  String?
-  activo                 String
+  orden                  Int?
+  activo                 Boolean 
   img_url                String
   img_alt                String
   slug                   String?
@@ -110,10 +124,10 @@ model Empleado {
 
 model Servicios {
   id                    String     @id @default(uuid())
-  titulo                String
+  titulo                String     @default("Servicios")
   descripcion           String?
   icono                 String?
-  activo                String
+  activo                Boolean    @default(true)
   proyecto_id           String
   //REL M:N
   proyecto              Proyecto @relation(name: "fk_ser_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
@@ -127,13 +141,13 @@ model Servicio {
   descripcion           String?
   valor                 String?
   nombre_promocion      String?
-  porcentaje_descuento  String?
+  porcentaje_descuento  Int?
   destacado             Boolean?
   icono                 String?
-  orden                 String?
-  activo                String
-  img_url               String
-  img_alt               String
+  orden                 Int?
+  activo                Boolean
+  img_url               String?
+  img_alt               String?
   servicios_id          String
   //REL M:N
   servicios             Servicios @relation(name: "fk_ser_ser", fields: [servicios_id], references: [id], onDelete: Cascade)
@@ -141,9 +155,10 @@ model Servicio {
 
 model Testimonios {
   id                    String      @id @default(uuid())
-  titulo                String
+  titulo                String      @default("Testimonios")
   descripcion           String?
-  activo                Boolean
+  activo                Boolean     @default(true)
+  aprobar               Boolean     @default(false)
   proyecto_id           String
   //REL M:N
   proyecto              Proyecto @relation(name: "fk_tes_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
