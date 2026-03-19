@@ -1,6 +1,7 @@
 //ENTITIES
 export * from './entities/usuario.entity';
 export * from './entities/proyecto.entity';
+export * from './entities/articulos.entity';
 export * from './entities/articulo.entity';
 export * from './entities/sec-articulo.entity';
 export * from './entities/actividad.entity';

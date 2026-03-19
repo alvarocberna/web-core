@@ -26,7 +26,6 @@ export class ActividadDatasourceService implements ActividadDatasource {
         const articulo = await this.prismaService.articulo.findUnique({
             where: { 
                 id: id_articulo, 
-                proyecto_id: user.proyecto_id   
             }
         });
         if (!articulo) {

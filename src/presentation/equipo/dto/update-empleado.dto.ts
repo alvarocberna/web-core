@@ -1,4 +1,5 @@
-import { IsString, IsOptional, MinLength, MaxLength } from 'class-validator';
+import { IsInt, IsBoolean, IsOptional, IsString, MinLength, MaxLength } from 'class-validator';
+import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UpdateEmpleadoDto } from 'src/domain';
 
@@ -45,16 +46,15 @@ export class UpdateEmpleadoDtoImpl implements UpdateEmpleadoDto {
     @MaxLength(500)
     descripcion: string | null;
 
-    @ApiPropertyOptional({ example: '1' })
+    @ApiPropertyOptional({ example: 1 })
     @IsOptional()
-    @IsString()
-    @MaxLength(10)
-    orden: string | null;
+    @Type(() => Number)
+    @IsInt()
+    orden: number | null;
 
-    @ApiProperty({ example: 'activo' })
-    @IsString()
-    @MaxLength(50)
-    activo: string;
+    @ApiProperty({ example: true })
+    @IsBoolean()
+    activo: boolean;
 
     @ApiProperty({ example: 'https://example.com/foto.jpg' })
     @IsString()

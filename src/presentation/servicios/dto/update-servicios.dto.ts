@@ -1,4 +1,4 @@
-import { IsString, IsOptional, MinLength, MaxLength } from 'class-validator';
+import { IsBoolean, IsOptional, IsString, MinLength, MaxLength } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UpdateServiciosDto } from 'src/domain';
 
@@ -21,8 +21,7 @@ export class UpdateServiciosDtoImpl implements UpdateServiciosDto {
     @MaxLength(200)
     icono: string | null;
 
-    @ApiProperty({ example: 'activo' })
-    @IsString()
-    @MaxLength(50)
-    activo: string;
+    @ApiProperty({ example: true })
+    @IsBoolean()
+    activo: boolean;
 }

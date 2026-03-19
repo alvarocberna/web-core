@@ -1,4 +1,4 @@
-import { IsString, IsDate, IsNumber, ValidateNested, IsOptional } from 'class-validator';
+import { IsString, IsDate, IsBoolean, IsNumber, ValidateNested, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 //domain
@@ -43,9 +43,10 @@ export class UpdateArticuloDtoImpl implements UpdateArticuloDto {
     @IsString()
     titulo: string;
 
-    @ApiProperty({ example: 'Subtítulo actualizado' })
+    @ApiPropertyOptional({ example: 'Subtítulo actualizado' })
+    @IsOptional()
     @IsString()
-    subtitulo: string;
+    subtitulo: string | null;
 
     @ApiProperty({ example: 'Juan García' })
     @IsString()
@@ -64,6 +65,10 @@ export class UpdateArticuloDtoImpl implements UpdateArticuloDto {
     @ApiProperty({ example: 'PUBLISHED', enum: ['PUBLISHED', 'DRAFT'] })
     @IsString()
     status: string;
+
+    @ApiProperty({ example: true })
+    @IsBoolean()
+    activo: boolean;
 
     @ApiProperty({ example: 'titulo-actualizado' })
     @IsString()

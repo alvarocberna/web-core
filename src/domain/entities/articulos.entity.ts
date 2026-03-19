@@ -1,10 +1,10 @@
-export class ServiciosEntity {
+export class ArticulosEntity {
     constructor(
         public id: string,
         public titulo: string,
         public descripcion: string | null,
-        public icono: string | null,
         public activo: boolean,
+        public aprobar: boolean,
         public proyecto_id: string,
     ) {}
 }

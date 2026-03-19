@@ -18,4 +18,8 @@ export class UpdateTestimoniosDtoImpl implements UpdateTestimoniosDto {
     @ApiProperty({ example: true })
     @IsBoolean()
     activo: boolean;
+
+    @ApiProperty({ example: false })
+    @IsBoolean()
+    aprobar: boolean;
 }

@@ -1,4 +1,4 @@
-import { IsString, IsDate, IsNumber, ValidateNested, IsOptional, MinLength, MaxLength } from 'class-validator';
+import { IsString, IsDate, IsBoolean, IsNumber, ValidateNested, IsOptional, MinLength, MaxLength } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 //domain
@@ -49,11 +49,12 @@ export class CreateArticuloDtoImpl implements CreateArticuloDto {
     @MaxLength(300)
     titulo: string;
 
-    @ApiProperty({ example: 'Subtítulo del artículo' })
+    @ApiPropertyOptional({ example: 'Subtítulo del artículo' })
+    @IsOptional()
     @IsString()
     @MinLength(1)
     @MaxLength(500)
-    subtitulo: string;
+    subtitulo: string | null;
 
     @ApiProperty({ example: 'Juan García' })
     @IsString()
@@ -74,6 +75,10 @@ export class CreateArticuloDtoImpl implements CreateArticuloDto {
     @ApiProperty({ example: 'PUBLISHED', enum: ['PUBLISHED', 'DRAFT'] })
     @IsString()
     status: string;
+
+    @ApiProperty({ example: true })
+    @IsBoolean()
+    activo: boolean;
 
     @ApiProperty({ example: 'titulo-del-articulo' })
     @IsString()

@@ -1,4 +1,5 @@
-import { IsString, IsBoolean, IsOptional, MinLength, MaxLength } from 'class-validator';
+import { IsInt, IsBoolean, IsOptional, IsString, MinLength, MaxLength } from 'class-validator';
+import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UpdateServicioDto } from 'src/domain';
 
@@ -27,11 +28,11 @@ export class UpdateServicioDtoImpl implements UpdateServicioDto {
     @MaxLength(200)
     nombre_promocion: string | null;
 
-    @ApiPropertyOptional({ example: '20' })
+    @ApiPropertyOptional({ example: 20 })
     @IsOptional()
-    @IsString()
-    @MaxLength(20)
-    porcentaje_descuento: string | null;
+    @Type(() => Number)
+    @IsInt()
+    porcentaje_descuento: number | null;
 
     @ApiPropertyOptional({ example: true })
     @IsOptional()
@@ -44,24 +45,25 @@ export class UpdateServicioDtoImpl implements UpdateServicioDto {
     @MaxLength(200)
     icono: string | null;
 
-    @ApiPropertyOptional({ example: '1' })
+    @ApiPropertyOptional({ example: 1 })
+    @IsOptional()
+    @Type(() => Number)
+    @IsInt()
+    orden: number | null;
+
+    @ApiProperty({ example: true })
+    @IsBoolean()
+    activo: boolean;
+
+    @ApiPropertyOptional({ example: 'https://example.com/servicio.jpg' })
     @IsOptional()
     @IsString()
-    @MaxLength(10)
-    orden: string | null;
-
-    @ApiProperty({ example: 'activo' })
-    @IsString()
-    @MaxLength(50)
-    activo: string;
-
-    @ApiProperty({ example: 'https://example.com/servicio.jpg' })
-    @IsString()
     @MaxLength(500)
-    img_url: string;
+    img_url: string | null;
 
-    @ApiProperty({ example: 'Imagen de diseño web' })
+    @ApiPropertyOptional({ example: 'Imagen de diseño web' })
+    @IsOptional()
     @IsString()
     @MaxLength(200)
-    img_alt: string;
+    img_alt: string | null;
 }

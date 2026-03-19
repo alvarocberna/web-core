@@ -2,14 +2,14 @@ export abstract class CreateServiciosDto {
     abstract titulo: string;
     abstract descripcion: string | null;
     abstract icono: string | null;
-    abstract activo: string;
+    abstract activo: boolean;
 }
 
 export abstract class UpdateServiciosDto {
     abstract titulo: string;
     abstract descripcion: string | null;
     abstract icono: string | null;
-    abstract activo: string;
+    abstract activo: boolean;
 }
 
 export abstract class CreateServicioDto {
@@ -17,13 +17,13 @@ export abstract class CreateServicioDto {
     abstract descripcion: string | null;
     abstract valor: string | null;
     abstract nombre_promocion: string | null;
-    abstract porcentaje_descuento: string | null;
+    abstract porcentaje_descuento: number | null;
     abstract destacado: boolean | null;
     abstract icono: string | null;
-    abstract orden: string | null;
-    abstract activo: string;
-    abstract img_url: string;
-    abstract img_alt: string;
+    abstract orden: number | null;
+    abstract activo: boolean;
+    abstract img_url: string | null;
+    abstract img_alt: string | null;
 }
 
 export abstract class UpdateServicioDto {
@@ -31,11 +31,11 @@ export abstract class UpdateServicioDto {
     abstract descripcion: string | null;
     abstract valor: string | null;
     abstract nombre_promocion: string | null;
-    abstract porcentaje_descuento: string | null;
+    abstract porcentaje_descuento: number | null;
     abstract destacado: boolean | null;
     abstract icono: string | null;
-    abstract orden: string | null;
-    abstract activo: string;
-    abstract img_url: string;
-    abstract img_alt: string;
+    abstract orden: number | null;
+    abstract activo: boolean;
+    abstract img_url: string | null;
+    abstract img_alt: string | null;
 }
