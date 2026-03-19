@@ -200,4 +200,18 @@ export class ArticuloController {
         if (!usuario_id) throw new BadRequestException('id de usuario no encontrado');
         return this.articuloService.findArticulos(usuario_id);
     }
+
+    @ApiOperation({ summary: 'Obtener un artículo por ID' })
+    @ApiQuery({ name: 'usuario_id', required: true, description: 'ID del usuario' })
+    @ApiParam({ name: 'id_articulo', description: 'ID del artículo' })
+    @ApiResponse({ status: 200, description: 'Artículo encontrado' })
+    @ApiResponse({ status: 401, description: 'No autorizado' })
+    @Get('/project/ver/:id_articulo')
+    findArticuloByIdPublic(
+        @Req() req: Request,
+        @Param('id_articulo') id_articulo: string,
+        @Query('usuario_id') usuario_id: string,
+    ) {
+        return this.articuloService.findArticuloById(usuario_id, id_articulo);
+    }
 }
