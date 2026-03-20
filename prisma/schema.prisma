@@ -15,6 +15,7 @@ model Proyecto {
   descripcion             String
   cliente                 String
   fecha_inicio            DateTime
+  activo                  Boolean    @default(true)
   //REL N:M 
   usuario                 Usuario[] @relation("fk_usu_pro")
   articulos               Articulos[] @relation("fk_arts_pro")
@@ -47,6 +48,7 @@ model Articulos {
   descripcion           String?
   activo                Boolean    @default(true)
   aprobar               Boolean    @default(false)   
+  notificacion          Boolean    @default(false)
   proyecto_id           String
   //REL M:N
   proyecto              Proyecto @relation(name: "fk_arts_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
@@ -96,6 +98,7 @@ model Equipo {
   titulo                 String     @default("Equipo")
   descripcion            String?  
   activo                 Boolean    @default(true)
+  notificacion           Boolean    @default(false)
   proyecto_id            String
   //REL M:N
   proyecto               Proyecto @relation(name: "fk_equ_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
@@ -128,6 +131,7 @@ model Servicios {
   descripcion           String?
   icono                 String?
   activo                Boolean    @default(true)
+  notificacion          Boolean    @default(false)
   proyecto_id           String
   //REL M:N
   proyecto              Proyecto @relation(name: "fk_ser_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
@@ -159,6 +163,7 @@ model Testimonios {
   descripcion           String?
   activo                Boolean     @default(true)
   aprobar               Boolean     @default(false)
+  notificacion          Boolean     @default(false)
   proyecto_id           String
   //REL M:N
   proyecto              Proyecto @relation(name: "fk_tes_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
@@ -173,7 +178,7 @@ model Testimonio {
   correo          String
   descripcion     String
   calificacion    Int?
-  aprobado        Boolean
+  status          String
   fecha_creacion  DateTime
   testimonios_id  String
   //REL M:N
@@ -193,4 +198,13 @@ model Actividad {
     proyecto              Proyecto @relation(name: "fk_act_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
     usuario               Usuario? @relation(name: "fk_act_usu", fields: [usuario_id], references: [id], onDelete: SetNull)
     articulo              Articulo? @relation(name: "fk_act_art", fields: [articulo_id], references: [id], onDelete: SetNull)
+}
+
+model Click {
+    id                    String    @id @default(uuid())
+    fecha                 DateTime
+    entidad_nombre        String
+    entidad_id            String 
+    proyecto_id           String
+
 }
