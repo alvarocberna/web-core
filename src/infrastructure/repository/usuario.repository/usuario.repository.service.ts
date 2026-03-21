@@ -15,6 +15,10 @@ export class UsuarioRepositoryService implements UsuarioRepository{
         return this.usuarioDatasource.createUsuario(id_proyecto, createUsuarioDto)
     }
 
+    async getAllUsuarios(id_proyecto: string): Promise<UsuarioEntity[]> {
+        return this.usuarioDatasource.getAllUsuarios(id_proyecto)
+    }
+
     async getUsuarioById(id_usuario: string): Promise<UsuarioEntity | null> {
         return this.usuarioDatasource.getUsuarioById(id_usuario)
     }
@@ -23,12 +27,8 @@ export class UsuarioRepositoryService implements UsuarioRepository{
         return this.usuarioDatasource.getUsuarioByEmail(email)
     }
 
-    async getAllUsuarios(id_proyecto: string): Promise<UsuarioEntity[]> {
-        return this.usuarioDatasource.getAllUsuarios(id_proyecto)
-    }
-
-    async updateUsuario(id_proyecto: string, id_usuario: string, updateUsuarioDto: UpdateUsuarioDto): Promise<UsuarioEntity> {
-        return this.usuarioDatasource.updateUsuario(id_proyecto, id_usuario, updateUsuarioDto)
+    async updateUsuario(proyecto_id: string, id_usuario: string, updateUsuarioDto: UpdateUsuarioDto): Promise<UsuarioEntity> {
+        return this.usuarioDatasource.updateUsuario(proyecto_id, id_usuario, updateUsuarioDto)
     }
     
     async updateUsuarioInfo(id_usuario: string, updateUsuarioInfoDto: UpdateUsuarioInfoDto): Promise<UsuarioEntity> {

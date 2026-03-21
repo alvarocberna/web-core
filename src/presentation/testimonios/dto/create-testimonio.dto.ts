@@ -32,4 +32,10 @@ export class CreateTestimonioDtoImpl implements CreateTestimonioDto {
     @Min(1)
     @Max(5)
     calificacion: number | null;
+
+    @ApiProperty({ example: 'pending' })
+    @IsString()
+    @MinLength(1)
+    @MaxLength(100)
+    status: string;
 }

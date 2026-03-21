@@ -6,6 +6,7 @@ export abstract class CreateArticulosDto {
         abstract descripcion: string | null;
         abstract activo: boolean;
         abstract aprobar: boolean;
+        abstract notificacion: boolean;
 }
 
 export abstract class UpdateArticulosDto {
@@ -13,6 +14,7 @@ export abstract class UpdateArticulosDto {
         abstract descripcion: string | null;
         abstract activo: boolean;
         abstract aprobar: boolean;
+        abstract notificacion: boolean;
 }
 
 export abstract class CreateArticuloFullDto{

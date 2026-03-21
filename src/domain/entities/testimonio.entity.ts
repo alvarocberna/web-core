@@ -6,7 +6,7 @@ export class TestimonioEntity {
         public correo: string,
         public descripcion: string,
         public calificacion: number | null,
-        public aprobado: boolean,
+        public status: string,
         public fecha_creacion: Date,
         public testimonios_id: string,
     ) {}

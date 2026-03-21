@@ -90,7 +90,6 @@ export class TestimoniosDatasourceService implements TestimoniosDatasource {
             data: {
                 id: this.uuidService.generate(),
                 ...createTestimonioDto,
-                aprobado: false,
                 fecha_creacion: new Date(),
                 testimonios_id: secTestimonios.id,
             },

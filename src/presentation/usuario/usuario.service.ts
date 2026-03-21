@@ -10,31 +10,34 @@ export class UsuarioService {
     private readonly usuarioService: UsuarioRepositoryService
   ){}
 
-  async create(id_proyecto: string, createUsuarioDto: CreateUsuarioDtoImpl){
-    await this.usuarioService.createUsuario(id_proyecto, createUsuarioDto)
+  //servicios para rol admin y superadmin
+  async create(proyecto_id: string, createUsuarioDto: CreateUsuarioDtoImpl){
+    await this.usuarioService.createUsuario(proyecto_id, createUsuarioDto)
   }
 
-  findAll() {
-    return `This action returns all usuario`;
+  findAll(proyecto_id: string) {
+    return this.usuarioService.getAllUsuarios(proyecto_id);
   }
 
-  findOne(id_usuario: string) {
-    return this.usuarioService.getUsuarioById(id_usuario)
+  findById(usuario_id: string) {
+    return this.usuarioService.getUsuarioById(usuario_id)
   }
 
-  updateInfo(id_usuario: string, updateUsuarioInfoDto: UpdateUsuarioInfoDtoImpl) {
-    return this.usuarioService.updateUsuarioInfo(id_usuario, updateUsuarioInfoDto);
+  update(proyecto_id: string, usuario_id: string, updateUsuarioDto: any) {
+    return this.usuarioService.updateUsuario(proyecto_id, usuario_id, updateUsuarioDto)
   }
 
-  updatePassword(id_usuario: string, updateUsuarioPasswordDto: UpdateUsuarioPasswordDtoImpl) {
-    return this.usuarioService.updateUsuarioPassword(id_usuario, updateUsuarioPasswordDto);
+  remove(proyecto_id: string, usuario_id: string) {
+    return this.usuarioService.deleteUsuario(proyecto_id, usuario_id);
   }
 
-  update(id: number, updateUsuarioDto: any) {
-    return `This action updates a #${id} usuario`;
+  //servicios para rol user
+  updateInfo(usuario_id: string, updateUsuarioInfoDto: UpdateUsuarioInfoDtoImpl) {
+    return this.usuarioService.updateUsuarioInfo(usuario_id, updateUsuarioInfoDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} usuario`;
+  updatePassword(usuario_id: string, updateUsuarioPasswordDto: UpdateUsuarioPasswordDtoImpl) {
+    return this.usuarioService.updateUsuarioPassword(usuario_id, updateUsuarioPasswordDto);
   }
+
 }

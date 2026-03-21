@@ -80,7 +80,12 @@ export class UsuarioDatasourceService implements UsuarioDatasource {
                 id: id_usuario,
                 proyecto_id: id_proyecto
             },
-            data: { ...updateUsuarioDto },
+            data: {
+                nombre: updateUsuarioDto.nombre,
+                apellido: updateUsuarioDto.apellido,
+                email: updateUsuarioDto.email,
+                rol: updateUsuarioDto.rol,
+            },
         });
         return usuario;
     }

@@ -18,4 +18,8 @@ export class CreateEquipoDtoImpl implements CreateEquipoDto {
     @ApiProperty({ example: true })
     @IsBoolean()
     activo: boolean;
+
+    @ApiProperty({ example: false })
+    @IsBoolean()
+    notificacion: boolean;
 }

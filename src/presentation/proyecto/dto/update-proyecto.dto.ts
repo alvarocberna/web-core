@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsBoolean, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 //domain
 import { UpdateProyectoDto } from "src/domain";
@@ -15,4 +15,8 @@ export class UpdateProyectoDtoImpl implements UpdateProyectoDto {
     @ApiProperty({ example: 'Nombre del Cliente' })
     @IsString()
     cliente: string;
+
+    @ApiProperty({ example: true })
+    @IsBoolean()
+    activo: boolean;
 }

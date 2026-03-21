@@ -2,12 +2,14 @@ export abstract class CreateEquipoDto {
     abstract titulo: string;
     abstract descripcion: string | null;
     abstract activo: boolean;
+    abstract notificacion: boolean;
 }
 
 export abstract class UpdateEquipoDto {
     abstract titulo: string;
     abstract descripcion: string | null;
     abstract activo: boolean;
+    abstract notificacion: boolean;
 }
 
 export abstract class CreateEmpleadoDto {

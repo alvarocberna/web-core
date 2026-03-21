@@ -3,6 +3,7 @@ export abstract class CreateTestimoniosDto {
     abstract descripcion: string | null;
     abstract activo: boolean;
     abstract aprobar: boolean;
+    abstract notificacion: boolean;
 }
 
 export abstract class UpdateTestimoniosDto {
@@ -10,6 +11,7 @@ export abstract class UpdateTestimoniosDto {
     abstract descripcion: string | null;
     abstract activo: boolean;
     abstract aprobar: boolean;
+    abstract notificacion: boolean;
 }
 
 export abstract class CreateTestimonioDto {
@@ -18,6 +20,7 @@ export abstract class CreateTestimonioDto {
     abstract correo: string;
     abstract descripcion: string;
     abstract calificacion: number | null;
+    abstract status: string;
 }
 
 export abstract class UpdateTestimonioDto {
@@ -26,5 +29,5 @@ export abstract class UpdateTestimonioDto {
     abstract correo: string;
     abstract descripcion: string;
     abstract calificacion: number | null;
-    abstract aprobado: boolean;
+    abstract status: string;
 }

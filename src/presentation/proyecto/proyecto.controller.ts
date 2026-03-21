@@ -24,27 +24,27 @@ export class ProyectoController {
   }
 
   @ApiOperation({ summary: 'Obtener un proyecto por ID' })
-  @ApiParam({ name: 'id', type: Number })
+  @ApiParam({ name: 'proyecto_id', type: Number })
   @ApiResponse({ status: 200, description: 'Proyecto encontrado' })
   @ApiResponse({ status: 404, description: 'Proyecto no encontrado' })
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.proyectoService.findOne(+id);
+  @Get(':proyecto_id')
+  findOne(@Param('proyecto_id') proyecto_id: string) {
+    return this.proyectoService.findOne(proyecto_id);
   }
 
   @ApiOperation({ summary: 'Actualizar un proyecto' })
-  @ApiParam({ name: 'id', type: Number })
+  @ApiParam({ name: 'proyecto_id', type: Number })
   @ApiResponse({ status: 200, description: 'Proyecto actualizado' })
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProyectoDto: UpdateProyectoDtoImpl) {
-    return this.proyectoService.update(+id, updateProyectoDto);
+  @Patch(':proyecto_id')
+  update(@Param('proyecto_id') proyecto_id: string, @Body() updateProyectoDto: UpdateProyectoDtoImpl) {
+    return this.proyectoService.update(proyecto_id, updateProyectoDto);
   }
 
   @ApiOperation({ summary: 'Eliminar un proyecto' })
-  @ApiParam({ name: 'id', type: Number })
+  @ApiParam({ name: 'proyecto_id', type: Number })
   @ApiResponse({ status: 200, description: 'Proyecto eliminado' })
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.proyectoService.remove(+id);
+  @Delete(':proyecto_id')
+  remove(@Param('proyecto_id') proyecto_id: string) {
+    return this.proyectoService.remove(proyecto_id);
   }
 }

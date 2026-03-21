@@ -18,4 +18,8 @@ export class UpdateEquipoDtoImpl implements UpdateEquipoDto {
     @ApiProperty({ example: true })
     @IsBoolean()
     activo: boolean;
+
+    @ApiProperty({ example: false })
+    @IsBoolean()
+    notificacion: boolean;
 }

@@ -22,4 +22,8 @@ export class CreateTestimoniosDtoImpl implements CreateTestimoniosDto {
     @ApiProperty({ example: false })
     @IsBoolean()
     aprobar: boolean;
+
+    @ApiProperty({ example: false })
+    @IsBoolean()
+    notificacion: boolean;
 }

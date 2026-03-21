@@ -22,4 +22,8 @@ export class UpdateArticulosDtoImpl implements UpdateArticulosDto {
     @ApiProperty({ example: false })
     @IsBoolean()
     aprobar: boolean;
+
+    @ApiProperty({ example: false })
+    @IsBoolean()
+    notificacion: boolean;
 }

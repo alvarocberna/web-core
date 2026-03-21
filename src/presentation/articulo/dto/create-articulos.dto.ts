@@ -22,4 +22,8 @@ export class CreateArticulosDtoImpl implements CreateArticulosDto {
     @ApiProperty({ example: false })
     @IsBoolean()
     aprobar: boolean;
+
+    @ApiProperty({ example: false })
+    @IsBoolean()
+    notificacion: boolean;
 }

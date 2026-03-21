@@ -5,6 +5,7 @@ export class TestimoniosEntity {
         public descripcion: string | null,
         public activo: boolean,
         public aprobar: boolean,
+        public notificacion: boolean,
         public proyecto_id: string,
     ) {}
 }

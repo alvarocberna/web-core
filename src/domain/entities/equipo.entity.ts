@@ -4,6 +4,7 @@ export class EquipoEntity {
         public titulo: string,
         public descripcion: string | null,
         public activo: boolean,
+        public notificacion: boolean,
         public proyecto_id: string,
     ) {}
 }

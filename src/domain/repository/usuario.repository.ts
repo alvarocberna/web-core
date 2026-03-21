@@ -5,7 +5,7 @@ export abstract class UsuarioRepository{
     abstract getUsuarioById(id_usuario: string): Promise<UsuarioEntity | null>;
     abstract getUsuarioByEmail(email: string): Promise<UsuarioEntity | null>;
     abstract getAllUsuarios(id_proyecto: string): Promise<UsuarioEntity[]>;
-    abstract updateUsuario(id_proyecto: string, id_usuario: string, updateUsuarioDto: UpdateUsuarioDto): Promise<UsuarioEntity>;
+    abstract updateUsuario(proyecto_id: string, id_usuario: string, updateUsuarioDto: UpdateUsuarioDto): Promise<UsuarioEntity>;
     abstract updateUsuarioInfo(id_usuario: string, updateUsuarioInfoDto: UpdateUsuarioInfoDto): Promise<UsuarioEntity>;
     abstract updateUsuarioPassword(id_usuario: string, updateUsuarioPasswordDto: UpdateUsuarioPasswordDto): Promise<void>;
     abstract deleteUsuario(id_proyecto: string, id_usuario: string): Promise<void>;

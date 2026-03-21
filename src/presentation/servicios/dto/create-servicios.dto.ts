@@ -24,4 +24,8 @@ export class CreateServiciosDtoImpl implements CreateServiciosDto {
     @ApiProperty({ example: true })
     @IsBoolean()
     activo: boolean;
+
+    @ApiProperty({ example: false })
+    @IsBoolean()
+    notificacion: boolean;
 }

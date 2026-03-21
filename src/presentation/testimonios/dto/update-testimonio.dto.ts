@@ -33,7 +33,9 @@ export class UpdateTestimonioDtoImpl implements UpdateTestimonioDto {
     @Max(5)
     calificacion: number | null;
 
-    @ApiProperty({ example: true, description: 'Aprobado para mostrarse públicamente' })
-    @IsBoolean()
-    aprobado: boolean;
+    @ApiProperty({ example: 'pending' })
+    @IsString()
+    @MinLength(1)
+    @MaxLength(100)
+    status: string;
 }
