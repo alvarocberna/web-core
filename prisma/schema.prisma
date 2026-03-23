@@ -48,6 +48,7 @@ model Articulos {
   descripcion           String?
   activo                Boolean    @default(true)
   aprobar               Boolean    @default(false)   
+  habilitado            Boolean    @default(true)
   notificacion          Boolean    @default(false)
   proyecto_id           String
   //REL M:N
@@ -99,6 +100,7 @@ model Equipo {
   descripcion            String?  
   activo                 Boolean    @default(true)
   notificacion           Boolean    @default(false)
+  habilitado            Boolean    @default(true)
   proyecto_id            String
   //REL M:N
   proyecto               Proyecto @relation(name: "fk_equ_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
@@ -132,6 +134,7 @@ model Servicios {
   icono                 String?
   activo                Boolean    @default(true)
   notificacion          Boolean    @default(false)
+  habilitado            Boolean    @default(true)
   proyecto_id           String
   //REL M:N
   proyecto              Proyecto @relation(name: "fk_ser_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
@@ -164,6 +167,7 @@ model Testimonios {
   activo                Boolean     @default(true)
   aprobar               Boolean     @default(false)
   notificacion          Boolean     @default(false)
+  habilitado            Boolean    @default(true)
   proyecto_id           String
   //REL M:N
   proyecto              Proyecto @relation(name: "fk_tes_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)

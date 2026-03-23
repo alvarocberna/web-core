@@ -7,6 +7,7 @@ export abstract class CreateArticulosDto {
         abstract activo: boolean;
         abstract aprobar: boolean;
         abstract notificacion: boolean;
+        abstract habilitado: boolean;
 }
 
 export abstract class UpdateArticulosDto {
@@ -15,6 +16,7 @@ export abstract class UpdateArticulosDto {
         abstract activo: boolean;
         abstract aprobar: boolean;
         abstract notificacion: boolean;
+        abstract habilitado: boolean;
 }
 
 export abstract class CreateArticuloFullDto{

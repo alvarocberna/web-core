@@ -6,6 +6,7 @@ export class ArticulosEntity {
         public activo: boolean,
         public aprobar: boolean,
         public notificacion: boolean,
+        public habilitado: boolean,
         public proyecto_id: string,
     ) {}
 }

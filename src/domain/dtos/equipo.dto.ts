@@ -3,6 +3,7 @@ export abstract class CreateEquipoDto {
     abstract descripcion: string | null;
     abstract activo: boolean;
     abstract notificacion: boolean;
+    abstract habilitado: boolean;
 }
 
 export abstract class UpdateEquipoDto {
@@ -10,6 +11,7 @@ export abstract class UpdateEquipoDto {
     abstract descripcion: string | null;
     abstract activo: boolean;
     abstract notificacion: boolean;
+    abstract habilitado: boolean;
 }
 
 export abstract class CreateEmpleadoDto {

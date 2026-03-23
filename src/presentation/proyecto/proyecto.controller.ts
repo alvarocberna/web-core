@@ -11,14 +11,14 @@ export class ProyectoController {
 
   @ApiOperation({ summary: 'Crear proyecto' })
   @ApiResponse({ status: 201, description: 'Proyecto creado exitosamente' })
-  @Post()
+  @Post('/crear')
   create(@Body() createProyectoDto: CreateProyectoDtoImpl) {
     return this.proyectoService.create(createProyectoDto);
   }
 
   @ApiOperation({ summary: 'Obtener todos los proyectos' })
   @ApiResponse({ status: 200, description: 'Lista de proyectos' })
-  @Get()
+  @Get('/ver-todo')
   findAll() {
     return this.proyectoService.findAll();
   }
@@ -27,7 +27,7 @@ export class ProyectoController {
   @ApiParam({ name: 'proyecto_id', type: Number })
   @ApiResponse({ status: 200, description: 'Proyecto encontrado' })
   @ApiResponse({ status: 404, description: 'Proyecto no encontrado' })
-  @Get(':proyecto_id')
+  @Get('/ver/:proyecto_id')
   findOne(@Param('proyecto_id') proyecto_id: string) {
     return this.proyectoService.findOne(proyecto_id);
   }
@@ -35,7 +35,7 @@ export class ProyectoController {
   @ApiOperation({ summary: 'Actualizar un proyecto' })
   @ApiParam({ name: 'proyecto_id', type: Number })
   @ApiResponse({ status: 200, description: 'Proyecto actualizado' })
-  @Patch(':proyecto_id')
+  @Patch('/editar/:proyecto_id')
   update(@Param('proyecto_id') proyecto_id: string, @Body() updateProyectoDto: UpdateProyectoDtoImpl) {
     return this.proyectoService.update(proyecto_id, updateProyectoDto);
   }
@@ -43,7 +43,7 @@ export class ProyectoController {
   @ApiOperation({ summary: 'Eliminar un proyecto' })
   @ApiParam({ name: 'proyecto_id', type: Number })
   @ApiResponse({ status: 200, description: 'Proyecto eliminado' })
-  @Delete(':proyecto_id')
+  @Delete('/eliminar/:proyecto_id')
   remove(@Param('proyecto_id') proyecto_id: string) {
     return this.proyectoService.remove(proyecto_id);
   }

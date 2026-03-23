@@ -28,4 +28,8 @@ export class UpdateServiciosDtoImpl implements UpdateServiciosDto {
     @ApiProperty({ example: false })
     @IsBoolean()
     notificacion: boolean;
+
+    @ApiProperty({ example: true })
+    @IsBoolean()
+    habilitado: boolean;
 }
