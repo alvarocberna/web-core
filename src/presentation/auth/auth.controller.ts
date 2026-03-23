@@ -9,6 +9,7 @@ import type { Response, Request } from 'express';
 import { AuthService } from './auth.service';
 import {JwtAuthGuard} from '../auth/guards/jwt-auth.guard';
 import { SkipCsrfCheck } from '../decorators/skip-csrf.decorator';
+import { Public } from '../decorators/public.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -59,33 +60,9 @@ export class AuthController {
   }
 
 
-  //este endpoint me parece que no se está utilizando
-  // @Post('register')
-  // async register(@Body() createProfesionalDto: CreateProfesionalDto, @Res() res: Response) {
-  //   //creamos usuario con el password hasheado
-  //   const user = await this.usuarioService.createProfesional(createProfesionalDto);
-
-  //   const { accessToken, refreshToken } = await this.authService.login({ id: user.id, email: user.correo });
-
-  //   // set cookies
-  //   res.cookie('access_token', accessToken, {
-  //     httpOnly: true,
-  //     sameSite: 'lax',
-  //     secure: process.env.NODE_ENV === 'production',
-  //     maxAge: 15 * 60 * 1000, // 15 min
-  //   });
-  //   res.cookie('refresh_token', refreshToken, {
-  //     httpOnly: true,
-  //     sameSite: 'lax',
-  //     secure: process.env.NODE_ENV === 'production',
-  //     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-  //   });
-
-  //   return res.json({ id: user.id, email: user.correo, name: user.nombre_primero + ' ' + user.apellido_paterno});
-  // }
-
   @ApiOperation({ summary: 'Obtener CSRF token (cookie + valor para header x-csrf-token)' })
   @ApiResponse({ status: 200, description: 'Token CSRF emitido en cookie y en body.' })
+  @Public()
   @SkipCsrfCheck()
   @Get('csrf-token')
   getCsrfToken(@Req() req: Request, @Res() res: Response) {
@@ -115,6 +92,7 @@ export class AuthController {
   })
   @ApiResponse({ status: 200, description: 'Login exitoso. Devuelve tokens y establece cookies.' })
   @ApiResponse({ status: 401, description: 'Credenciales inválidas' })
+  @Public()
   @SkipCsrfCheck()
   @Post('login')
   async login(
@@ -134,7 +112,7 @@ export class AuthController {
       return res.status(401).json({ message: 'Credenciales inválidas' });
     }
     this.logger.log(`[login] Login exitoso: ${body.email}`);
-    const tokens = await this.authService.login({ id: validated.id, email: body.email });
+    const tokens = await this.authService.login({ id: validated.id, email: body.email, rol: validated.rol });
 
     this.logCookieDiagnostics('login', req);
 
@@ -182,6 +160,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Renovar access token usando refresh token (cookie)' })
   @ApiResponse({ status: 200, description: 'Tokens renovados. Nuevas cookies establecidas.' })
   @ApiResponse({ status: 401, description: 'Refresh token inválido o ausente' })
+  @Public()
   @SkipCsrfCheck()
   @Post('refresh')
   async refresh(@Req() req: Request, @Res() res: Response) {

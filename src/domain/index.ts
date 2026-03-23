@@ -44,3 +44,5 @@ export * from './repository/servicios.repository';
 export * from './use-cases/create-articulo.use-case';
 export * from './use-cases/update-articulo.use-case';
 export * from './use-cases/delete-articulo.use-case';
+//ENUMS
+export * from './enums/rol.enum';

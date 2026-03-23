@@ -8,6 +8,10 @@ import { UpdateArticulosDtoImpl } from './dto/update-articulos.dto';
 import { CreateArticuloDtoImpl } from './dto/create-articulo.dto';
 import { UpdateArticuloDtoImpl } from './dto/update-articulo.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Public } from '../decorators/public.decorator';
+import { Roles } from '../decorators/roles.decorator';
+import { RolesGuard } from '../guards/roles.guard';
+import { Rol } from '../../domain';
 
 @ApiTags('articulos')
 @Controller('articulos')
@@ -20,7 +24,8 @@ export class ArticuloController {
     @ApiOperation({ summary: 'Crear la sección de artículos' })
     @ApiResponse({ status: 201, description: 'Sección artículos creada' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('/crear')
     createArticulos(
         @Req() req: Request,
@@ -34,7 +39,8 @@ export class ArticuloController {
     @ApiOperation({ summary: 'Obtener la sección de artículos con todos sus artículos y secciones' })
     @ApiResponse({ status: 200, description: 'Sección artículos con artículos y sec_artículos' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN, Rol.USER)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Get('/ver-todo')
     findArticulos(@Req() req: Request) {
         const id_usuario = (req as any).user?.id;
@@ -45,7 +51,8 @@ export class ArticuloController {
     @ApiOperation({ summary: 'Editar la sección de artículos' })
     @ApiResponse({ status: 200, description: 'Sección artículos actualizada' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Put('/editar')
     updateArticulos(
         @Req() req: Request,
@@ -77,7 +84,8 @@ export class ArticuloController {
     })
     @ApiResponse({ status: 201, description: 'Artículo creado exitosamente' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN, Rol.USER)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('/articulo/crear')
     @UseInterceptors(
         FileFieldsInterceptor([
@@ -111,7 +119,8 @@ export class ArticuloController {
     @ApiParam({ name: 'id_articulo', description: 'ID del artículo' })
     @ApiResponse({ status: 200, description: 'Artículo encontrado' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN, Rol.USER)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Get('/articulo/ver/:id_articulo')
     findArticuloById(
         @Req() req: Request,
@@ -142,7 +151,8 @@ export class ArticuloController {
     })
     @ApiResponse({ status: 200, description: 'Artículo actualizado' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN, Rol.USER)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Put('/articulo/editar/:id_articulo')
     @UseInterceptors(
         FileFieldsInterceptor([
@@ -177,7 +187,8 @@ export class ArticuloController {
     @ApiParam({ name: 'id_articulo', description: 'ID del artículo a eliminar' })
     @ApiResponse({ status: 200, description: 'Artículo eliminado' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN, Rol.USER)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete('/articulo/eliminar/:id_articulo')
     deleteArticulo(
         @Req() req: Request,
@@ -193,6 +204,7 @@ export class ArticuloController {
     @ApiQuery({ name: 'usuario_id', required: true, description: 'ID del usuario' })
     @ApiResponse({ status: 200, description: 'Sección artículos con artículos y sec_artículos' })
     @ApiResponse({ status: 400, description: 'id de usuario no encontrado' })
+    @Public()
     @Get('/project/ver-todo')
     findAllPublic(
         @Query('usuario_id') usuario_id: string,
@@ -206,6 +218,7 @@ export class ArticuloController {
     @ApiParam({ name: 'id_articulo', description: 'ID del artículo' })
     @ApiResponse({ status: 200, description: 'Artículo encontrado' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
+    @Public()
     @Get('/project/ver/:id_articulo')
     findArticuloByIdPublic(
         @Req() req: Request,

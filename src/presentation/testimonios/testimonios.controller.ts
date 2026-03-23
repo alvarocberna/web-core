@@ -6,6 +6,10 @@ import { CreateTestimoniosDtoImpl } from './dto/create-testimonios.dto';
 import { UpdateTestimoniosDtoImpl } from './dto/update-testimonios.dto';
 import { CreateTestimonioDtoImpl } from './dto/create-testimonio.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Public } from '../decorators/public.decorator';
+import { Roles } from '../decorators/roles.decorator';
+import { RolesGuard } from '../guards/roles.guard';
+import { Rol } from '../../domain';
 
 @ApiTags('testimonios')
 @Controller('testimonios')
@@ -18,7 +22,8 @@ export class TestimoniosController {
     @ApiOperation({ summary: 'Crear la sec testimonios' })
     @ApiResponse({ status: 200, description: 'Info seccción testimonios' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('/crear')
     create(
         @Req() req: Request,
@@ -32,7 +37,8 @@ export class TestimoniosController {
     @ApiOperation({ summary: 'Obtener la info de la sec testimonios' })
     @ApiResponse({ status: 200, description: 'Info seccción testimonios' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN, Rol.USER)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Get('/ver-todo')
     findAll(@Req() req: Request) {
         const id_usuario = (req as any).user?.id;
@@ -43,7 +49,8 @@ export class TestimoniosController {
     @ApiOperation({ summary: 'Editar sec testimonios' })
     @ApiResponse({ status: 200, description: 'Contenedor actualizado' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Put('/editar')
     update(
         @Req() req: Request,
@@ -59,7 +66,8 @@ export class TestimoniosController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Enviar un nuevo testimonio (público)' })
     @ApiResponse({ status: 201, description: 'Testimonio enviado exitosamente' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('/testimonio/crear')
     createTestimonio(
         @Req() req: Request,
@@ -74,7 +82,8 @@ export class TestimoniosController {
     @ApiParam({ name: 'id_testimonio', description: 'ID del testimonio' })
     @ApiResponse({ status: 200, description: 'Testimonio eliminado' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete('/testimonio/eliminar/:id_testimonio')
     removeTestimonio(
         @Req() req: Request,
@@ -90,6 +99,7 @@ export class TestimoniosController {
     @ApiOperation({ summary: 'Obtener la info de la sec testimonios y de los testimonios por proyecto (público)' })
     @ApiQuery({ name: 'usuario_id', required: false, description: 'ID del usuario' })
     @ApiResponse({ status: 200, description: 'Sec testimonios y lista de testimonios' })
+    @Public()
     @Get('/project/ver-todo')
     findAllPublic(
         @Query('usuario_id') usuario_id: string,

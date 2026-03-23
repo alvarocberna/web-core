@@ -5,6 +5,8 @@ import { ConfigModule } from '@nestjs/config'; //permite llamar env var
 import * as Joi from 'joi';
 //guards
 import { CsrfGuard } from './presentation/guards/csrf.guard';
+import { JwtAuthGuard } from './presentation/auth/guards/jwt-auth.guard';
+import { RolesGuard } from './presentation/guards/roles.guard';
 //infrastructure
 import { PrismaModule } from './infrastructure/orm/prisma/prisma.module';
 //presentation
@@ -67,7 +69,9 @@ const envValidationSchema = Joi.object({
        ServiciosModule,
   ],
   providers: [
-    { provide: APP_GUARD, useClass: CsrfGuard },
+    { provide: APP_GUARD, useClass: CsrfGuard },    // 1ro: CSRF
+    { provide: APP_GUARD, useClass: JwtAuthGuard }, // 2do: JWT (soporta @Public())
+    { provide: APP_GUARD, useClass: RolesGuard },   // 3ro: Roles (corre después de JWT)
   ],
   exports: []
 })

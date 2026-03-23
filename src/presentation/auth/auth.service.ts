@@ -30,8 +30,8 @@ export class AuthService {
     return rest;
   }
 
-  async login(user: { id: string; email: string }) {
-    const payload = { sub: user.id, email: user.email };
+  async login(user: { id: string; email: string; rol: string }) {
+    const payload = { sub: user.id, email: user.email, rol: user.rol };
     const accessToken = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
       expiresIn: this.configService.get<string>('JWT_ACCESS_EXPIRATION'),
@@ -65,7 +65,7 @@ export class AuthService {
     const isMatch = await bcrypt.compare(rt, user.hashedRt);
     if (!isMatch) throw new UnauthorizedException();
     // create new tokens
-    const payload = { sub: user.id, email: user.email };
+    const payload = { sub: user.id, email: user.email, rol: user.rol };
     const accessToken = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
       expiresIn: this.configService.get<string>('JWT_ACCESS_EXPIRATION'),

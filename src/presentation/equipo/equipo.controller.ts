@@ -7,6 +7,10 @@ import { UpdateEquipoDtoImpl } from './dto/update-equipo.dto';
 import { CreateEmpleadoDtoImpl } from './dto/create-empleado.dto';
 import { UpdateEmpleadoDtoImpl } from './dto/update-empleado.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Public } from '../decorators/public.decorator';
+import { Roles } from '../decorators/roles.decorator';
+import { RolesGuard } from '../guards/roles.guard';
+import { Rol } from '../../domain';
 
 @ApiTags('equipo')
 @Controller('equipo')
@@ -19,7 +23,8 @@ export class EquipoController {
     @ApiOperation({ summary: 'Crear la sec equipo' })
     @ApiResponse({ status: 201, description: 'Sec equipo creada' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('/crear')
     create(
         @Req() req: Request,
@@ -33,7 +38,8 @@ export class EquipoController {
     @ApiOperation({ summary: 'Obtener la info de la sec equipo con empleados' })
     @ApiResponse({ status: 200, description: 'Info sec equipo con empleados' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN, Rol.USER)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Get('/ver-todo')
     findAll(@Req() req: Request) {
         const id_usuario = (req as any).user?.id;
@@ -44,7 +50,8 @@ export class EquipoController {
     @ApiOperation({ summary: 'Editar sec equipo' })
     @ApiResponse({ status: 200, description: 'Sec equipo actualizada' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Put('/editar')
     update(
         @Req() req: Request,
@@ -60,7 +67,8 @@ export class EquipoController {
     @ApiOperation({ summary: 'Crear un nuevo empleado' })
     @ApiResponse({ status: 201, description: 'Empleado creado' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('/empleado/crear')
     createEmpleado(
         @Req() req: Request,
@@ -75,7 +83,8 @@ export class EquipoController {
     @ApiParam({ name: 'id_empleado', description: 'ID del empleado' })
     @ApiResponse({ status: 200, description: 'Datos del empleado' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Get('/empleado/ver/:id_empleado')
     findEmpleado(
         @Req() req: Request,
@@ -90,7 +99,8 @@ export class EquipoController {
     @ApiParam({ name: 'id_empleado', description: 'ID del empleado' })
     @ApiResponse({ status: 200, description: 'Empleado actualizado' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Put('/empleado/editar/:id_empleado')
     updateEmpleado(
         @Req() req: Request,
@@ -106,7 +116,8 @@ export class EquipoController {
     @ApiParam({ name: 'id_empleado', description: 'ID del empleado' })
     @ApiResponse({ status: 200, description: 'Empleado eliminado' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete('/empleado/eliminar/:id_empleado')
     removeEmpleado(
         @Req() req: Request,
@@ -121,6 +132,7 @@ export class EquipoController {
     @ApiOperation({ summary: 'Obtener la info del equipo con empleados por proyecto (público)' })
     @ApiQuery({ name: 'usuario_id', required: true, description: 'ID del usuario' })
     @ApiResponse({ status: 200, description: 'Sec equipo con lista de empleados' })
+    @Public()
     @Get('/project/ver-todo')
     findAllPublic(
         @Query('usuario_id') usuario_id: string,

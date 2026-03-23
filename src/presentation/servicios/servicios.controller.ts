@@ -7,6 +7,10 @@ import { UpdateServiciosDtoImpl } from './dto/update-servicios.dto';
 import { CreateServicioDtoImpl } from './dto/create-servicio.dto';
 import { UpdateServicioDtoImpl } from './dto/update-servicio.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Public } from '../decorators/public.decorator';
+import { Roles } from '../decorators/roles.decorator';
+import { RolesGuard } from '../guards/roles.guard';
+import { Rol } from '../../domain';
 
 @ApiTags('servicios')
 @Controller('servicios')
@@ -19,7 +23,8 @@ export class ServiciosController {
     @ApiOperation({ summary: 'Crear la sec servicios' })
     @ApiResponse({ status: 201, description: 'Sec servicios creada' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('/crear')
     create(
         @Req() req: Request,
@@ -33,7 +38,8 @@ export class ServiciosController {
     @ApiOperation({ summary: 'Obtener la info de la sec servicios con servicios' })
     @ApiResponse({ status: 200, description: 'Info sec servicios con servicios' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN, Rol.USER)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Get('/ver-todo')
     findAll(@Req() req: Request) {
         const id_usuario = (req as any).user?.id;
@@ -44,7 +50,8 @@ export class ServiciosController {
     @ApiOperation({ summary: 'Editar sec servicios' })
     @ApiResponse({ status: 200, description: 'Sec servicios actualizada' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Put('/editar')
     update(
         @Req() req: Request,
@@ -60,7 +67,8 @@ export class ServiciosController {
     @ApiOperation({ summary: 'Crear un nuevo servicio' })
     @ApiResponse({ status: 201, description: 'Servicio creado' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('/servicio/crear')
     createServicio(
         @Req() req: Request,
@@ -75,7 +83,8 @@ export class ServiciosController {
     @ApiParam({ name: 'id_servicio', description: 'ID del servicio' })
     @ApiResponse({ status: 200, description: 'Datos del servicio' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Get('/servicio/ver/:id_servicio')
     findServicio(
         @Req() req: Request,
@@ -90,7 +99,8 @@ export class ServiciosController {
     @ApiParam({ name: 'id_servicio', description: 'ID del servicio' })
     @ApiResponse({ status: 200, description: 'Servicio actualizado' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Put('/servicio/editar/:id_servicio')
     updateServicio(
         @Req() req: Request,
@@ -106,7 +116,8 @@ export class ServiciosController {
     @ApiParam({ name: 'id_servicio', description: 'ID del servicio' })
     @ApiResponse({ status: 200, description: 'Servicio eliminado' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
-    @UseGuards(JwtAuthGuard)
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Delete('/servicio/eliminar/:id_servicio')
     removeServicio(
         @Req() req: Request,
@@ -121,6 +132,7 @@ export class ServiciosController {
     @ApiOperation({ summary: 'Obtener la info de servicios con sus servicios por proyecto (público)' })
     @ApiQuery({ name: 'usuario_id', required: true, description: 'ID del usuario' })
     @ApiResponse({ status: 200, description: 'Sec servicios con lista de servicios' })
+    @Public()
     @Get('/project/ver-todo')
     findAllPublic(
         @Query('usuario_id') usuario_id: string,
