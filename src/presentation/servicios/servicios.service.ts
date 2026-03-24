@@ -3,11 +3,14 @@ import { CreateServiciosDtoImpl } from './dto/create-servicios.dto';
 import { UpdateServiciosDtoImpl } from './dto/update-servicios.dto';
 import { CreateServicioDtoImpl } from './dto/create-servicio.dto';
 import { UpdateServicioDtoImpl } from './dto/update-servicio.dto';
-import { ServiciosRepositoryService } from 'src/infrastructure';
+import { ServiciosRepositoryService, ImageStorageRepositoryService } from 'src/infrastructure';
 
 @Injectable()
 export class ServiciosService {
-    constructor(private readonly serviciosRepository: ServiciosRepositoryService) {}
+    constructor(
+        private readonly serviciosRepository: ServiciosRepositoryService,
+        private readonly imageStorage: ImageStorageRepositoryService,
+    ) {}
 
     // ─── Servicios (Entidad padre) ───────────────────────────────────────────────
 
@@ -25,7 +28,15 @@ export class ServiciosService {
 
     // ─── Servicio (entidad hijo) ─────────────────────────────────────────────────
 
-    createServicio(id_usuario: string, createServicioDto: CreateServicioDtoImpl) {
+    async createServicio(
+        id_usuario: string,
+        createServicioDto: CreateServicioDtoImpl,
+        files?: { image_file?: Express.Multer.File[] },
+    ) {
+        if (files?.image_file?.[0]) {
+            const imageUrl = await this.imageStorage.saveImage(files.image_file[0]);
+            createServicioDto.img_url = imageUrl;
+        }
         return this.serviciosRepository.createServicio(id_usuario, createServicioDto);
     }
 
@@ -33,7 +44,16 @@ export class ServiciosService {
         return this.serviciosRepository.getServicio(id_usuario, id_servicio);
     }
 
-    updateServicio(id_usuario: string, id_servicio: string, updateServicioDto: UpdateServicioDtoImpl) {
+    async updateServicio(
+        id_usuario: string,
+        id_servicio: string,
+        updateServicioDto: UpdateServicioDtoImpl,
+        files?: { image_file?: Express.Multer.File[] },
+    ) {
+        if (files?.image_file?.[0]) {
+            const imageUrl = await this.imageStorage.saveImage(files.image_file[0]);
+            updateServicioDto.img_url = imageUrl;
+        }
         return this.serviciosRepository.updateServicio(id_usuario, id_servicio, updateServicioDto);
     }
 

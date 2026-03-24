@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Body, Put, Param, Delete, Req, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Delete, Req, UseGuards, Query, UseInterceptors, UploadedFiles } from '@nestjs/common';
 import { BadRequestException } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiQuery, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { EquipoService } from './equipo.service';
 import { CreateEquipoDtoImpl } from './dto/create-equipo.dto';
 import { UpdateEquipoDtoImpl } from './dto/update-equipo.dto';
@@ -64,18 +65,38 @@ export class EquipoController {
     // ─── Empleado (entidad hijo) ─────────────────────────────────────────────────
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Crear un nuevo empleado' })
+    @ApiOperation({ summary: 'Crear un nuevo empleado con imagen (multipart/form-data)' })
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                data: { type: 'string', description: 'JSON stringificado con los datos del empleado (CreateEmpleadoDtoImpl)' },
+                image_file: { type: 'string', format: 'binary', description: 'Imagen del empleado' },
+            },
+            required: ['data'],
+        },
+    })
     @ApiResponse({ status: 201, description: 'Empleado creado' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
     @Roles(Rol.ADMIN, Rol.SUPERADMIN)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('/empleado/crear')
+    @UseInterceptors(FileFieldsInterceptor([{ name: 'image_file', maxCount: 1 }]))
     createEmpleado(
         @Req() req: Request,
-        @Body() createEmpleadoDto: CreateEmpleadoDtoImpl,
+        @Body('data') dataString: string,
+        @UploadedFiles() files: { image_file?: Express.Multer.File[] },
     ) {
         const id_usuario = (req as any).user?.id;
-        return this.equipoService.createEmpleado(id_usuario, createEmpleadoDto);
+        if (!dataString) throw new BadRequestException('El campo "data" es requerido en el FormData');
+        let createEmpleadoDto: CreateEmpleadoDtoImpl;
+        try {
+            createEmpleadoDto = JSON.parse(dataString);
+        } catch {
+            throw new BadRequestException('El campo "data" no es un JSON válido');
+        }
+        return this.equipoService.createEmpleado(id_usuario, createEmpleadoDto, files);
     }
 
     @ApiBearerAuth()
@@ -95,20 +116,40 @@ export class EquipoController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Editar datos de un empleado' })
+    @ApiOperation({ summary: 'Editar datos de un empleado con imagen (multipart/form-data)' })
+    @ApiConsumes('multipart/form-data')
     @ApiParam({ name: 'id_empleado', description: 'ID del empleado' })
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                data: { type: 'string', description: 'JSON stringificado con los datos a actualizar (UpdateEmpleadoDtoImpl)' },
+                image_file: { type: 'string', format: 'binary', description: 'Nueva imagen del empleado' },
+            },
+            required: ['data'],
+        },
+    })
     @ApiResponse({ status: 200, description: 'Empleado actualizado' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
     @Roles(Rol.ADMIN, Rol.SUPERADMIN)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Put('/empleado/editar/:id_empleado')
+    @UseInterceptors(FileFieldsInterceptor([{ name: 'image_file', maxCount: 1 }]))
     updateEmpleado(
         @Req() req: Request,
         @Param('id_empleado') id_empleado: string,
-        @Body() updateEmpleadoDto: UpdateEmpleadoDtoImpl,
+        @Body('data') dataString: string,
+        @UploadedFiles() files: { image_file?: Express.Multer.File[] },
     ) {
         const id_usuario = (req as any).user?.id;
-        return this.equipoService.updateEmpleado(id_usuario, id_empleado, updateEmpleadoDto);
+        if (!dataString) throw new BadRequestException('El campo "data" es requerido en el FormData');
+        let updateEmpleadoDto: UpdateEmpleadoDtoImpl;
+        try {
+            updateEmpleadoDto = JSON.parse(dataString);
+        } catch {
+            throw new BadRequestException('El campo "data" no es un JSON válido');
+        }
+        return this.equipoService.updateEmpleado(id_usuario, id_empleado, updateEmpleadoDto, files);
     }
 
     @ApiBearerAuth()

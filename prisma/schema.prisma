@@ -118,9 +118,9 @@ model Empleado {
   especialidad           String?
   descripcion            String?
   orden                  Int?
-  activo                 Boolean 
-  img_url                String
-  img_alt                String
+  activo                 Boolean
+  img_url                String?
+  img_alt                String?
   slug                   String?
   equipo_id              String
   //REL M:N

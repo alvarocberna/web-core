@@ -56,12 +56,14 @@ export class CreateEmpleadoDtoImpl implements CreateEmpleadoDto {
     @IsBoolean()
     activo: boolean;
 
-    @ApiProperty({ example: 'https://example.com/foto.jpg' })
+    @ApiPropertyOptional({ example: 'https://example.com/foto.jpg' })
+    @IsOptional()
     @IsString()
     @MaxLength(500)
     img_url: string;
 
-    @ApiProperty({ example: 'Foto de Juan Pérez' })
+    @ApiPropertyOptional({ example: 'Foto de Juan Pérez' })
+    @IsOptional()
     @IsString()
     @MaxLength(200)
     img_alt: string;

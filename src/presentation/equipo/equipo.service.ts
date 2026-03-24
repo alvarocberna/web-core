@@ -3,11 +3,14 @@ import { CreateEquipoDtoImpl } from './dto/create-equipo.dto';
 import { UpdateEquipoDtoImpl } from './dto/update-equipo.dto';
 import { CreateEmpleadoDtoImpl } from './dto/create-empleado.dto';
 import { UpdateEmpleadoDtoImpl } from './dto/update-empleado.dto';
-import { EquipoRepositoryService } from 'src/infrastructure';
+import { EquipoRepositoryService, ImageStorageRepositoryService } from 'src/infrastructure';
 
 @Injectable()
 export class EquipoService {
-    constructor(private readonly equipoRepository: EquipoRepositoryService) {}
+    constructor(
+        private readonly equipoRepository: EquipoRepositoryService,
+        private readonly imageStorage: ImageStorageRepositoryService,
+    ) {}
 
     // ─── Equipo (Entidad padre) ──────────────────────────────────────────────────
 
@@ -25,7 +28,15 @@ export class EquipoService {
 
     // ─── Empleado (entidad hijo) ─────────────────────────────────────────────────
 
-    createEmpleado(id_usuario: string, createEmpleadoDto: CreateEmpleadoDtoImpl) {
+    async createEmpleado(
+        id_usuario: string,
+        createEmpleadoDto: CreateEmpleadoDtoImpl,
+        files?: { image_file?: Express.Multer.File[] },
+    ) {
+        if (files?.image_file?.[0]) {
+            const imageUrl = await this.imageStorage.saveImage(files.image_file[0]);
+            createEmpleadoDto.img_url = imageUrl;
+        }
         return this.equipoRepository.createEmpleado(id_usuario, createEmpleadoDto);
     }
 
@@ -33,7 +44,16 @@ export class EquipoService {
         return this.equipoRepository.getEmpleado(id_usuario, id_empleado);
     }
 
-    updateEmpleado(id_usuario: string, id_empleado: string, updateEmpleadoDto: UpdateEmpleadoDtoImpl) {
+    async updateEmpleado(
+        id_usuario: string,
+        id_empleado: string,
+        updateEmpleadoDto: UpdateEmpleadoDtoImpl,
+        files?: { image_file?: Express.Multer.File[] },
+    ) {
+        if (files?.image_file?.[0]) {
+            const imageUrl = await this.imageStorage.saveImage(files.image_file[0]);
+            updateEmpleadoDto.img_url = imageUrl;
+        }
         return this.equipoRepository.updateEmpleado(id_usuario, id_empleado, updateEmpleadoDto);
     }
 

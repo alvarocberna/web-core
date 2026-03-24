@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Body, Put, Param, Delete, Req, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Delete, Req, UseGuards, Query, UseInterceptors, UploadedFiles } from '@nestjs/common';
 import { BadRequestException } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiQuery, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { ServiciosService } from './servicios.service';
 import { CreateServiciosDtoImpl } from './dto/create-servicios.dto';
 import { UpdateServiciosDtoImpl } from './dto/update-servicios.dto';
@@ -64,18 +65,38 @@ export class ServiciosController {
     // ─── Servicio (entidad hijo) ─────────────────────────────────────────────────
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Crear un nuevo servicio' })
+    @ApiOperation({ summary: 'Crear un nuevo servicio con imagen (multipart/form-data)' })
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                data: { type: 'string', description: 'JSON stringificado con los datos del servicio (CreateServicioDtoImpl)' },
+                image_file: { type: 'string', format: 'binary', description: 'Imagen del servicio' },
+            },
+            required: ['data'],
+        },
+    })
     @ApiResponse({ status: 201, description: 'Servicio creado' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
     @Roles(Rol.ADMIN, Rol.SUPERADMIN)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('/servicio/crear')
+    @UseInterceptors(FileFieldsInterceptor([{ name: 'image_file', maxCount: 1 }]))
     createServicio(
         @Req() req: Request,
-        @Body() createServicioDto: CreateServicioDtoImpl,
+        @Body('data') dataString: string,
+        @UploadedFiles() files: { image_file?: Express.Multer.File[] },
     ) {
         const id_usuario = (req as any).user?.id;
-        return this.serviciosService.createServicio(id_usuario, createServicioDto);
+        if (!dataString) throw new BadRequestException('El campo "data" es requerido en el FormData');
+        let createServicioDto: CreateServicioDtoImpl;
+        try {
+            createServicioDto = JSON.parse(dataString);
+        } catch {
+            throw new BadRequestException('El campo "data" no es un JSON válido');
+        }
+        return this.serviciosService.createServicio(id_usuario, createServicioDto, files);
     }
 
     @ApiBearerAuth()
@@ -95,20 +116,40 @@ export class ServiciosController {
     }
 
     @ApiBearerAuth()
-    @ApiOperation({ summary: 'Editar datos de un servicio' })
+    @ApiOperation({ summary: 'Editar datos de un servicio con imagen (multipart/form-data)' })
+    @ApiConsumes('multipart/form-data')
     @ApiParam({ name: 'id_servicio', description: 'ID del servicio' })
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                data: { type: 'string', description: 'JSON stringificado con los datos a actualizar (UpdateServicioDtoImpl)' },
+                image_file: { type: 'string', format: 'binary', description: 'Nueva imagen del servicio' },
+            },
+            required: ['data'],
+        },
+    })
     @ApiResponse({ status: 200, description: 'Servicio actualizado' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
     @Roles(Rol.ADMIN, Rol.SUPERADMIN)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Put('/servicio/editar/:id_servicio')
+    @UseInterceptors(FileFieldsInterceptor([{ name: 'image_file', maxCount: 1 }]))
     updateServicio(
         @Req() req: Request,
         @Param('id_servicio') id_servicio: string,
-        @Body() updateServicioDto: UpdateServicioDtoImpl,
+        @Body('data') dataString: string,
+        @UploadedFiles() files: { image_file?: Express.Multer.File[] },
     ) {
         const id_usuario = (req as any).user?.id;
-        return this.serviciosService.updateServicio(id_usuario, id_servicio, updateServicioDto);
+        if (!dataString) throw new BadRequestException('El campo "data" es requerido en el FormData');
+        let updateServicioDto: UpdateServicioDtoImpl;
+        try {
+            updateServicioDto = JSON.parse(dataString);
+        } catch {
+            throw new BadRequestException('El campo "data" no es un JSON válido');
+        }
+        return this.serviciosService.updateServicio(id_usuario, id_servicio, updateServicioDto, files);
     }
 
     @ApiBearerAuth()
