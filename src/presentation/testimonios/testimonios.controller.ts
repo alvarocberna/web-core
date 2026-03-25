@@ -95,7 +95,6 @@ export class TestimoniosController {
 
     // ─── Ruta pública: ver testimonios desde projects publicos ─────────────────────────
 
-    @ApiBearerAuth()
     @ApiOperation({ summary: 'Obtener la info de la sec testimonios y de los testimonios por proyecto (público)' })
     @ApiQuery({ name: 'usuario_id', required: false, description: 'ID del usuario' })
     @ApiResponse({ status: 200, description: 'Sec testimonios y lista de testimonios' })
@@ -107,5 +106,20 @@ export class TestimoniosController {
         const id_usuario = usuario_id;
         if (!id_usuario) throw new BadRequestException('id de usuario no encontrado');
         return this.testimoniosService.find(id_usuario);
+    }
+
+
+    @ApiOperation({ summary: 'Enviar un nuevo testimonio (público)' })
+    @ApiQuery({ name: 'usuario_id', required: false, description: 'ID del usuario' })
+    @ApiResponse({ status: 201, description: 'Testimonio enviado exitosamente' })
+    @Public()
+    @Post('/project/testimonio/crear')
+    createTestimonioPublic(
+        @Body() createTestimonioDto: CreateTestimonioDtoImpl,
+        @Query('usuario_id') usuario_id: string,
+    ) {
+        const id_usuario = usuario_id;
+        if (!id_usuario) throw new BadRequestException('id de usuario no encontrado');
+        return this.testimoniosService.createTestimonio(id_usuario, createTestimonioDto);
     }
 }

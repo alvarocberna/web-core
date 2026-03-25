@@ -41,25 +41,21 @@ async function bootstrap() {
 
   app.use(cookieParser());
 
-  const authLimiter = rateLimit({
-    // windowMs: 15 * 60 * 1000, // 15 minutes
-    // max: 10, // limit each IP to 10 requests per window per route
-    // standardHeaders: true,
-    // legacyHeaders: false,
-    // message: 'Too many requests from this IP, please try again later.'
+  const limiter = rateLimit({
       windowMs: 15 * 60 * 1000,
       max: 10,
       standardHeaders: true,
       legacyHeaders: false,
-      skip: (req) => req.method === 'OPTIONS', // 👈 CLAVE
+      skip: (req) => req.method === 'OPTIONS',
   });
 
   // Apply limiter to sensitive auth routes
-  app.use('/auth/login', authLimiter);
-  app.use('/usuario/admin/create-user', authLimiter);
-  app.use('/usuario/user/create-user', authLimiter);
+  app.use('/auth/login', limiter);
+  app.use('/usuario/admin/create-user', limiter);
+  app.use('/usuario/user/create-user', limiter);
+  app.use('/testimonios/project/testimonio/crear', limiter);
 
-    //habilitamos Prisma Filter personalizado para manejar exceptions de Prisma
+  //habilitamos Prisma Filter personalizado para manejar exceptions de Prisma
   app.useGlobalFilters(new HttpExceptionFilter());
   //habilitamos los pipes de nest para convertir tipos de datos en el DTO
   app.useGlobalPipes(
