@@ -136,9 +136,65 @@ HTTP POST /articulos/articulo/crear
 
 ---
 
+## 4. Capa Común (`src/common/`)
+
+Utilidades y decoradores transversales compartidos por todas las capas. No pertenecen a ningún módulo de negocio concreto.
+
+```
+src/common/
+├── decorators/
+│   └── sanitize.decorator.ts   ← Decoradores de transformación para DTOs
+└── utils/
+    └── sanitize.util.ts        ← Funciones de sanitización basadas en sanitize-html
+```
+
+### Sanitización de entrada
+
+Todos los datos de texto que llegan a la API son sanitizados en los DTOs antes de alcanzar la capa de dominio. La sanitización se aplica mediante decoradores de `class-transformer` y se ejecuta automáticamente en el pipe global de validación.
+
+#### Utilidades (`sanitize.util.ts`)
+
+| Función | Descripción | Uso recomendado |
+|---------|-------------|-----------------|
+| `stripHtml(value)` | Elimina todas las etiquetas HTML; devuelve texto plano | Nombres, títulos, descripciones |
+| `sanitizeRichHtml(value)` | Permite un subconjunto seguro de etiquetas HTML; bloquea scripts, event handlers y protocolos peligrosos | Contenido de secciones con editor rich-text |
+| `sanitizeUrl(value)` | Elimina URLs con protocolos peligrosos (`javascript:`, `data:`, `vbscript:`); devuelve cadena vacía si el protocolo es peligroso | Campos `img_url`, `image_url` |
+
+**Etiquetas permitidas por `sanitizeRichHtml`:** `p`, `h1`–`h6`, `strong`, `em`, `b`, `i`, `u`, `s`, `mark`, `code`, `pre`, `blockquote`, `ul`, `ol`, `li`, `a`, `br`, `hr`, `span`, `div`, `img`, `table`, `thead`, `tbody`, `tr`, `th`, `td`.
+
+**Esquemas de URL permitidos:** `http`, `https`, `mailto`.
+
+#### Decoradores (`sanitize.decorator.ts`)
+
+| Decorador | Función subyacente | Cuándo usarlo |
+|-----------|-------------------|---------------|
+| `@Sanitize()` | `stripHtml` | Cualquier campo de texto plano |
+| `@SanitizeRich()` | `sanitizeRichHtml` | Campos con contenido HTML de editores rich-text |
+| `@SanitizeUrl()` | `sanitizeUrl` | Campos que contienen URLs de imágenes o enlaces |
+
+**Ejemplo de uso en un DTO:**
+
+```typescript
+import { Sanitize, SanitizeRich, SanitizeUrl } from 'src/common/decorators/sanitize.decorator';
+
+export class CreateArticuloDto {
+  @Sanitize()
+  titulo: string;
+
+  @SanitizeRich()
+  contenido_sec: string;
+
+  @SanitizeUrl()
+  img_url: string;
+}
+```
+
+---
+
 ## Convenciones de código
 
 - Los DTOs usan `class-validator` con `whitelist: true` (propiedades no declaradas son ignoradas).
 - Los IDs son UUIDs v4 generados con `UuidAdapter`.
 - Las contraseñas nunca se retornan en las respuestas (excluidas manualmente en el servicio).
 - Los tokens se almacenan únicamente como hash (bcrypt) en la base de datos.
+- Los campos de texto en los DTOs se sanitizan con los decoradores de `src/common/decorators/sanitize.decorator.ts` antes de llegar a la capa de dominio.

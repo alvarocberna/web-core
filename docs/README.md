@@ -45,4 +45,4 @@ Swagger disponible en `http://localhost:3001/api/docs`.
 - **ORM:** Prisma 6 + PostgreSQL
 - **Auth:** JWT (access 15 min / refresh 7 días) vía cookies HTTP-only
 - **Storage:** AWS S3 (fallback: disco local `/uploads`)
-- **Seguridad:** Helmet, CSRF guard, Rate limiting, CORS
+- **Seguridad:** Helmet, CSRF guard, Rate limiting, CORS, Sanitización de entrada (XSS)
