@@ -1,8 +1,11 @@
-import { IsString, IsDate, IsBoolean, IsNumber, ValidateNested, IsOptional } from 'class-validator';
+import { IsEnum, IsString, IsDate, IsBoolean, IsNumber, ValidateNested, IsOptional, MinLength, MaxLength } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 //domain
 import { UpdateArticuloDto, UpdateSecArticuloDto } from "src/domain";
+import { ArticuloStatus } from 'src/domain/enums/articulo-status.enum';
+//sanitize
+import { Sanitize, SanitizeRich, SanitizeUrl } from 'src/common/decorators/sanitize.decorator';
 
 export class UpdateSecArticuloDtoImpl implements UpdateSecArticuloDto {
     @ApiProperty({ example: 'uuid-de-la-seccion' })
@@ -15,40 +18,52 @@ export class UpdateSecArticuloDtoImpl implements UpdateSecArticuloDto {
     nro_seccion: number;
 
     @ApiProperty({ example: 'Título de la sección' })
+    @Sanitize()
     @IsString()
     titulo_sec: string;
 
     @ApiProperty({ example: 'Contenido de la sección...' })
+    @SanitizeRich()
     @IsString()
+    @MaxLength(50000)
     contenido_sec: string;
 
     @ApiPropertyOptional({ example: 'https://example.com/image.jpg' })
     @IsOptional()
+    @SanitizeUrl()
     @IsString()
+    @MaxLength(500)
     image_url: string | null;
 
     @ApiPropertyOptional({ example: 'Texto alternativo' })
     @IsOptional()
+    @Sanitize()
     @IsString()
+    @MaxLength(300)
     image_alt: string | null;
 
     @ApiPropertyOptional({ example: 'center' })
     @IsOptional()
+    @Sanitize()
     @IsString()
+    @MaxLength(50)
     image_position: string | null;
 }
 
 export class UpdateArticuloDtoImpl implements UpdateArticuloDto {
     @ApiProperty({ example: 'Título actualizado' })
+    @Sanitize()
     @IsString()
     titulo: string;
 
     @ApiPropertyOptional({ example: 'Subtítulo actualizado' })
     @IsOptional()
+    @Sanitize()
     @IsString()
     subtitulo: string | null;
 
     @ApiProperty({ example: 'Juan García' })
+    @Sanitize()
     @IsString()
     autor: string;
 
@@ -62,31 +77,38 @@ export class UpdateArticuloDtoImpl implements UpdateArticuloDto {
     @IsDate()
     fecha_actualizacion: Date | null;
 
-    @ApiProperty({ example: 'PUBLISHED', enum: ['PUBLISHED', 'DRAFT'] })
-    @IsString()
-    status: string;
+    @ApiProperty({ example: 'PUBLISHED', enum: ArticuloStatus })
+    @IsEnum(ArticuloStatus)
+    status: ArticuloStatus;
 
     @ApiProperty({ example: true })
     @IsBoolean()
     activo: boolean;
 
     @ApiProperty({ example: 'titulo-actualizado' })
+    @Sanitize()
     @IsString()
     slug: string;
 
     @ApiPropertyOptional({ example: 'https://example.com/image.jpg' })
     @IsOptional()
+    @SanitizeUrl()
     @IsString()
+    @MaxLength(500)
     image_url: string | null;
 
     @ApiPropertyOptional({ example: 'Texto alternativo' })
     @IsOptional()
+    @Sanitize()
     @IsString()
+    @MaxLength(300)
     image_alt: string | null;
 
     @ApiPropertyOptional({ example: 'center' })
     @IsOptional()
+    @Sanitize()
     @IsString()
+    @MaxLength(50)
     image_position: string | null;
 
     @ApiProperty({ type: [UpdateSecArticuloDtoImpl] })

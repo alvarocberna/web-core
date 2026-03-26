@@ -1,15 +1,20 @@
-import { IsString, IsEmail, IsInt, IsOptional, Min, Max, MinLength, MaxLength } from 'class-validator';
+import { IsEnum, IsString, IsEmail, IsInt, IsOptional, Min, Max, MinLength, MaxLength } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { CreateTestimonioDto } from 'src/domain';
+import { TestimonioStatus } from 'src/domain/enums/testimonio-status.enum';
+//sanitize
+import { Sanitize } from 'src/common/decorators/sanitize.decorator';
 
 export class CreateTestimonioDtoImpl implements CreateTestimonioDto {
     @ApiProperty({ example: 'Juan' })
+    @Sanitize()
     @IsString()
     @MinLength(1)
     @MaxLength(100)
     nombre: string;
 
     @ApiProperty({ example: 'García' })
+    @Sanitize()
     @IsString()
     @MinLength(1)
     @MaxLength(100)
@@ -21,6 +26,7 @@ export class CreateTestimonioDtoImpl implements CreateTestimonioDto {
     correo: string;
 
     @ApiProperty({ example: 'Excelente servicio, muy recomendado.' })
+    @Sanitize()
     @IsString()
     @MinLength(1)
     @MaxLength(1000)
@@ -33,9 +39,7 @@ export class CreateTestimonioDtoImpl implements CreateTestimonioDto {
     @Max(5)
     calificacion: number | null;
 
-    @ApiProperty({ example: 'pending' })
-    @IsString()
-    @MinLength(1)
-    @MaxLength(100)
-    status: string;
+    @ApiProperty({ example: 'pending', enum: TestimonioStatus })
+    @IsEnum(TestimonioStatus)
+    status: TestimonioStatus;
 }

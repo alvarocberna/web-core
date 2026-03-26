@@ -2,9 +2,12 @@ import { IsInt, IsBoolean, IsOptional, IsString, MinLength, MaxLength } from 'cl
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UpdateEmpleadoDto } from 'src/domain';
+//sanitize
+import { Sanitize, SanitizeUrl } from 'src/common/decorators/sanitize.decorator';
 
 export class UpdateEmpleadoDtoImpl implements UpdateEmpleadoDto {
     @ApiProperty({ example: 'Juan' })
+    @Sanitize()
     @IsString()
     @MinLength(1)
     @MaxLength(100)
@@ -12,11 +15,13 @@ export class UpdateEmpleadoDtoImpl implements UpdateEmpleadoDto {
 
     @ApiPropertyOptional({ example: 'Carlos' })
     @IsOptional()
+    @Sanitize()
     @IsString()
     @MaxLength(100)
     nombre_segundo: string | null;
 
     @ApiProperty({ example: 'Pérez' })
+    @Sanitize()
     @IsString()
     @MinLength(1)
     @MaxLength(100)
@@ -24,11 +29,13 @@ export class UpdateEmpleadoDtoImpl implements UpdateEmpleadoDto {
 
     @ApiPropertyOptional({ example: 'García' })
     @IsOptional()
+    @Sanitize()
     @IsString()
     @MaxLength(100)
     apellido_materno: string | null;
 
     @ApiProperty({ example: 'Desarrollador' })
+    @Sanitize()
     @IsString()
     @MinLength(1)
     @MaxLength(200)
@@ -36,12 +43,14 @@ export class UpdateEmpleadoDtoImpl implements UpdateEmpleadoDto {
 
     @ApiPropertyOptional({ example: 'Frontend' })
     @IsOptional()
+    @Sanitize()
     @IsString()
     @MaxLength(200)
     especialidad: string | null;
 
     @ApiPropertyOptional({ example: 'Especialista en interfaces de usuario' })
     @IsOptional()
+    @Sanitize()
     @IsString()
     @MaxLength(500)
     descripcion: string | null;
@@ -58,18 +67,21 @@ export class UpdateEmpleadoDtoImpl implements UpdateEmpleadoDto {
 
     @ApiPropertyOptional({ example: 'https://example.com/foto.jpg' })
     @IsOptional()
+    @SanitizeUrl()
     @IsString()
     @MaxLength(500)
     img_url: string;
 
     @ApiPropertyOptional({ example: 'Foto de Juan Pérez' })
     @IsOptional()
+    @Sanitize()
     @IsString()
     @MaxLength(200)
     img_alt: string;
 
     @ApiPropertyOptional({ example: 'juan-perez' })
     @IsOptional()
+    @Sanitize()
     @IsString()
     @MaxLength(200)
     slug: string | null;

@@ -11,9 +11,9 @@ datasource db {
 
 model Proyecto {
   id                      String   @id @default(uuid())
-  nombre_proyecto         String
-  descripcion             String
-  cliente                 String
+  nombre_proyecto         String   @db.VarChar(200)
+  descripcion             String   @db.VarChar(500)
+  cliente                 String 
   fecha_inicio            DateTime
   activo                  Boolean    @default(true)
   //REL N:M 
@@ -27,13 +27,13 @@ model Proyecto {
 
 model Usuario {
   id                     String   @id @default(uuid())
-  nombre                 String
-  apellido               String
+  nombre                 String   @db.VarChar(50)
+  apellido               String   @db.VarChar(50)
   email                  String   @unique
   fechaCreacion          DateTime
-  password               String
+  password               String   
   hashedRt               String?
-  rol                    String
+  rol                    String   
   proyecto_id            String
   //REL M:N
   proyecto               Proyecto @relation(name: "fk_usu_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
@@ -44,8 +44,8 @@ model Usuario {
 
 model Articulos {
   id                    String     @id @default(uuid())
-  titulo                String     @default("Articulos")
-  descripcion           String?
+  titulo                String     @default("Articulos") @db.VarChar(200)
+  descripcion           String?    @db.VarChar(500)
   activo                Boolean    @default(true)
   aprobar               Boolean    @default(false)   
   habilitado            Boolean    @default(true)
@@ -60,8 +60,8 @@ model Articulos {
 model Articulo {
     id                   String              @id @default(uuid())
     nro_articulo         Int
-    titulo               String
-    subtitulo            String?
+    titulo               String              @db.VarChar(200)
+    subtitulo            String?             @db.VarChar(500)
     autor                String
     fecha_publicacion    DateTime
     fecha_actualizacion  DateTime?
@@ -84,8 +84,8 @@ model Articulo {
 model SecArticulo {
     id                   String    @id @default(uuid())
     nro_seccion          Int
-    titulo_sec           String
-    contenido_sec        String
+    titulo_sec           String    @db.VarChar(200)
+    contenido_sec        String   
     image_url            String?
     image_alt            String?
     image_position       String?
@@ -96,11 +96,11 @@ model SecArticulo {
 
 model Equipo {
   id                     String     @id @default(uuid())
-  titulo                 String     @default("Equipo")
-  descripcion            String?  
+  titulo                 String     @default("Equipo")      @db.VarChar(200)
+  descripcion            String?                            @db.VarChar(500)
   activo                 Boolean    @default(true)
   notificacion           Boolean    @default(false)
-  habilitado            Boolean    @default(true)
+  habilitado             Boolean    @default(true)
   proyecto_id            String
   //REL M:N
   proyecto               Proyecto @relation(name: "fk_equ_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
@@ -109,14 +109,14 @@ model Equipo {
 }
 
 model Empleado {
-  id                     String  @id @default(uuid())
-  nombre_primero         String
-  nombre_segundo         String?
-  apellido_paterno       String
-  apellido_materno       String?
-  profesion              String
-  especialidad           String?
-  descripcion            String?
+  id                     String   @id @default(uuid())
+  nombre_primero         String   @db.VarChar(50)
+  nombre_segundo         String?  @db.VarChar(50)
+  apellido_paterno       String   @db.VarChar(50)
+  apellido_materno       String?  @db.VarChar(50)
+  profesion              String   @db.VarChar(100)
+  especialidad           String?  @db.VarChar(200)
+  descripcion            String?  @db.VarChar(500)
   orden                  Int?
   activo                 Boolean
   img_url                String?
@@ -129,9 +129,9 @@ model Empleado {
 
 model Servicios {
   id                    String     @id @default(uuid())
-  titulo                String     @default("Servicios")
-  descripcion           String?
-  icono                 String?
+  titulo                String     @default("Servicios") @db.VarChar(200)
+  descripcion           String?    @db.VarChar(500)
+  icono                 String?    
   activo                Boolean    @default(true)
   notificacion          Boolean    @default(false)
   habilitado            Boolean    @default(true)
@@ -144,10 +144,10 @@ model Servicios {
 
 model Servicio {
   id                    String   @id @default(uuid())
-  nombre_servicio       String
-  descripcion           String?
-  valor                 String?
-  nombre_promocion      String?
+  nombre_servicio       String   @db.VarChar(200)
+  descripcion           String?  @db.VarChar(500)
+  valor                 String?  
+  nombre_promocion      String?  @db.VarChar(200)
   porcentaje_descuento  Int?
   destacado             Boolean?
   icono                 String?
@@ -162,8 +162,8 @@ model Servicio {
 
 model Testimonios {
   id                    String      @id @default(uuid())
-  titulo                String      @default("Testimonios")
-  descripcion           String?
+  titulo                String      @default("Testimonios") @db.VarChar(200)
+  descripcion           String?     @db.VarChar(500)
   activo                Boolean     @default(true)
   aprobar               Boolean     @default(false)
   notificacion          Boolean     @default(false)
@@ -177,10 +177,10 @@ model Testimonios {
 
 model Testimonio {
   id              String     @id @default(uuid())
-  nombre          String
-  apellido        String
-  correo          String
-  descripcion     String
+  nombre          String     @db.VarChar(50)
+  apellido        String     @db.VarChar(50)
+  correo          String     @db.VarChar(100)
+  descripcion     String     @db.VarChar(500)
   calificacion    Int?
   status          String
   fecha_creacion  DateTime
@@ -191,7 +191,7 @@ model Testimonio {
 
 model Actividad {
     id                    String   @id @default(uuid())
-    accion                String
+    accion                String   
     titulo_articulo       String
     responsable           String
     fecha                 DateTime
