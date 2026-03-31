@@ -1,4 +1,4 @@
-import { IsInt, IsBoolean, IsOptional, IsString, MinLength, MaxLength } from 'class-validator';
+import { IsInt, IsBoolean, IsOptional, IsString, IsNumber, MinLength, MaxLength } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { CreateServicioDto } from 'src/domain';
@@ -20,12 +20,11 @@ export class CreateServicioDtoImpl implements CreateServicioDto {
     @MaxLength(500)
     descripcion: string | null;
 
-    @ApiPropertyOptional({ example: '1500' })
+    @ApiPropertyOptional({ example: 10000 })
     @IsOptional()
-    @Sanitize()
-    @IsString()
-    @MaxLength(100)
-    valor: string | null;
+    @Type(() => Number)
+    @IsInt()
+    valor: number | null;
 
     @ApiPropertyOptional({ example: 'Promo verano' })
     @IsOptional()
@@ -61,6 +60,12 @@ export class CreateServicioDtoImpl implements CreateServicioDto {
     @ApiProperty({ example: true })
     @IsBoolean()
     activo: boolean;
+
+    @ApiPropertyOptional({ example: 'juan-perez' })
+    @Sanitize()
+    @IsString()
+    @MaxLength(300)
+    slug: string;
 
     @ApiPropertyOptional({ example: 'https://example.com/servicio.jpg' })
     @IsOptional()

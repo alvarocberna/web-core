@@ -65,6 +65,13 @@ export class UpdateEmpleadoDtoImpl implements UpdateEmpleadoDto {
     @IsBoolean()
     activo?: boolean;
 
+    @ApiPropertyOptional({ example: 'juan-perez' })
+    @IsOptional()
+    @Sanitize()
+    @IsString()
+    @MaxLength(300)
+    slug?: string;
+
     @ApiPropertyOptional({ example: 'https://example.com/foto.jpg' })
     @IsOptional()
     @SanitizeUrl()
@@ -79,10 +86,4 @@ export class UpdateEmpleadoDtoImpl implements UpdateEmpleadoDto {
     @MaxLength(100)
     img_alt?: string;
 
-    @ApiPropertyOptional({ example: 'juan-perez' })
-    @IsOptional()
-    @Sanitize()
-    @IsString()
-    @MaxLength(200)
-    slug?: string;
 }

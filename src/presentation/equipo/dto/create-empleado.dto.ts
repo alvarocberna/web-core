@@ -64,6 +64,12 @@ export class CreateEmpleadoDtoImpl implements CreateEmpleadoDto {
     @IsBoolean()
     activo: boolean;
 
+    @ApiPropertyOptional({ example: 'juan-perez' })
+    @Sanitize()
+    @IsString()
+    @MaxLength(300)
+    slug: string;
+
     @ApiPropertyOptional({ example: 'https://example.com/foto.jpg' })
     @IsOptional()
     @SanitizeUrl()
@@ -78,10 +84,4 @@ export class CreateEmpleadoDtoImpl implements CreateEmpleadoDto {
     @MaxLength(100)
     img_alt: string | null;
 
-    @ApiPropertyOptional({ example: 'juan-perez' })
-    @IsOptional()
-    @Sanitize()
-    @IsString()
-    @MaxLength(300)
-    slug: string | null;
 }

@@ -121,9 +121,9 @@ model Empleado {
   descripcion            String?  @db.VarChar(500)
   orden                  Int?
   activo                 Boolean
+  slug                   String   @default("")  
   img_url                String?
   img_alt                String?
-  slug                   String?
   equipo_id              String
   //REL M:N
   equipo                 Equipo @relation(name: "fk_emp_equ", fields: [equipo_id], references: [id], onDelete: Cascade)
@@ -148,13 +148,14 @@ model Servicio {
   id                    String   @id @default(uuid())
   nombre_servicio       String   @db.VarChar(200)
   descripcion           String?  @db.VarChar(500)
-  valor                 String?  
+  valor                 Int?  
   nombre_promocion      String?  @db.VarChar(200)
   porcentaje_descuento  Int?
   destacado             Boolean
   icono                 String?
   orden                 Int?
   activo                Boolean
+  slug                  String  @default("-")  
   img_url               String?
   img_alt               String?
   servicios_id          String

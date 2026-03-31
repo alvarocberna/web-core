@@ -20,12 +20,11 @@ export class UpdateServicioDtoImpl implements UpdateServicioDto {
     @MaxLength(500)
     descripcion?: string;
 
-    @ApiPropertyOptional({ example: '1500' })
+    @ApiPropertyOptional({ example: 10000 })
     @IsOptional()
-    @Sanitize()
-    @IsString()
-    @MaxLength(100)
-    valor?: string;
+    @Type(() => Number)
+    @IsInt()
+    valor?: number;
 
     @ApiPropertyOptional({ example: 'Promo verano' })
     @IsOptional()
@@ -61,6 +60,13 @@ export class UpdateServicioDtoImpl implements UpdateServicioDto {
     @ApiPropertyOptional({ example: true })
     @IsBoolean()
     activo?: boolean;
+
+    @ApiPropertyOptional({ example: 'juan-perez' })
+    @IsOptional()
+    @Sanitize()
+    @IsString()
+    @MaxLength(300)
+    slug: string;
 
     @ApiPropertyOptional({ example: 'https://example.com/servicio.jpg' })
     @IsOptional()

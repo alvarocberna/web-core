@@ -19,6 +19,35 @@ import { Rol } from '../../domain';
 export class ServiciosController {
     constructor(private readonly serviciosService: ServiciosService) {}
 
+    private parseOptionalIntField(value: unknown, fieldName: string): number | undefined {
+        if (value === undefined || value === null) return undefined;
+
+        if (typeof value === 'number') {
+            if (!Number.isInteger(value)) {
+                throw new BadRequestException(`El campo "${fieldName}" debe ser un entero válido`);
+            }
+            return value;
+        }
+
+        if (typeof value === 'string') {
+            const trimmed = value.trim();
+            if (!trimmed) return undefined;
+
+            if (!/^-?\d+$/.test(trimmed)) {
+                throw new BadRequestException(`El campo "${fieldName}" debe ser un entero válido`);
+            }
+
+            const parsed = Number(trimmed);
+            if (!Number.isSafeInteger(parsed)) {
+                throw new BadRequestException(`El campo "${fieldName}" está fuera de rango`);
+            }
+
+            return parsed;
+        }
+
+        throw new BadRequestException(`El campo "${fieldName}" debe ser numérico`);
+    }
+
     // ─── Servicios (entidad padre) ───────────────────────────────────────────────
 
     @ApiBearerAuth()
@@ -94,7 +123,10 @@ export class ServiciosController {
         let createServicioDto: CreateServicioDtoImpl;
         try {
             createServicioDto = JSON.parse(dataString);
-        } catch {
+        } catch (error) {
+            if (error instanceof BadRequestException) {
+                throw error;
+            }
             throw new BadRequestException('El campo "data" no es un JSON válido');
         }
         return this.serviciosService.createServicio(id_usuario, createServicioDto, files);
@@ -147,6 +179,11 @@ export class ServiciosController {
         let updateServicioDto: UpdateServicioDtoImpl;
         try {
             updateServicioDto = JSON.parse(dataString);
+            updateServicioDto.valor = this.parseOptionalIntField(updateServicioDto.valor, 'valor');
+            updateServicioDto.porcentaje_descuento = this.parseOptionalIntField(
+                updateServicioDto.porcentaje_descuento,
+                'porcentaje_descuento',
+            );
         } catch {
             throw new BadRequestException('El campo "data" no es un JSON válido');
         }
