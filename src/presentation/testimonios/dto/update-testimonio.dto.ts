@@ -6,40 +6,42 @@ import { TestimonioStatus } from 'src/domain/enums/testimonio-status.enum';
 import { Sanitize } from 'src/common/decorators/sanitize.decorator';
 
 export class UpdateTestimonioDtoImpl implements UpdateTestimonioDto {
-    @ApiProperty({ example: 'Juan' })
+    @ApiPropertyOptional({ example: 'Juan' })
+    @IsOptional()
     @Sanitize()
     @IsString()
-    @MinLength(1)
-    @MaxLength(100)
-    nombre: string;
+    @MaxLength(50)
+    nombre?: string;
 
-    @ApiProperty({ example: 'García' })
+    @ApiPropertyOptional({ example: 'García' })
+    @IsOptional()
     @Sanitize()
     @IsString()
-    @MinLength(1)
-    @MaxLength(100)
-    apellido: string;
+    @MaxLength(50)
+    apellido?: string;
 
-    @ApiProperty({ example: 'juan@example.com' })
+    @ApiPropertyOptional({ example: 'juan@example.com' })
+    @IsOptional()
     @IsEmail()
-    @MaxLength(254)
-    correo: string;
+    @MaxLength(100)
+    correo?: string;
 
-    @ApiProperty({ example: 'Excelente servicio, muy recomendado.' })
+    @ApiPropertyOptional({ example: 'Excelente servicio, muy recomendado.' })
+    @IsOptional()
     @Sanitize()
     @IsString()
-    @MinLength(1)
-    @MaxLength(1000)
-    descripcion: string;
+    @MaxLength(500)
+    descripcion?: string;
 
     @ApiPropertyOptional({ example: 5, minimum: 1, maximum: 5 })
     @IsOptional()
+    @IsOptional()
     @IsInt()
-    @Min(1)
     @Max(5)
-    calificacion: number | null;
+    calificacion?: number;
 
-    @ApiProperty({ example: 'pending', enum: TestimonioStatus })
+    @ApiPropertyOptional({ example: 'pending', enum: TestimonioStatus })
+    @IsOptional()
     @IsEnum(TestimonioStatus)
-    status: TestimonioStatus;
+    status?: TestimonioStatus;
 }

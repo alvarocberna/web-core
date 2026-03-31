@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Put, Param, Delete, Req, UseGuards, Query, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards, Query, UseInterceptors, UploadedFiles } from '@nestjs/common';
 import { BadRequestException } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiQuery, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { imageMulterOptions } from '../../common/utils/multer.config';
 import { ServiciosService } from './servicios.service';
 import { CreateServiciosDtoImpl } from './dto/create-servicios.dto';
 import { UpdateServiciosDtoImpl } from './dto/update-servicios.dto';
@@ -53,7 +54,7 @@ export class ServiciosController {
     @ApiResponse({ status: 401, description: 'No autorizado' })
     @Roles(Rol.ADMIN, Rol.SUPERADMIN)
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Put('/editar')
+    @Patch('/editar')
     update(
         @Req() req: Request,
         @Body() updateServiciosDto: UpdateServiciosDtoImpl,
@@ -82,7 +83,7 @@ export class ServiciosController {
     @Roles(Rol.ADMIN, Rol.SUPERADMIN)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('/servicio/crear')
-    @UseInterceptors(FileFieldsInterceptor([{ name: 'image_file', maxCount: 1 }]))
+    @UseInterceptors(FileFieldsInterceptor([{ name: 'image_file', maxCount: 1 }], imageMulterOptions))
     createServicio(
         @Req() req: Request,
         @Body('data') dataString: string,
@@ -133,8 +134,8 @@ export class ServiciosController {
     @ApiResponse({ status: 401, description: 'No autorizado' })
     @Roles(Rol.ADMIN, Rol.SUPERADMIN)
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Put('/servicio/editar/:id_servicio')
-    @UseInterceptors(FileFieldsInterceptor([{ name: 'image_file', maxCount: 1 }]))
+    @Patch('/servicio/editar/:id_servicio')
+    @UseInterceptors(FileFieldsInterceptor([{ name: 'image_file', maxCount: 1 }], imageMulterOptions))
     updateServicio(
         @Req() req: Request,
         @Param('id_servicio') id_servicio: string,

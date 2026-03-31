@@ -51,6 +51,7 @@ async function bootstrap() {
 
   // Apply limiter to sensitive auth routes
   app.use('/auth/login', limiter);
+  app.use('/auth/refresh', limiter);
   app.use('/usuario/admin/create-user', limiter);
   app.use('/usuario/user/create-user', limiter);
   app.use('/testimonios/project/testimonio/crear', limiter);

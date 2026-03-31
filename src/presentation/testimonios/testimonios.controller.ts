@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Put, Param, Delete, Req, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards, Query } from '@nestjs/common';
 import { BadRequestException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { TestimoniosService } from './testimonios.service';
 import { CreateTestimoniosDtoImpl } from './dto/create-testimonios.dto';
 import { UpdateTestimoniosDtoImpl } from './dto/update-testimonios.dto';
+import { UpdateTestimonioDtoImpl } from './dto/update-testimonio.dto'
 import { CreateTestimonioDtoImpl } from './dto/create-testimonio.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Public } from '../decorators/public.decorator';
@@ -51,7 +52,7 @@ export class TestimoniosController {
     @ApiResponse({ status: 401, description: 'No autorizado' })
     @Roles(Rol.ADMIN, Rol.SUPERADMIN)
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Put('/editar')
+    @Patch('/editar')
     update(
         @Req() req: Request,
         @Body() updateTestimoniosDto: UpdateTestimoniosDtoImpl,
@@ -75,6 +76,21 @@ export class TestimoniosController {
     ) {
         const id_usuario = (req as any).user?.id;
         return this.testimoniosService.createTestimonio(id_usuario, createTestimonioDto);
+    }
+
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Editar status testimonio' })
+    @ApiParam({ name: 'id_testimonio', description: 'ID del testimonio' })
+    @ApiResponse({ status: 201, description: 'Testimonio actualizado exitosamente' })
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Patch('/testimonio/editar/:id_testimonio')
+    updateTestimonio(
+        @Req() req: Request,
+        @Param('id_testimonio') id_testimonio: string,
+        @Body() updateTestimonioDto: UpdateTestimonioDtoImpl,
+    ) {
+        return this.testimoniosService.updateTestimonio(id_testimonio, updateTestimonioDto);
     }
 
     @ApiBearerAuth()

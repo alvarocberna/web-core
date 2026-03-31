@@ -43,7 +43,7 @@ export class CreateServicioDtoImpl implements CreateServicioDto {
     @ApiPropertyOptional({ example: true })
     @IsOptional()
     @IsBoolean()
-    destacado: boolean | null;
+    destacado: boolean;
 
     @ApiPropertyOptional({ example: 'icon-web' })
     @IsOptional()
@@ -73,6 +73,6 @@ export class CreateServicioDtoImpl implements CreateServicioDto {
     @IsOptional()
     @Sanitize()
     @IsString()
-    @MaxLength(200)
+    @MaxLength(100)
     img_alt: string | null;
 }

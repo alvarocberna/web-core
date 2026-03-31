@@ -3,31 +3,30 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UpdateTestimoniosDto } from 'src/domain';
 
 export class UpdateTestimoniosDtoImpl implements UpdateTestimoniosDto {
-    @ApiProperty({ example: 'Lo que dicen nuestros clientes' })
+    @ApiPropertyOptional({ example: 'Lo que dicen nuestros clientes' })
     @IsString()
-    @MinLength(1)
     @MaxLength(200)
-    titulo: string;
+    titulo?: string;
 
     @ApiPropertyOptional({ example: 'Opiniones de clientes satisfechos' })
     @IsOptional()
     @IsString()
     @MaxLength(500)
-    descripcion: string | null;
+    descripcion?: string;
 
-    @ApiProperty({ example: true })
+    @ApiPropertyOptional({ example: true })
     @IsBoolean()
-    activo: boolean;
+    activo?: boolean;
 
-    @ApiProperty({ example: false })
+    @ApiPropertyOptional({ example: false })
     @IsBoolean()
-    aprobar: boolean;
+    aprobar?: boolean;
 
-    @ApiProperty({ example: false })
+    @ApiPropertyOptional({ example: false })
     @IsBoolean()
-    notificacion: boolean;
+    notificacion?: boolean;
 
-    @ApiProperty({ example: true })
+    @ApiPropertyOptional({ example: true })
     @IsBoolean()
-    habilitado: boolean;
+    habilitado?: boolean;
 }

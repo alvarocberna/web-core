@@ -97,15 +97,7 @@ export class UsuarioController {
     @Body() updateUsuarioDto: UpdateUsuarioDtoImpl,
     @Req() req: Request,
   ) {
-    /*Obtenemos el proyecto_id del query si proviene de un proyecto externo (superamin panel)
-    Sino, obtenemos el proyecto_id del req si viene del propio proyecto (admin panel)*/
-    let id_proyecto = '';
-    if(proyecto_id){
-      id_proyecto = proyecto_id;
-    }else{
-      id_proyecto = (req as any).user?.proyecto_id;
-    }
-    return this.usuarioService.update(id_proyecto, usuario_id, updateUsuarioDto);
+    return this.usuarioService.update(usuario_id, updateUsuarioDto);
   }
 
   @ApiBearerAuth()
@@ -152,19 +144,19 @@ export class UsuarioController {
   @ApiResponse({ status: 200, description: 'Información del usuario actualizada' })
   @ApiResponse({ status: 400, description: 'El correo ya está en uso' })
   @ApiResponse({ status: 401, description: 'No autorizado' })
-  @Roles(Rol.USER)
+  @Roles(Rol.USER, Rol.ADMIN, Rol.SUPERADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch('user/editar')
-  updateInfo(@Req() req: Request, @Body() updateUsuarioInfoDto: UpdateUsuarioInfoDtoImpl) {
+  updateInfo(@Req() req: Request, @Body() updateUsuarioDto: UpdateUsuarioDtoImpl) {
     const id_usuario = (req as any).user?.id;
-    return this.usuarioService.updateInfo(id_usuario, updateUsuarioInfoDto);
+    return this.usuarioService.update(id_usuario, updateUsuarioDto);
   }
 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Cambiar contraseña del usuario autenticado' })
   @ApiResponse({ status: 204, description: 'Contraseña actualizada' })
   @ApiResponse({ status: 401, description: 'Contraseña actual incorrecta o no autorizado' })
-  @Roles(Rol.USER)
+  @Roles(Rol.USER, Rol.ADMIN, Rol.SUPERADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @Patch('user/password')

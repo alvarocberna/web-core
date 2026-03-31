@@ -6,83 +6,83 @@ import { UpdateEmpleadoDto } from 'src/domain';
 import { Sanitize, SanitizeUrl } from 'src/common/decorators/sanitize.decorator';
 
 export class UpdateEmpleadoDtoImpl implements UpdateEmpleadoDto {
-    @ApiProperty({ example: 'Juan' })
+    @ApiPropertyOptional({ example: 'Juan' })
     @Sanitize()
     @IsString()
     @MinLength(1)
-    @MaxLength(100)
-    nombre_primero: string;
+    @MaxLength(50)
+    nombre_primero?: string;
 
     @ApiPropertyOptional({ example: 'Carlos' })
     @IsOptional()
     @Sanitize()
     @IsString()
-    @MaxLength(100)
-    nombre_segundo: string | null;
+    @MaxLength(50)
+    nombre_segundo?: string;
 
-    @ApiProperty({ example: 'Pérez' })
+    @ApiPropertyOptional({ example: 'Pérez' })
     @Sanitize()
     @IsString()
     @MinLength(1)
-    @MaxLength(100)
-    apellido_paterno: string;
+    @MaxLength(50)
+    apellido_paterno?: string;
 
     @ApiPropertyOptional({ example: 'García' })
     @IsOptional()
     @Sanitize()
     @IsString()
-    @MaxLength(100)
-    apellido_materno: string | null;
+    @MaxLength(50)
+    apellido_materno?: string;
 
-    @ApiProperty({ example: 'Desarrollador' })
+    @ApiPropertyOptional({ example: 'Desarrollador' })
     @Sanitize()
     @IsString()
     @MinLength(1)
-    @MaxLength(200)
-    profesion: string;
+    @MaxLength(100)
+    profesion?: string;
 
     @ApiPropertyOptional({ example: 'Frontend' })
     @IsOptional()
     @Sanitize()
     @IsString()
     @MaxLength(200)
-    especialidad: string | null;
+    especialidad?: string;
 
     @ApiPropertyOptional({ example: 'Especialista en interfaces de usuario' })
     @IsOptional()
     @Sanitize()
     @IsString()
     @MaxLength(500)
-    descripcion: string | null;
+    descripcion?: string;
 
     @ApiPropertyOptional({ example: 1 })
     @IsOptional()
     @Type(() => Number)
     @IsInt()
-    orden: number | null;
+    orden?: number;
 
-    @ApiProperty({ example: true })
+    @ApiPropertyOptional({ example: true })
     @IsBoolean()
-    activo: boolean;
+    activo?: boolean;
 
     @ApiPropertyOptional({ example: 'https://example.com/foto.jpg' })
     @IsOptional()
     @SanitizeUrl()
     @IsString()
     @MaxLength(500)
-    img_url: string;
+    img_url?: string;
 
     @ApiPropertyOptional({ example: 'Foto de Juan Pérez' })
     @IsOptional()
     @Sanitize()
     @IsString()
-    @MaxLength(200)
-    img_alt: string;
+    @MaxLength(100)
+    img_alt?: string;
 
     @ApiPropertyOptional({ example: 'juan-perez' })
     @IsOptional()
     @Sanitize()
     @IsString()
     @MaxLength(200)
-    slug: string | null;
+    slug?: string;
 }

@@ -3,27 +3,27 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UpdateEquipoDto } from 'src/domain';
 
 export class UpdateEquipoDtoImpl implements UpdateEquipoDto {
-    @ApiProperty({ example: 'Nuestro Equipo' })
+    @ApiPropertyOptional({ example: 'Nuestro Equipo' })
     @IsString()
     @MinLength(1)
     @MaxLength(200)
-    titulo: string;
+    titulo?: string;
 
     @ApiPropertyOptional({ example: 'Conoce a las personas detrás del proyecto' })
     @IsOptional()
     @IsString()
     @MaxLength(500)
-    descripcion: string | null;
+    descripcion?: string;
 
-    @ApiProperty({ example: true })
+    @ApiPropertyOptional({ example: true })
     @IsBoolean()
-    activo: boolean;
+    activo?: boolean;
 
-    @ApiProperty({ example: false })
+    @ApiPropertyOptional({ example: false })
     @IsBoolean()
-    notificacion: boolean;
+    notificacion?: boolean;
 
-    @ApiProperty({ example: true })
+    @ApiPropertyOptional({ example: true })
     @IsBoolean()
-    habilitado: boolean;
+    habilitado?: boolean;
 }

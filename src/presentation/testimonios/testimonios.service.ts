@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateTestimoniosDtoImpl } from './dto/create-testimonios.dto';
 import { UpdateTestimoniosDtoImpl } from './dto/update-testimonios.dto';
 import { CreateTestimonioDtoImpl } from './dto/create-testimonio.dto';
+import { UpdateTestimonioDtoImpl } from './dto/update-testimonio.dto'
 import { TestimoniosRepositoryService } from 'src/infrastructure';
 
 @Injectable()
@@ -26,6 +27,10 @@ export class TestimoniosService {
 
     createTestimonio(id_usuario: string, createTestimonioDto: CreateTestimonioDtoImpl) {
         return this.testimoniosRepository.createTestimonio(id_usuario, createTestimonioDto);
+    }
+
+    updateTestimonio(id_testimonio: string, updateTestimonioDto: UpdateTestimonioDtoImpl) {
+        return this.testimoniosRepository.updateTestimonio(id_testimonio, updateTestimonioDto);
     }
 
     removeTestimonio(id_usuario: string, id_testimonio: string) {

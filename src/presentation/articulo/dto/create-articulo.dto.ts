@@ -29,7 +29,7 @@ export class CreateSecArticuloDtoImpl implements CreateSecArticuloDto {
     @SanitizeRich()
     @IsString()
     @MinLength(1)
-    @MaxLength(50000)
+    @MaxLength(5000)
     contenido_sec: string;
 
     @ApiPropertyOptional({ example: 'https://example.com/image.jpg' })
@@ -43,7 +43,7 @@ export class CreateSecArticuloDtoImpl implements CreateSecArticuloDto {
     @IsOptional()
     @Sanitize()
     @IsString()
-    @MaxLength(300)
+    @MaxLength(100)
     image_alt: string | null;
 
     @ApiPropertyOptional({ example: 'center' })
@@ -59,14 +59,13 @@ export class CreateArticuloDtoImpl implements CreateArticuloDto {
     @Sanitize()
     @IsString()
     @MinLength(1)
-    @MaxLength(300)
+    @MaxLength(200)
     titulo: string;
 
     @ApiPropertyOptional({ example: 'Subtítulo del artículo' })
     @IsOptional()
     @Sanitize()
     @IsString()
-    @MinLength(1)
     @MaxLength(500)
     subtitulo: string | null;
 
@@ -113,7 +112,7 @@ export class CreateArticuloDtoImpl implements CreateArticuloDto {
     @IsOptional()
     @Sanitize()
     @IsString()
-    @MaxLength(300)
+    @MaxLength(100)
     image_alt: string | null;
 
     @ApiPropertyOptional({ example: 'center' })

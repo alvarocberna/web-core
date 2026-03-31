@@ -74,39 +74,26 @@ export class UsuarioDatasourceService implements UsuarioDatasource {
         });
     }
 
-    async updateUsuario(id_proyecto: string, id_usuario: string, updateUsuarioDto: UpdateUsuarioDto): Promise<UsuarioEntity> {
-        const usuario = await this.prismaService.usuario.update({
-            where: { 
-                id: id_usuario,
-                proyecto_id: id_proyecto
-            },
-            data: {
-                nombre: updateUsuarioDto.nombre,
-                apellido: updateUsuarioDto.apellido,
-                email: updateUsuarioDto.email,
-                rol: updateUsuarioDto.rol,
-            },
-        });
-        return usuario;
-    }
-    
-    async updateUsuarioInfo(id_usuario: string, updateUsuarioInfoDto: UpdateUsuarioInfoDto): Promise<UsuarioEntity> {
+    async updateUsuario(id_usuario: string, updateUsuarioDto: UpdateUsuarioDto): Promise<UsuarioEntity> {
+        const { nombre, apellido, email, rol, img_url, img_alt } = updateUsuarioDto;
+        
         const usuario = await this.prismaService.usuario.findUnique({ where: { id: id_usuario } });
         if (!usuario) throw new NotFoundException('Usuario not found');
 
-        if (updateUsuarioInfoDto.email && updateUsuarioInfoDto.email !== usuario.email) {
-            const emailExists = await this.prismaService.usuario.findUnique({ where: { email: updateUsuarioInfoDto.email } });
-            if (emailExists) throw new BadRequestException(`El correo ${updateUsuarioInfoDto.email} ya está en uso`);
-        }
-
-        return this.prismaService.usuario.update({
-            where: { id: id_usuario },
+        const update = await this.prismaService.usuario.update({
+            where: {
+                id: id_usuario,
+            },
             data: {
-                ...(updateUsuarioInfoDto.nombre && { nombre: updateUsuarioInfoDto.nombre }),
-                ...(updateUsuarioInfoDto.apellido && { apellido: updateUsuarioInfoDto.apellido }),
-                ...(updateUsuarioInfoDto.email && { email: updateUsuarioInfoDto.email }),
+                ...(nombre !== undefined && { nombre }),
+                ...(apellido !== undefined && { apellido }),
+                ...(email !== undefined && { email }),
+                ...(rol !== undefined && { rol }),
+                ...(img_url !== undefined && { img_url }),
+                ...(img_alt !== undefined && { img_alt }),
             },
         });
+        return update;
     }
 
     async updateUsuarioPassword(id_usuario: string, updateUsuarioPasswordDto: UpdateUsuarioPasswordDto): Promise<void> {

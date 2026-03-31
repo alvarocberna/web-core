@@ -5,7 +5,7 @@ export class EmpleadoEntity {
         public nombre_segundo: string | null,
         public apellido_paterno: string,
         public apellido_materno: string | null,
-        public profesion: string,
+        public profesion: string | null,
         public especialidad: string | null,
         public descripcion: string | null,
         public orden: number | null,

@@ -11,7 +11,7 @@ export class UpdateUsuarioDtoImpl implements UpdateUsuarioDto {
     @Sanitize()
     @IsString()
     @MinLength(1)
-    @MaxLength(100)
+    @MaxLength(50)
     nombre?: string;
 
     @ApiPropertyOptional({ example: 'García' })
@@ -19,17 +19,33 @@ export class UpdateUsuarioDtoImpl implements UpdateUsuarioDto {
     @Sanitize()
     @IsString()
     @MinLength(1)
-    @MaxLength(100)
+    @MaxLength(50)
     apellido?: string;
 
     @ApiPropertyOptional({ example: 'juan@example.com' })
     @IsOptional()
     @IsEmail()
-    @MaxLength(254)
+    @MaxLength(100)
     email?: string;
 
     @ApiPropertyOptional({ example: 'USER', enum: Rol })
     @IsOptional()
     @IsEnum(Rol)
     rol?: Rol;
+
+    @ApiPropertyOptional({ example: 'https://web-core-storage.s3.us-east-1.amazonaws.com/uploads/images/image-123456789.png' })
+    @IsOptional()
+    @Sanitize()
+    @IsString()
+    @MinLength(1)
+    @MaxLength(500)
+    img_url?: string;
+
+    @ApiPropertyOptional({ example: 'imagen alternativa' })
+    @IsOptional()
+    @Sanitize()
+    @IsString()
+    @MinLength(1)
+    @MaxLength(100)
+    img_alt?: string;
 }

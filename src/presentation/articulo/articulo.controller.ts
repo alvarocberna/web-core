@@ -1,7 +1,8 @@
-import { Controller, Req, Get, Post, Body, Put, Param, Delete, UseGuards, UseInterceptors, UploadedFiles, Query } from '@nestjs/common';
+import { Controller, Req, Get, Post, Body, Put, Patch, Param, Delete, UseGuards, UseInterceptors, UploadedFiles, Query } from '@nestjs/common';
 import { BadRequestException } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiConsumes, ApiParam, ApiQuery, ApiBody } from '@nestjs/swagger';
+import { imageMulterOptions } from '../../common/utils/multer.config';
 import { ArticuloService } from './articulo.service';
 import { CreateArticulosDtoImpl } from './dto/create-articulos.dto';
 import { UpdateArticulosDtoImpl } from './dto/update-articulos.dto';
@@ -53,7 +54,7 @@ export class ArticuloController {
     @ApiResponse({ status: 401, description: 'No autorizado' })
     @Roles(Rol.ADMIN, Rol.SUPERADMIN)
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Put('/editar')
+    @Patch('/editar')
     updateArticulos(
         @Req() req: Request,
         @Body() updateArticulosDto: UpdateArticulosDtoImpl,
@@ -91,7 +92,7 @@ export class ArticuloController {
         FileFieldsInterceptor([
             { name: 'image_file', maxCount: 1 },
             { name: 'sec_images', maxCount: 20 },
-        ]),
+        ], imageMulterOptions),
     )
     createArticulo(
         @Req() req: Request,
@@ -158,7 +159,7 @@ export class ArticuloController {
         FileFieldsInterceptor([
             { name: 'image_file', maxCount: 1 },
             { name: 'sec_images', maxCount: 20 },
-        ]),
+        ], imageMulterOptions),
     )
     updateArticulo(
         @Req() req: Request,

@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Put, Param, Delete, Req, UseGuards, Query, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards, Query, UseInterceptors, UploadedFiles } from '@nestjs/common';
 import { BadRequestException } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiQuery, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { imageMulterOptions } from '../../common/utils/multer.config';
 import { EquipoService } from './equipo.service';
 import { CreateEquipoDtoImpl } from './dto/create-equipo.dto';
 import { UpdateEquipoDtoImpl } from './dto/update-equipo.dto';
@@ -53,7 +54,7 @@ export class EquipoController {
     @ApiResponse({ status: 401, description: 'No autorizado' })
     @Roles(Rol.ADMIN, Rol.SUPERADMIN)
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Put('/editar')
+    @Patch('/editar')
     update(
         @Req() req: Request,
         @Body() updateEquipoDto: UpdateEquipoDtoImpl,
@@ -82,7 +83,7 @@ export class EquipoController {
     @Roles(Rol.ADMIN, Rol.SUPERADMIN)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('/empleado/crear')
-    @UseInterceptors(FileFieldsInterceptor([{ name: 'image_file', maxCount: 1 }]))
+    @UseInterceptors(FileFieldsInterceptor([{ name: 'image_file', maxCount: 1 }], imageMulterOptions))
     createEmpleado(
         @Req() req: Request,
         @Body('data') dataString: string,
@@ -133,8 +134,8 @@ export class EquipoController {
     @ApiResponse({ status: 401, description: 'No autorizado' })
     @Roles(Rol.ADMIN, Rol.SUPERADMIN)
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Put('/empleado/editar/:id_empleado')
-    @UseInterceptors(FileFieldsInterceptor([{ name: 'image_file', maxCount: 1 }]))
+    @Patch('/empleado/editar/:id_empleado')
+    @UseInterceptors(FileFieldsInterceptor([{ name: 'image_file', maxCount: 1 }], imageMulterOptions))
     updateEmpleado(
         @Req() req: Request,
         @Param('id_empleado') id_empleado: string,

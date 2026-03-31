@@ -6,73 +6,73 @@ import { UpdateServicioDto } from 'src/domain';
 import { Sanitize, SanitizeUrl } from 'src/common/decorators/sanitize.decorator';
 
 export class UpdateServicioDtoImpl implements UpdateServicioDto {
-    @ApiProperty({ example: 'Diseño Web' })
+    @ApiPropertyOptional({ example: 'Diseño Web' })
     @Sanitize()
     @IsString()
     @MinLength(1)
     @MaxLength(200)
-    nombre_servicio: string;
+    nombre_servicio?: string;
 
     @ApiPropertyOptional({ example: 'Creamos sitios web modernos y responsivos' })
     @IsOptional()
     @Sanitize()
     @IsString()
     @MaxLength(500)
-    descripcion: string | null;
+    descripcion?: string;
 
     @ApiPropertyOptional({ example: '1500' })
     @IsOptional()
     @Sanitize()
     @IsString()
     @MaxLength(100)
-    valor: string | null;
+    valor?: string;
 
     @ApiPropertyOptional({ example: 'Promo verano' })
     @IsOptional()
     @Sanitize()
     @IsString()
     @MaxLength(200)
-    nombre_promocion: string | null;
+    nombre_promocion?: string;
 
     @ApiPropertyOptional({ example: 20 })
     @IsOptional()
     @Type(() => Number)
     @IsInt()
-    porcentaje_descuento: number | null;
+    porcentaje_descuento?: number;
 
     @ApiPropertyOptional({ example: true })
     @IsOptional()
     @IsBoolean()
-    destacado: boolean | null;
+    destacado?: boolean;
 
     @ApiPropertyOptional({ example: 'icon-web' })
     @IsOptional()
     @Sanitize()
     @IsString()
     @MaxLength(200)
-    icono: string | null;
+    icono?: string;
 
     @ApiPropertyOptional({ example: 1 })
     @IsOptional()
     @Type(() => Number)
     @IsInt()
-    orden: number | null;
+    orden?: number;
 
-    @ApiProperty({ example: true })
+    @ApiPropertyOptional({ example: true })
     @IsBoolean()
-    activo: boolean;
+    activo?: boolean;
 
     @ApiPropertyOptional({ example: 'https://example.com/servicio.jpg' })
     @IsOptional()
     @SanitizeUrl()
     @IsString()
     @MaxLength(500)
-    img_url: string | null;
+    img_url?: string;
 
     @ApiPropertyOptional({ example: 'Imagen de diseño web' })
     @IsOptional()
     @Sanitize()
     @IsString()
-    @MaxLength(200)
-    img_alt: string | null;
+    @MaxLength(100)
+    img_alt?: string;
 }

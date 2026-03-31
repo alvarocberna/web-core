@@ -27,12 +27,8 @@ export class UsuarioRepositoryService implements UsuarioRepository{
         return this.usuarioDatasource.getUsuarioByEmail(email)
     }
 
-    async updateUsuario(proyecto_id: string, id_usuario: string, updateUsuarioDto: UpdateUsuarioDto): Promise<UsuarioEntity> {
-        return this.usuarioDatasource.updateUsuario(proyecto_id, id_usuario, updateUsuarioDto)
-    }
-    
-    async updateUsuarioInfo(id_usuario: string, updateUsuarioInfoDto: UpdateUsuarioInfoDto): Promise<UsuarioEntity> {
-        return this.usuarioDatasource.updateUsuarioInfo(id_usuario, updateUsuarioInfoDto);
+    async updateUsuario(id_usuario: string, updateUsuarioDto: UpdateUsuarioDto): Promise<UsuarioEntity> {
+        return this.usuarioDatasource.updateUsuario(id_usuario, updateUsuarioDto)
     }
 
     async updateUsuarioPassword(id_usuario: string, updateUsuarioPasswordDto: UpdateUsuarioPasswordDto): Promise<void> {

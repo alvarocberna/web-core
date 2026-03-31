@@ -127,26 +127,35 @@ export class ArticuloDatasourceService implements ArticuloDatasource {
         return articulo;
     }
 
-    async updateArticulo(id_usuario: string, id_articulo: string, updateArticuloDto: UpdateArticuloDto): Promise<ArticuloEntity> {
-        const { sec_articulo, ...data } = updateArticuloDto as UpdateArticuloDto;
+ async updateArticulo(id_usuario: string, id_articulo: string, updateArticuloDto: UpdateArticuloDto): Promise<ArticuloEntity> {
+        const {sec_articulo, ...data} = updateArticuloDto as UpdateArticuloDto;
 
-        // Preservar imagen principal si no se envía una nueva
-        const data_old = await this.prismaService.articulo.findUnique({
-            where: { id: id_articulo },
-            include: { sec_articulo: true },
+        //que no elimine la url antigua
+        const data_old = await this.prismaService.articulo.findUnique({ 
+            where: { 
+                id: id_articulo,
+            },
+            include: {
+                sec_articulo: true
+            }
         });
-        if (data_old?.image_url && !data.image_url) {
+        if(data_old?.image_url && !data.image_url){
             data.image_url = data_old.image_url;
         }
-        // Preservar imágenes de secciones si no se envían nuevas
+        //lo mismo pero sub sec
         data_old?.sec_articulo.forEach(sec_old => {
-            sec_articulo.forEach(sec_new => {
-                if (sec_new.id === sec_old.id && sec_old.image_url && !sec_new.image_url) {
-                    sec_new.image_url = sec_old.image_url;
+            sec_articulo.forEach((sec_new) => {
+                if(sec_new.id === sec_old.id){
+                    if(sec_old?.image_url && !sec_new?.image_url){
+                        sec_new.image_url = sec_old.image_url;
+                    }
                 }
-            });
+            })
+        })
+        const user = await this.prismaService.usuario.findUnique({
+            where: {id: id_usuario}
         });
-
+        
         const articulo = await this.prismaService.articulo.update({
             where: { id: id_articulo, usuario_id: id_usuario },
             data: {
@@ -156,18 +165,21 @@ export class ArticuloDatasourceService implements ArticuloDatasource {
                         deleteMany: {},
                         createMany: {
                             data: sec_articulo.map(sec => ({
-                                nro_seccion: sec.nro_seccion,
+                                // ...sec,
+                                nro_seccion: sec.nro_seccion + 1,
                                 titulo_sec: sec.titulo_sec,
                                 contenido_sec: sec.contenido_sec,
                                 image_url: sec.image_url,
                                 image_alt: sec.image_alt,
                                 image_position: sec.image_position,
-                            })),
-                        },
-                    },
-                }),
+                            }))
+                        }
+                    }
+                })
             },
-            include: { sec_articulo: true },
+            include: {
+                sec_articulo: true
+            }
         });
         return articulo;
     }

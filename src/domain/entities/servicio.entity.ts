@@ -6,7 +6,7 @@ export class ServicioEntity {
         public valor: string | null,
         public nombre_promocion: string | null,
         public porcentaje_descuento: number | null,
-        public destacado: boolean | null,
+        public destacado: boolean,
         public icono: string | null,
         public orden: number | null,
         public activo: boolean,

@@ -8,6 +8,7 @@ import {
     CreateTestimoniosDto,
     UpdateTestimoniosDto,
     CreateTestimonioDto,
+    UpdateTestimonioDto,
 } from 'src/domain';
 //infrastructure
 import { PrismaService } from 'src/infrastructure/orm/prisma/prisma.service';
@@ -95,6 +96,24 @@ export class TestimoniosDatasourceService implements TestimoniosDatasource {
             },
         });
         return testimonio;
+    }
+
+    async updateTestimonio(id_testimonio: string, updateTestimonioDto: UpdateTestimonioDto): Promise<TestimonioEntity> {
+        const testimonio = await this.prismaService.testimonio.findUnique({where: {id: id_testimonio}})
+        if(!testimonio){
+            throw new NotFoundException('Testimonio no encontrado')
+        }
+
+        const update = await this.prismaService.testimonio.update({
+            where: {
+                id: id_testimonio,
+            },
+            data: {
+                ...(updateTestimonioDto.status !== undefined && { status: updateTestimonioDto.status }),
+                
+            },
+        });
+        return update;
     }
 
     async deleteTestimonio(id_usuario: string, id_testimonio: string): Promise<void> {

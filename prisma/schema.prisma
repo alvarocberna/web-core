@@ -29,11 +29,13 @@ model Usuario {
   id                     String   @id @default(uuid())
   nombre                 String   @db.VarChar(50)
   apellido               String   @db.VarChar(50)
-  email                  String   @unique
+  email                  String   @unique @db.VarChar(100)
   fechaCreacion          DateTime
   password               String   
   hashedRt               String?
-  rol                    String   
+  rol                    String    
+  img_url                String? @default("")
+  img_alt                String? @default("") @db.VarChar(100)
   proyecto_id            String
   //REL M:N
   proyecto               Proyecto @relation(name: "fk_usu_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
@@ -85,9 +87,9 @@ model SecArticulo {
     id                   String    @id @default(uuid())
     nro_seccion          Int
     titulo_sec           String    @db.VarChar(200)
-    contenido_sec        String   
+    contenido_sec        String    
     image_url            String?
-    image_alt            String?
+    image_alt            String?   @db.VarChar(100)
     image_position       String?
     articulo_id          String
     //REL M:N
@@ -114,7 +116,7 @@ model Empleado {
   nombre_segundo         String?  @db.VarChar(50)
   apellido_paterno       String   @db.VarChar(50)
   apellido_materno       String?  @db.VarChar(50)
-  profesion              String   @db.VarChar(100)
+  profesion              String?   @db.VarChar(100)
   especialidad           String?  @db.VarChar(200)
   descripcion            String?  @db.VarChar(500)
   orden                  Int?
@@ -149,7 +151,7 @@ model Servicio {
   valor                 String?  
   nombre_promocion      String?  @db.VarChar(200)
   porcentaje_descuento  Int?
-  destacado             Boolean?
+  destacado             Boolean
   icono                 String?
   orden                 Int?
   activo                Boolean
@@ -167,7 +169,7 @@ model Testimonios {
   activo                Boolean     @default(true)
   aprobar               Boolean     @default(false)
   notificacion          Boolean     @default(false)
-  habilitado            Boolean    @default(true)
+  habilitado            Boolean     @default(true)
   proyecto_id           String
   //REL M:N
   proyecto              Proyecto @relation(name: "fk_tes_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)

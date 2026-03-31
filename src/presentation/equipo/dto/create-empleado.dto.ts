@@ -10,36 +10,35 @@ export class CreateEmpleadoDtoImpl implements CreateEmpleadoDto {
     @Sanitize()
     @IsString()
     @MinLength(1)
-    @MaxLength(100)
+    @MaxLength(50)
     nombre_primero: string;
 
     @ApiPropertyOptional({ example: 'Carlos' })
     @IsOptional()
     @Sanitize()
     @IsString()
-    @MaxLength(100)
+    @MaxLength(50)
     nombre_segundo: string | null;
 
     @ApiProperty({ example: 'Pérez' })
     @Sanitize()
     @IsString()
     @MinLength(1)
-    @MaxLength(100)
+    @MaxLength(50)
     apellido_paterno: string;
 
     @ApiPropertyOptional({ example: 'García' })
     @IsOptional()
     @Sanitize()
     @IsString()
-    @MaxLength(100)
+    @MaxLength(50)
     apellido_materno: string | null;
 
     @ApiProperty({ example: 'Desarrollador' })
     @Sanitize()
     @IsString()
-    @MinLength(1)
     @MaxLength(200)
-    profesion: string;
+    profesion: string | null;
 
     @ApiPropertyOptional({ example: 'Frontend' })
     @IsOptional()
@@ -70,19 +69,19 @@ export class CreateEmpleadoDtoImpl implements CreateEmpleadoDto {
     @SanitizeUrl()
     @IsString()
     @MaxLength(500)
-    img_url: string;
+    img_url: string | null;
 
     @ApiPropertyOptional({ example: 'Foto de Juan Pérez' })
     @IsOptional()
     @Sanitize()
     @IsString()
-    @MaxLength(200)
-    img_alt: string;
+    @MaxLength(100)
+    img_alt: string | null;
 
     @ApiPropertyOptional({ example: 'juan-perez' })
     @IsOptional()
     @Sanitize()
     @IsString()
-    @MaxLength(200)
+    @MaxLength(300)
     slug: string | null;
 }

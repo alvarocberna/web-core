@@ -6,6 +6,7 @@ import {
     CreateTestimoniosDto,
     UpdateTestimoniosDto,
     CreateTestimonioDto,
+    UpdateTestimonioDto,
 } from 'src/domain';
 import { TestimoniosDatasourceService } from 'src/infrastructure';
 
@@ -27,6 +28,10 @@ export class TestimoniosRepositoryService implements TestimoniosRepository {
 
     createTestimonio(id_usuario: string, createTestimonioDto: CreateTestimonioDto): Promise<TestimonioEntity> {
         return this.testimoniosDatasource.createTestimonio(id_usuario, createTestimonioDto);
+    }
+
+    updateTestimonio(id_testimonio: string, updateTestimonioDto: UpdateTestimonioDto): Promise<TestimonioEntity> {
+        return this.testimoniosDatasource.updateTestimonio(id_testimonio, updateTestimonioDto);
     }
 
     deleteTestimonio(id_usuario: string, id_testimonio: string): Promise<void> {
