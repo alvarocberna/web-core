@@ -7,23 +7,23 @@ export class CreateEquipoDtoImpl implements CreateEquipoDto {
     @IsString()
     @MinLength(1)
     @MaxLength(200)
-    titulo: string;
+    titulo!: string;
 
     @ApiPropertyOptional({ example: 'Conoce a las personas detrás del proyecto' })
     @IsOptional()
     @IsString()
     @MaxLength(500)
-    descripcion: string | null;
+    descripcion!: string | null;
 
     @ApiProperty({ example: true })
     @IsBoolean()
-    activo: boolean;
+    activo!: boolean;
 
     @ApiProperty({ example: false })
     @IsBoolean()
-    notificacion: boolean;
+    notificacion!: boolean;
 
     @ApiProperty({ example: true })
     @IsBoolean()
-    habilitado: boolean;
+    habilitado!: boolean;
 }

@@ -86,8 +86,8 @@ model Articulo {
 model SecArticulo {
     id                   String    @id @default(uuid())
     nro_seccion          Int
-    titulo_sec           String    @db.VarChar(200)
-    contenido_sec        String    
+    titulo_sec           String?    @db.VarChar(200)
+    contenido_sec        String?    
     image_url            String?
     image_alt            String?   @db.VarChar(100)
     image_position       String?
@@ -127,6 +127,21 @@ model Empleado {
   equipo_id              String
   //REL M:N
   equipo                 Equipo @relation(name: "fk_emp_equ", fields: [equipo_id], references: [id], onDelete: Cascade)
+  //REL N:M
+  sec_empleado          SecEmpleado[]      @relation("fk_sec_emp")
+}
+
+model SecEmpleado {
+    id                   String    @id @default(uuid())
+    nro_seccion          Int
+    titulo_sec           String?    @db.VarChar(200)
+    contenido_sec        String?    
+    image_url            String?
+    image_alt            String?   @db.VarChar(100)
+    image_position       String?
+    empleado_id          String
+    //REL M:N
+    empleado             Empleado @relation(name: "fk_sec_emp", fields: [empleado_id], references: [id], onDelete: Cascade)
 }
 
 model Servicios {
@@ -161,6 +176,21 @@ model Servicio {
   servicios_id          String
   //REL M:N
   servicios             Servicios @relation(name: "fk_ser_ser", fields: [servicios_id], references: [id], onDelete: Cascade)
+  //REL N:M
+  sec_servicio          SecServicio[]      @relation("fk_sec_ser")
+}
+
+model SecServicio {
+    id                   String    @id @default(uuid())
+    nro_seccion          Int
+    titulo_sec           String?    @db.VarChar(200)
+    contenido_sec        String?    
+    image_url            String?
+    image_alt            String?   @db.VarChar(100)
+    image_position       String?
+    servicio_id          String
+    //REL M:N
+    servicio             Servicio @relation(name: "fk_sec_ser", fields: [servicio_id], references: [id], onDelete: Cascade)
 }
 
 model Testimonios {

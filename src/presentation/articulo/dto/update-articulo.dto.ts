@@ -10,45 +10,45 @@ import { Sanitize, SanitizeRich, SanitizeUrl } from 'src/common/decorators/sanit
 export class UpdateSecArticuloDtoImpl implements UpdateSecArticuloDto {
     @ApiProperty({ example: 'uuid-de-la-seccion' })
     @IsString()
-    id: string;
+    id!: string;
 
     @ApiProperty({ example: 1 })
     @Type(() => Number)
     @IsNumber()
-    nro_seccion: number;
+    nro_seccion!: number;
 
     @ApiProperty({ example: 'Título de la sección' })
     @Sanitize()
     @IsString()
     @MaxLength(200)
-    titulo_sec: string;
+    titulo_sec!: string | null;
 
     @ApiProperty({ example: 'Contenido de la sección...' })
     @SanitizeRich()
     @IsString()
     @MaxLength(5000)
-    contenido_sec: string;
+    contenido_sec!: string | null;
 
     @ApiPropertyOptional({ example: 'https://example.com/image.jpg' })
     @IsOptional()
     @SanitizeUrl()
     @IsString()
     @MaxLength(500)
-    image_url: string | null;
+    image_url!: string | null;
 
     @ApiPropertyOptional({ example: 'Texto alternativo' })
     @IsOptional()
     @Sanitize()
     @IsString()
     @MaxLength(100)
-    image_alt: string | null;
+    image_alt!: string | null;
 
     @ApiPropertyOptional({ example: 'center' })
     @IsOptional()
     @Sanitize()
     @IsString()
     @MaxLength(50)
-    image_position: string | null;
+    image_position!: string | null;
 }
 
 export class UpdateArticuloDtoImpl implements UpdateArticuloDto {
@@ -56,66 +56,66 @@ export class UpdateArticuloDtoImpl implements UpdateArticuloDto {
     @Sanitize()
     @IsString()
     @MaxLength(200)
-    titulo: string;
+    titulo!: string;
 
     @ApiPropertyOptional({ example: 'Subtítulo actualizado' })
     @IsOptional()
     @Sanitize()
     @IsString()
     @MaxLength(500)
-    subtitulo: string | null;
+    subtitulo!: string | null;
 
     @ApiPropertyOptional({ example: 'Juan García' })
     @Sanitize()
     @IsString()
-    autor: string;
+    autor!: string;
 
     @ApiPropertyOptional({ example: '2024-01-01T00:00:00.000Z' })
     @Type(() => Date)
     @IsDate()
-    fecha_publicacion: Date;
+    fecha_publicacion!: Date;
 
     @ApiPropertyOptional({ example: '2024-06-01T00:00:00.000Z' })
     @Type(() => Date)
     @IsDate()
-    fecha_actualizacion: Date | null;
+    fecha_actualizacion!: Date | null;
 
     @ApiPropertyOptional({ example: 'PUBLISHED', enum: ArticuloStatus })
     @IsEnum(ArticuloStatus)
-    status: ArticuloStatus;
+    status!: ArticuloStatus;
 
     @ApiPropertyOptional({ example: true })
     @IsBoolean()
-    activo: boolean;
+    activo!: boolean;
 
     @ApiPropertyOptional({ example: 'titulo-actualizado' })
     @Sanitize()
     @IsString()
-    slug: string;
+    slug!: string;
 
     @ApiPropertyOptional({ example: 'https://example.com/image.jpg' })
     @IsOptional()
     @SanitizeUrl()
     @IsString()
     @MaxLength(500)
-    image_url: string | null;
+    image_url!: string | null;
 
     @ApiPropertyOptional({ example: 'Texto alternativo' })
     @IsOptional()
     @Sanitize()
     @IsString()
     @MaxLength(100)
-    image_alt: string | null;
+    image_alt!: string | null;
 
     @ApiPropertyOptional({ example: 'center' })
     @IsOptional()
     @Sanitize()
     @IsString()
     @MaxLength(50)
-    image_position: string | null;
+    image_position!: string | null;
 
     @ApiPropertyOptional({ type: [UpdateSecArticuloDtoImpl] })
     @ValidateNested()
     @Type(() => UpdateSecArticuloDtoImpl)
-    sec_articulo: UpdateSecArticuloDtoImpl[];
+    sec_articulo!: UpdateSecArticuloDtoImpl[];
 }

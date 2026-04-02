@@ -1,6 +1,5 @@
 
-import {CreateSecArticuloDto, UpdateSecArticuloDto} from 'src/domain';
-
+//ARTICULOS - ENTIDAD PADRE
 export abstract class CreateArticulosDto {
         abstract titulo: string;
         abstract descripcion: string | null;
@@ -19,10 +18,12 @@ export abstract class UpdateArticulosDto {
         abstract habilitado?: boolean;
 }
 
-export abstract class CreateArticuloFullDto{
-        articulo: CreateArticuloDto;
-        sec_articulo: CreateSecArticuloDto[]
-}
+// export abstract class CreateArticuloFullDto{
+//         articulo: CreateArticuloDto;
+//         sec_articulo: CreateSecArticuloDto[]
+// }
+
+//ARTICULO - ENTIDAD HIJA
 
 export abstract class CreateArticuloDto{
         abstract titulo: string;
@@ -52,4 +53,24 @@ export abstract class UpdateArticuloDto{
         abstract image_alt: string | null;
         abstract image_position: string | null;
         abstract sec_articulo: UpdateSecArticuloDto[]
+}
+
+//SEC-ARTICULO - ENTIDAD NIETA JAJ
+export abstract class CreateSecArticuloDto{
+        abstract nro_seccion: number;
+        abstract titulo_sec: string | null;
+        abstract contenido_sec: string | null;
+        abstract image_url: string | null;
+        abstract image_alt: string | null;
+        abstract image_position: string | null;
+}
+
+export abstract class UpdateSecArticuloDto{
+        abstract id: string;
+        abstract nro_seccion: number;
+        abstract titulo_sec: string | null;
+        abstract contenido_sec: string | null;
+        abstract image_url: string | null;
+        abstract image_alt: string | null;
+        abstract image_position: string | null;
 }

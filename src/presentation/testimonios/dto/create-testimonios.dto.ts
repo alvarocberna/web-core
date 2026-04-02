@@ -7,27 +7,27 @@ export class CreateTestimoniosDtoImpl implements CreateTestimoniosDto {
     @IsString()
     @MinLength(1)
     @MaxLength(200)
-    titulo: string;
+    titulo!: string;
 
     @ApiPropertyOptional({ example: 'Opiniones de clientes satisfechos' })
     @IsOptional()
     @IsString()
     @MaxLength(500)
-    descripcion: string | null;
+    descripcion!: string | null;
 
     @ApiProperty({ example: true })
     @IsBoolean()
-    activo: boolean;
+    activo!: boolean;
 
     @ApiProperty({ example: false })
     @IsBoolean()
-    aprobar: boolean;
+    aprobar!: boolean;
 
     @ApiProperty({ example: false })
     @IsBoolean()
-    notificacion: boolean;
+    notificacion!: boolean;
 
     @ApiProperty({ example: true })
     @IsBoolean()
-    habilitado: boolean;
+    habilitado!: boolean;
 }

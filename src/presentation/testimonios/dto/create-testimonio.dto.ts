@@ -11,35 +11,35 @@ export class CreateTestimonioDtoImpl implements CreateTestimonioDto {
     @IsString()
     @MinLength(1)
     @MaxLength(50)
-    nombre: string;
+    nombre!: string;
 
     @ApiProperty({ example: 'García' })
     @Sanitize()
     @IsString()
     @MinLength(1)
     @MaxLength(50)
-    apellido: string;
+    apellido!: string;
 
     @ApiProperty({ example: 'juan@example.com' })
     @IsEmail()
     @MaxLength(100)
-    correo: string;
+    correo!: string;
 
     @ApiProperty({ example: 'Excelente servicio, muy recomendado.' })
     @Sanitize()
     @IsString()
     @MinLength(1)
     @MaxLength(500)
-    descripcion: string;
+    descripcion!: string;
 
     @ApiPropertyOptional({ example: 5, minimum: 1, maximum: 5 })
     @IsOptional()
     @IsInt()
     @Min(1)
     @Max(5)
-    calificacion: number | null;
+    calificacion!: number | null;
 
     @ApiProperty({ example: 'pending', enum: TestimonioStatus })
     @IsEnum(TestimonioStatus)
-    status: TestimonioStatus;
+    status!: TestimonioStatus;
 }

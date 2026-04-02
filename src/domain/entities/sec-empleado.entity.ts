@@ -1,5 +1,5 @@
 
-export class SecArticuloEntity {
+export class SecEmpleadoEntity {
     constructor(
         public id: string,
         public nro_seccion: number,

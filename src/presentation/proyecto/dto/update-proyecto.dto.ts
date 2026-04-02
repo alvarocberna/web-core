@@ -11,23 +11,23 @@ export class UpdateProyectoDtoImpl implements UpdateProyectoDto {
     @IsString()
     @MinLength(1)
     @MaxLength(200)
-    nombre_proyecto: string;
+    nombre_proyecto!: string;
 
     @ApiProperty({ example: 'Nueva descripción del proyecto' })
     @Sanitize()
     @IsString()
     @MinLength(1)
     @MaxLength(500)
-    descripcion: string;
+    descripcion!: string;
 
     @ApiProperty({ example: 'Nombre del Cliente' })
     @Sanitize()
     @IsString()
     @MinLength(1)
     @MaxLength(200)
-    cliente: string;
+    cliente!: string;
 
     @ApiProperty({ example: true })
     @IsBoolean()
-    activo: boolean;
+    activo!: boolean;
 }
