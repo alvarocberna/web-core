@@ -31,12 +31,33 @@ export class EquipoService {
     async createEmpleado(
         id_usuario: string,
         createEmpleadoDto: CreateEmpleadoDtoImpl,
-        files?: { image_file?: Express.Multer.File[] },
+        files?: {
+            image_file?: Express.Multer.File[];
+            sec_images?: Express.Multer.File[];
+        },
     ) {
         if (files?.image_file?.[0]) {
             const imageUrl = await this.imageStorage.saveImage(files.image_file[0]);
             createEmpleadoDto.img_url = imageUrl;
         }
+
+        if (files?.sec_images && createEmpleadoDto.sec_empleado) {
+            for (const [index, file] of files.sec_images.entries()) {
+                if (!createEmpleadoDto.sec_empleado[index]) continue;
+
+                if (typeof file.size === 'number') {
+                    if (file.size === 0) continue;
+                } else if (file.buffer) {
+                    if ((file.buffer as Buffer).length === 0) continue;
+                } else {
+                    continue;
+                }
+
+                const imageUrl = await this.imageStorage.saveImage(file);
+                createEmpleadoDto.sec_empleado[index].image_url = imageUrl;
+            }
+        }
+
         return this.equipoRepository.createEmpleado(id_usuario, createEmpleadoDto);
     }
 
@@ -48,12 +69,33 @@ export class EquipoService {
         id_usuario: string,
         id_empleado: string,
         updateEmpleadoDto: UpdateEmpleadoDtoImpl,
-        files?: { image_file?: Express.Multer.File[] },
+        files?: {
+            image_file?: Express.Multer.File[];
+            sec_images?: Express.Multer.File[];
+        },
     ) {
         if (files?.image_file?.[0]) {
             const imageUrl = await this.imageStorage.saveImage(files.image_file[0]);
             updateEmpleadoDto.img_url = imageUrl;
         }
+
+        if (files?.sec_images && updateEmpleadoDto.sec_empleado) {
+            for (const [index, file] of files.sec_images.entries()) {
+                if (!updateEmpleadoDto.sec_empleado[index]) continue;
+
+                if (typeof file.size === 'number') {
+                    if (file.size === 0) continue;
+                } else if (file.buffer) {
+                    if ((file.buffer as Buffer).length === 0) continue;
+                } else {
+                    continue;
+                }
+
+                const imageUrl = await this.imageStorage.saveImage(file);
+                updateEmpleadoDto.sec_empleado[index].image_url = imageUrl;
+            }
+        }
+
         return this.equipoRepository.updateEmpleado(id_usuario, id_empleado, updateEmpleadoDto);
     }
 

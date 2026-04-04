@@ -43,7 +43,11 @@ export class EquipoDatasourceService implements EquipoDatasource {
 
         const equipo = await this.prismaService.equipo.findFirst({
             where: { proyecto_id: user.proyecto_id },
-            include: { empleado: true },
+            include: {
+                empleado: {
+                    include: { sec_empleado: true },
+                },
+            },
         });
 
         return equipo;
@@ -68,6 +72,8 @@ export class EquipoDatasourceService implements EquipoDatasource {
     // ─── Empleado (entidad hijo) ─────────────────────────────────────────────────
 
     async createEmpleado(id_usuario: string, createEmpleadoDto: CreateEmpleadoDto): Promise<EmpleadoEntity> {
+        const { sec_empleado, ...data } = createEmpleadoDto;
+
         const user = await this.prismaService.usuario.findUnique({ where: { id: id_usuario } });
         if (!user) throw new NotFoundException('Usuario no encontrado');
 
@@ -79,9 +85,23 @@ export class EquipoDatasourceService implements EquipoDatasource {
         const empleado = await this.prismaService.empleado.create({
             data: {
                 id: this.uuidService.generate(),
-                ...createEmpleadoDto,
+                ...data,
                 equipo_id: equipo.id,
+                ...(sec_empleado && sec_empleado.length > 0 && {
+                    sec_empleado: {
+                        create: sec_empleado.map((sec, index) => ({
+                            id: this.uuidService.generate(),
+                            nro_seccion: index + 1,
+                            titulo_sec: sec.titulo_sec,
+                            contenido_sec: sec.contenido_sec,
+                            image_url: sec.image_url,
+                            image_alt: sec.image_alt,
+                            image_position: sec.image_position,
+                        })),
+                    },
+                }),
             },
+            include: { sec_empleado: true },
         });
         return empleado;
     }
@@ -97,6 +117,7 @@ export class EquipoDatasourceService implements EquipoDatasource {
 
         const empleado = await this.prismaService.empleado.findUnique({
             where: { id: id_empleado, equipo_id: equipo.id },
+            include: { sec_empleado: true },
         });
         if (!empleado) throw new NotFoundException('Empleado no encontrado');
 
@@ -104,6 +125,8 @@ export class EquipoDatasourceService implements EquipoDatasource {
     }
 
     async updateEmpleado(id_usuario: string, id_empleado: string, updateEmpleadoDto: UpdateEmpleadoDto): Promise<EmpleadoEntity> {
+        const { sec_empleado, ...data } = updateEmpleadoDto as UpdateEmpleadoDto;
+
         const user = await this.prismaService.usuario.findUnique({ where: { id: id_usuario } });
         if (!user) throw new NotFoundException('Usuario no encontrado');
 
@@ -112,14 +135,49 @@ export class EquipoDatasourceService implements EquipoDatasource {
         });
         if (!equipo) throw new NotFoundException('Equipo no encontrado');
 
-        const empleado = await this.prismaService.empleado.findUnique({
+        const empleado_old = await this.prismaService.empleado.findUnique({
             where: { id: id_empleado, equipo_id: equipo.id },
+            include: { sec_empleado: true },
         });
-        if (!empleado) throw new NotFoundException('Empleado no encontrado');
+        if (!empleado_old) throw new NotFoundException('Empleado no encontrado');
+
+        if (empleado_old.img_url && !data.img_url) {
+            data.img_url = empleado_old.img_url;
+        }
+
+        if (sec_empleado) {
+            empleado_old.sec_empleado.forEach(sec_old => {
+                sec_empleado.forEach(sec_new => {
+                    if (sec_new.id === sec_old.id) {
+                        if (sec_old.image_url && !sec_new.image_url) {
+                            sec_new.image_url = sec_old.image_url;
+                        }
+                    }
+                });
+            });
+        }
 
         const updated = await this.prismaService.empleado.update({
             where: { id: id_empleado },
-            data: { ...updateEmpleadoDto },
+            data: {
+                ...data,
+                ...(sec_empleado && {
+                    sec_empleado: {
+                        deleteMany: {},
+                        createMany: {
+                            data: sec_empleado.map(sec => ({
+                                nro_seccion: sec.nro_seccion,
+                                titulo_sec: sec.titulo_sec,
+                                contenido_sec: sec.contenido_sec,
+                                image_url: sec.image_url,
+                                image_alt: sec.image_alt,
+                                image_position: sec.image_position,
+                            })),
+                        },
+                    },
+                }),
+            },
+            include: { sec_empleado: true },
         });
         return updated;
     }

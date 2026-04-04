@@ -43,7 +43,11 @@ export class ServiciosDatasourceService implements ServiciosDatasource {
 
         const servicios = await this.prismaService.servicios.findFirst({
             where: { proyecto_id: user.proyecto_id },
-            include: { servicio: true },
+            include: {
+                servicio: {
+                    include: { sec_servicio: true },
+                },
+            },
         });
 
         return servicios;
@@ -68,6 +72,8 @@ export class ServiciosDatasourceService implements ServiciosDatasource {
     // ─── Servicio (entidad hijo) ─────────────────────────────────────────────────
 
     async createServicio(id_usuario: string, createServicioDto: CreateServicioDto): Promise<ServicioEntity> {
+        const { sec_servicio, ...data } = createServicioDto;
+
         const user = await this.prismaService.usuario.findUnique({ where: { id: id_usuario } });
         if (!user) throw new NotFoundException('Usuario no encontrado');
 
@@ -79,9 +85,23 @@ export class ServiciosDatasourceService implements ServiciosDatasource {
         const servicio = await this.prismaService.servicio.create({
             data: {
                 id: this.uuidService.generate(),
-                ...createServicioDto,
+                ...data,
                 servicios_id: servicios.id,
+                ...(sec_servicio && sec_servicio.length > 0 && {
+                    sec_servicio: {
+                        create: sec_servicio.map((sec, index) => ({
+                            id: this.uuidService.generate(),
+                            nro_seccion: index + 1,
+                            titulo_sec: sec.titulo_sec,
+                            contenido_sec: sec.contenido_sec,
+                            image_url: sec.image_url,
+                            image_alt: sec.image_alt,
+                            image_position: sec.image_position,
+                        })),
+                    },
+                }),
             },
+            include: { sec_servicio: true },
         });
         return servicio;
     }
@@ -97,6 +117,7 @@ export class ServiciosDatasourceService implements ServiciosDatasource {
 
         const servicio = await this.prismaService.servicio.findUnique({
             where: { id: id_servicio, servicios_id: servicios.id },
+            include: { sec_servicio: true },
         });
         if (!servicio) throw new NotFoundException('Servicio no encontrado');
 
@@ -104,6 +125,8 @@ export class ServiciosDatasourceService implements ServiciosDatasource {
     }
 
     async updateServicio(id_usuario: string, id_servicio: string, updateServicioDto: UpdateServicioDto): Promise<ServicioEntity> {
+        const { sec_servicio, ...data } = updateServicioDto as UpdateServicioDto;
+
         const user = await this.prismaService.usuario.findUnique({ where: { id: id_usuario } });
         if (!user) throw new NotFoundException('Usuario no encontrado');
 
@@ -112,14 +135,49 @@ export class ServiciosDatasourceService implements ServiciosDatasource {
         });
         if (!servicios) throw new NotFoundException('Servicios no encontrado');
 
-        const servicio = await this.prismaService.servicio.findUnique({
+        const servicio_old = await this.prismaService.servicio.findUnique({
             where: { id: id_servicio, servicios_id: servicios.id },
+            include: { sec_servicio: true },
         });
-        if (!servicio) throw new NotFoundException('Servicio no encontrado');
+        if (!servicio_old) throw new NotFoundException('Servicio no encontrado');
+
+        if (servicio_old.img_url && !data.img_url) {
+            data.img_url = servicio_old.img_url;
+        }
+
+        if (sec_servicio) {
+            servicio_old.sec_servicio.forEach(sec_old => {
+                sec_servicio.forEach(sec_new => {
+                    if (sec_new.id === sec_old.id) {
+                        if (sec_old.image_url && !sec_new.image_url) {
+                            sec_new.image_url = sec_old.image_url;
+                        }
+                    }
+                });
+            });
+        }
 
         const updated = await this.prismaService.servicio.update({
             where: { id: id_servicio },
-            data: { ...updateServicioDto },
+            data: {
+                ...data,
+                ...(sec_servicio && {
+                    sec_servicio: {
+                        deleteMany: {},
+                        createMany: {
+                            data: sec_servicio.map(sec => ({
+                                nro_seccion: sec.nro_seccion,
+                                titulo_sec: sec.titulo_sec,
+                                contenido_sec: sec.contenido_sec,
+                                image_url: sec.image_url,
+                                image_alt: sec.image_alt,
+                                image_position: sec.image_position,
+                            })),
+                        },
+                    },
+                }),
+            },
+            include: { sec_servicio: true },
         });
         return updated;
     }

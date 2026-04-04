@@ -27,13 +27,14 @@ export abstract class CreateEmpleadoDto {
     abstract descripcion: string | null;
     abstract orden: number | null;
     abstract activo: boolean;
-    abstract slug: string | null;
+    abstract slug: string;
     abstract img_url: string | null;
     abstract img_alt: string | null;
     abstract sec_empleado: CreateSecEmpleadoDto[] | null; 
 }
 
 export abstract class UpdateEmpleadoDto {
+    abstract id: string;
     abstract nombre_primero: string;
     abstract nombre_segundo: string | null;
     abstract apellido_paterno: string;
@@ -43,10 +44,10 @@ export abstract class UpdateEmpleadoDto {
     abstract descripcion: string | null;
     abstract orden: number | null;
     abstract activo: boolean;
-    abstract slug: string | null;
+    abstract slug: string;
     abstract img_url: string | null;
     abstract img_alt: string | null;
-    abstract sec_empleado: CreateSecEmpleadoDto[] | null; 
+    abstract sec_empleado: UpdateSecEmpleadoDto[] | null; 
 }
 
 //SEC-EMPLEADO - ENTIDAD NIETA JAJ

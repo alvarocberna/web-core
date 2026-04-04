@@ -74,6 +74,7 @@ export class EquipoController {
             properties: {
                 data: { type: 'string', description: 'JSON stringificado con los datos del empleado (CreateEmpleadoDtoImpl)' },
                 image_file: { type: 'string', format: 'binary', description: 'Imagen del empleado' },
+                sec_images: { type: 'string', format: 'binary', description: 'Imágenes de las secciones (hasta 20)' },
             },
             required: ['data'],
         },
@@ -83,11 +84,19 @@ export class EquipoController {
     @Roles(Rol.ADMIN, Rol.SUPERADMIN)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('/empleado/crear')
-    @UseInterceptors(FileFieldsInterceptor([{ name: 'image_file', maxCount: 1 }], imageMulterOptions))
+    @UseInterceptors(
+        FileFieldsInterceptor([
+            { name: 'image_file', maxCount: 1 },
+            { name: 'sec_images', maxCount: 20 },
+        ], imageMulterOptions),
+    )
     createEmpleado(
         @Req() req: Request,
         @Body('data') dataString: string,
-        @UploadedFiles() files: { image_file?: Express.Multer.File[] },
+        @UploadedFiles() files: {
+            image_file?: Express.Multer.File[];
+            sec_images?: Express.Multer.File[];
+        },
     ) {
         const id_usuario = (req as any).user?.id;
         if (!dataString) throw new BadRequestException('El campo "data" es requerido en el FormData');
@@ -126,6 +135,7 @@ export class EquipoController {
             properties: {
                 data: { type: 'string', description: 'JSON stringificado con los datos a actualizar (UpdateEmpleadoDtoImpl)' },
                 image_file: { type: 'string', format: 'binary', description: 'Nueva imagen del empleado' },
+                sec_images: { type: 'string', format: 'binary', description: 'Nuevas imágenes de secciones (hasta 20)' },
             },
             required: ['data'],
         },
@@ -135,12 +145,20 @@ export class EquipoController {
     @Roles(Rol.ADMIN, Rol.SUPERADMIN)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Patch('/empleado/editar/:id_empleado')
-    @UseInterceptors(FileFieldsInterceptor([{ name: 'image_file', maxCount: 1 }], imageMulterOptions))
+    @UseInterceptors(
+        FileFieldsInterceptor([
+            { name: 'image_file', maxCount: 1 },
+            { name: 'sec_images', maxCount: 20 },
+        ], imageMulterOptions),
+    )
     updateEmpleado(
         @Req() req: Request,
         @Param('id_empleado') id_empleado: string,
         @Body('data') dataString: string,
-        @UploadedFiles() files: { image_file?: Express.Multer.File[] },
+        @UploadedFiles() files: {
+            image_file?: Express.Multer.File[];
+            sec_images?: Express.Multer.File[];
+        },
     ) {
         const id_usuario = (req as any).user?.id;
         if (!dataString) throw new BadRequestException('El campo "data" es requerido en el FormData');

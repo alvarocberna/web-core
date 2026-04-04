@@ -52,6 +52,10 @@ export class UpdateSecEmpleadoDtoImpl implements UpdateSecEmpleadoDto {
 }
 
 export class UpdateEmpleadoDtoImpl implements UpdateEmpleadoDto {
+    @ApiProperty({ example: 'uuid-empleado' })
+    @IsString()
+    id!: string;
+
     @ApiPropertyOptional({ example: 'Juan' })
     @Sanitize()
     @IsString()

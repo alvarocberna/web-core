@@ -111,7 +111,7 @@ export class CreateEmpleadoDtoImpl implements CreateEmpleadoDto {
     @Sanitize()
     @IsString()
     @MaxLength(300)
-    slug!: string | null;
+    slug!: string;
 
     @ApiPropertyOptional({ example: 'https://example.com/foto.jpg' })
     @IsOptional()

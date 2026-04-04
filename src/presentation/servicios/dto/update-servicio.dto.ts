@@ -52,6 +52,10 @@ export class UpdateSecServicioDtoImpl implements UpdateSecServicioDto {
 }
 
 export class UpdateServicioDtoImpl implements UpdateServicioDto {
+    @ApiProperty({ example: 'uuid-servicio' })
+    @IsString()
+    id!: string;
+
     @ApiPropertyOptional({ example: 'Diseño Web' })
     @Sanitize()
     @IsString()
@@ -64,26 +68,26 @@ export class UpdateServicioDtoImpl implements UpdateServicioDto {
     @Sanitize()
     @IsString()
     @MaxLength(500)
-    descripcion!: string;
+    descripcion!: string | null;
 
     @ApiPropertyOptional({ example: 10000 })
     @IsOptional()
     @Type(() => Number)
     @IsInt()
-    valor!: number;
+    valor!: number | null;
 
     @ApiPropertyOptional({ example: 'Promo verano' })
     @IsOptional()
     @Sanitize()
     @IsString()
     @MaxLength(200)
-    nombre_promocion!: string;
+    nombre_promocion!: string | null;
 
     @ApiPropertyOptional({ example: 20 })
     @IsOptional()
     @Type(() => Number)
     @IsInt()
-    porcentaje_descuento!: number;
+    porcentaje_descuento!: number | null;
 
     @ApiPropertyOptional({ example: true })
     @IsOptional()
@@ -95,13 +99,13 @@ export class UpdateServicioDtoImpl implements UpdateServicioDto {
     @Sanitize()
     @IsString()
     @MaxLength(200)
-    icono!: string;
+    icono!: string | null;
 
     @ApiPropertyOptional({ example: 1 })
     @IsOptional()
     @Type(() => Number)
     @IsInt()
-    orden!: number;
+    orden!: number | null;
 
     @ApiPropertyOptional({ example: true })
     @IsBoolean()
@@ -112,24 +116,24 @@ export class UpdateServicioDtoImpl implements UpdateServicioDto {
     @Sanitize()
     @IsString()
     @MaxLength(300)
-    slug!: string | null;
+    slug!: string;
 
     @ApiPropertyOptional({ example: 'https://example.com/servicio.jpg' })
     @IsOptional()
     @SanitizeUrl()
     @IsString()
     @MaxLength(500)
-    img_url!: string;
+    img_url!: string | null;
 
     @ApiPropertyOptional({ example: 'Imagen de diseño web' })
     @IsOptional()
     @Sanitize()
     @IsString()
     @MaxLength(100)
-    img_alt!: string;
+    img_alt!: string | null;
 
     @ApiProperty({ type: [UpdateSecServicioDtoImpl] })
     @ValidateNested()
     @Type(() => UpdateSecServicioDtoImpl)
-    sec_servicio!: UpdateSecServicioDtoImpl[];
+    sec_servicio!: UpdateSecServicioDtoImpl[] | null;
 }

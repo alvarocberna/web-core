@@ -19,8 +19,8 @@ import { Rol } from '../../domain';
 export class ServiciosController {
     constructor(private readonly serviciosService: ServiciosService) {}
 
-    private parseOptionalIntField(value: unknown, fieldName: string): number | undefined {
-        if (value === undefined || value === null) return undefined;
+    private parseOptionalIntField(value: unknown, fieldName: string): number | null {
+        if (value === undefined || value === null) return null;
 
         if (typeof value === 'number') {
             if (!Number.isInteger(value)) {
@@ -31,7 +31,7 @@ export class ServiciosController {
 
         if (typeof value === 'string') {
             const trimmed = value.trim();
-            if (!trimmed) return undefined;
+            if (!trimmed) return null;
 
             if (!/^-?\d+$/.test(trimmed)) {
                 throw new BadRequestException(`El campo "${fieldName}" debe ser un entero válido`);
@@ -103,6 +103,7 @@ export class ServiciosController {
             properties: {
                 data: { type: 'string', description: 'JSON stringificado con los datos del servicio (CreateServicioDtoImpl)' },
                 image_file: { type: 'string', format: 'binary', description: 'Imagen del servicio' },
+                sec_images: { type: 'string', format: 'binary', description: 'Imágenes de las secciones (hasta 20)' },
             },
             required: ['data'],
         },
@@ -112,23 +113,31 @@ export class ServiciosController {
     @Roles(Rol.ADMIN, Rol.SUPERADMIN)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('/servicio/crear')
-    @UseInterceptors(FileFieldsInterceptor([{ name: 'image_file', maxCount: 1 }], imageMulterOptions))
+    @UseInterceptors(
+        FileFieldsInterceptor([
+            { name: 'image_file', maxCount: 1 },
+            { name: 'sec_images', maxCount: 20 },
+        ], imageMulterOptions),
+    )
     createServicio(
         @Req() req: Request,
         @Body('data') dataString: string,
-        @UploadedFiles() files: { image_file?: Express.Multer.File[] },
+        @UploadedFiles() files: {
+            image_file?: Express.Multer.File[];
+            sec_images?: Express.Multer.File[];
+        },
     ) {
         const id_usuario = (req as any).user?.id;
         if (!dataString) throw new BadRequestException('El campo "data" es requerido en el FormData');
         let createServicioDto: CreateServicioDtoImpl;
         try {
             createServicioDto = JSON.parse(dataString);
-        } catch (error) {
-            if (error instanceof BadRequestException) {
-                throw error;
-            }
+        } catch {
             throw new BadRequestException('El campo "data" no es un JSON válido');
         }
+        createServicioDto.valor = this.parseOptionalIntField(createServicioDto.valor, 'valor');
+        createServicioDto.porcentaje_descuento = this.parseOptionalIntField(createServicioDto.porcentaje_descuento, 'porcentaje_descuento');
+        createServicioDto.orden = this.parseOptionalIntField(createServicioDto.orden, 'orden');
         return this.serviciosService.createServicio(id_usuario, createServicioDto, files);
     }
 
@@ -158,6 +167,7 @@ export class ServiciosController {
             properties: {
                 data: { type: 'string', description: 'JSON stringificado con los datos a actualizar (UpdateServicioDtoImpl)' },
                 image_file: { type: 'string', format: 'binary', description: 'Nueva imagen del servicio' },
+                sec_images: { type: 'string', format: 'binary', description: 'Nuevas imágenes de secciones (hasta 20)' },
             },
             required: ['data'],
         },
@@ -167,26 +177,32 @@ export class ServiciosController {
     @Roles(Rol.ADMIN, Rol.SUPERADMIN)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Patch('/servicio/editar/:id_servicio')
-    @UseInterceptors(FileFieldsInterceptor([{ name: 'image_file', maxCount: 1 }], imageMulterOptions))
+    @UseInterceptors(
+        FileFieldsInterceptor([
+            { name: 'image_file', maxCount: 1 },
+            { name: 'sec_images', maxCount: 20 },
+        ], imageMulterOptions),
+    )
     updateServicio(
         @Req() req: Request,
         @Param('id_servicio') id_servicio: string,
         @Body('data') dataString: string,
-        @UploadedFiles() files: { image_file?: Express.Multer.File[] },
+        @UploadedFiles() files: {
+            image_file?: Express.Multer.File[];
+            sec_images?: Express.Multer.File[];
+        },
     ) {
         const id_usuario = (req as any).user?.id;
         if (!dataString) throw new BadRequestException('El campo "data" es requerido en el FormData');
         let updateServicioDto: UpdateServicioDtoImpl;
         try {
             updateServicioDto = JSON.parse(dataString);
-            updateServicioDto.valor = this.parseOptionalIntField(updateServicioDto.valor, 'valor');
-            updateServicioDto.porcentaje_descuento = this.parseOptionalIntField(
-                updateServicioDto.porcentaje_descuento,
-                'porcentaje_descuento',
-            );
         } catch {
             throw new BadRequestException('El campo "data" no es un JSON válido');
         }
+        updateServicioDto.valor = this.parseOptionalIntField(updateServicioDto.valor, 'valor');
+        updateServicioDto.porcentaje_descuento = this.parseOptionalIntField(updateServicioDto.porcentaje_descuento, 'porcentaje_descuento');
+        updateServicioDto.orden = this.parseOptionalIntField(updateServicioDto.orden, 'orden');
         return this.serviciosService.updateServicio(id_usuario, id_servicio, updateServicioDto, files);
     }
 

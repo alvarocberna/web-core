@@ -29,13 +29,14 @@ export abstract class CreateServicioDto {
     abstract icono: string | null;
     abstract orden: number | null;
     abstract activo: boolean;
-    abstract slug: string | null;
+    abstract slug: string;
     abstract img_url: string | null;
     abstract img_alt: string | null;
     abstract sec_servicio: CreateSecServicioDto[] | null; 
 }
 
 export abstract class UpdateServicioDto {
+    abstract id: string;
     abstract nombre_servicio: string;
     abstract descripcion: string | null;
     abstract valor: number | null;
@@ -45,10 +46,10 @@ export abstract class UpdateServicioDto {
     abstract icono: string | null;
     abstract orden: number | null;
     abstract activo: boolean;
-    abstract slug: string | null;
+    abstract slug: string;
     abstract img_url: string | null;
     abstract img_alt: string | null;
-    abstract sec_servicio: CreateSecServicioDto[] | null; 
+    abstract sec_servicio: UpdateSecServicioDto[] | null; 
 }
 
 //SEC-SERVICIO - ENTIDAD NIETA JAJ

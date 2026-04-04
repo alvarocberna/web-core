@@ -15,7 +15,6 @@ export * from './entities/servicio.entity';
 export * from './dtos/usuario.dto';
 export * from './dtos/proyecto.dto';
 export * from './dtos/articulo.dto';
-export * from './dtos/sec-articulo.dto';
 // export * from './dtos/actividad.dto';
 export * from './dtos/testimonios.dto';
 export * from './dtos/equipo.dto';

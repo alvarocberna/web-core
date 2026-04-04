@@ -31,12 +31,33 @@ export class ServiciosService {
     async createServicio(
         id_usuario: string,
         createServicioDto: CreateServicioDtoImpl,
-        files?: { image_file?: Express.Multer.File[] },
+        files?: {
+            image_file?: Express.Multer.File[];
+            sec_images?: Express.Multer.File[];
+        },
     ) {
         if (files?.image_file?.[0]) {
             const imageUrl = await this.imageStorage.saveImage(files.image_file[0]);
             createServicioDto.img_url = imageUrl;
         }
+
+        if (files?.sec_images && createServicioDto.sec_servicio) {
+            for (const [index, file] of files.sec_images.entries()) {
+                if (!createServicioDto.sec_servicio[index]) continue;
+
+                if (typeof file.size === 'number') {
+                    if (file.size === 0) continue;
+                } else if (file.buffer) {
+                    if ((file.buffer as Buffer).length === 0) continue;
+                } else {
+                    continue;
+                }
+
+                const imageUrl = await this.imageStorage.saveImage(file);
+                createServicioDto.sec_servicio[index].image_url = imageUrl;
+            }
+        }
+
         return this.serviciosRepository.createServicio(id_usuario, createServicioDto);
     }
 
@@ -48,12 +69,33 @@ export class ServiciosService {
         id_usuario: string,
         id_servicio: string,
         updateServicioDto: UpdateServicioDtoImpl,
-        files?: { image_file?: Express.Multer.File[] },
+        files?: {
+            image_file?: Express.Multer.File[];
+            sec_images?: Express.Multer.File[];
+        },
     ) {
         if (files?.image_file?.[0]) {
             const imageUrl = await this.imageStorage.saveImage(files.image_file[0]);
             updateServicioDto.img_url = imageUrl;
         }
+
+        if (files?.sec_images && updateServicioDto.sec_servicio) {
+            for (const [index, file] of files.sec_images.entries()) {
+                if (!updateServicioDto.sec_servicio[index]) continue;
+
+                if (typeof file.size === 'number') {
+                    if (file.size === 0) continue;
+                } else if (file.buffer) {
+                    if ((file.buffer as Buffer).length === 0) continue;
+                } else {
+                    continue;
+                }
+
+                const imageUrl = await this.imageStorage.saveImage(file);
+                updateServicioDto.sec_servicio[index].image_url = imageUrl;
+            }
+        }
+
         return this.serviciosRepository.updateServicio(id_usuario, id_servicio, updateServicioDto);
     }
 
