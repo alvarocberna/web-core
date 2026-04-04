@@ -18,8 +18,11 @@ export class ProyectoDatasourceService implements ProyectoDatasource {
         const proyecto = this.prismaService.proyecto.create({ 
             data: {
                 id: this.uuidService.generate(),
-                ...createProyectoDto,
+                nombre_proyecto: createProyectoDto.nombre_proyecto,
+                descripcion: createProyectoDto.descripcion,
+                cliente: createProyectoDto.cliente,
                 fecha_inicio: new Date(),
+                activo: createProyectoDto.activo,
             }
         });
         return proyecto;

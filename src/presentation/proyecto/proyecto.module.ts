@@ -1,10 +1,17 @@
 import { Module } from '@nestjs/common';
 import { ProyectoService } from './proyecto.service';
 import { ProyectoController } from './proyecto.controller';
-import { ProyectoRepositoryModule } from 'src/infrastructure';
+import { ProyectoRepositoryModule, EquipoRepositoryModule, ServiciosRepositoryModule, ArticuloRepositoryModule, TestimoniosRepositoryModule, UsuarioRepositoryModule } from 'src/infrastructure';
 
 @Module({
-  imports: [ProyectoRepositoryModule],
+  imports: [
+    ProyectoRepositoryModule,
+    EquipoRepositoryModule,
+    ServiciosRepositoryModule,
+    ArticuloRepositoryModule,
+    TestimoniosRepositoryModule,
+    UsuarioRepositoryModule,
+  ],
   controllers: [ProyectoController],
   providers: [ProyectoService],
   exports: [ProyectoService]

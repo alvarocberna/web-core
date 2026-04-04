@@ -35,3 +35,5 @@ export * from './repository/equipo.repository/equipo.repository.module';
 export * from './repository/equipo.repository/equipo.repository.service';
 export * from './repository/servicios.repository/servicios.repository.module';
 export * from './repository/servicios.repository/servicios.repository.service';
+export * from './repository/usuario.repository/usuario.repository.service';
+export * from './repository/usuario.repository/usuario.repository.module';
