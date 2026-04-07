@@ -168,7 +168,7 @@ export class EquipoDatasourceService implements EquipoDatasource {
                         deleteMany: {},
                         createMany: {
                             data: sec_empleado.map(sec => ({
-                                nro_seccion: sec.nro_seccion,
+                                nro_seccion: sec.nro_seccion + 1,
                                 titulo_sec: sec.titulo_sec,
                                 contenido_sec: sec.contenido_sec,
                                 image_url: sec.image_url,

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards, Query, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Put, Param, Delete, Req, UseGuards, Query, UseInterceptors, UploadedFiles } from '@nestjs/common';
 import { BadRequestException } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiQuery, ApiConsumes, ApiBody } from '@nestjs/swagger';
@@ -144,7 +144,7 @@ export class EquipoController {
     @ApiResponse({ status: 401, description: 'No autorizado' })
     @Roles(Rol.ADMIN, Rol.SUPERADMIN)
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Patch('/empleado/editar/:id_empleado')
+    @Put('/empleado/editar/:id_empleado')
     @UseInterceptors(
         FileFieldsInterceptor([
             { name: 'image_file', maxCount: 1 },

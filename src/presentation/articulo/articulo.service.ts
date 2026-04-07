@@ -6,7 +6,7 @@ import { UpdateArticuloDtoImpl } from './dto/update-articulo.dto';
 //domain
 import { CreateArticuloUseCase, UpdateArticuloUseCase, DeleteArticuloUseCase } from 'src/domain';
 //infrastructure
-import { ArticuloRepositoryService, ActividadRepositoryService, ImageStorageRepositoryService } from 'src/infrastructure';
+import { ArticuloRepositoryService, ActividadRepositoryService, ImageStorageRepositoryService, UsuarioRepositoryService } from 'src/infrastructure';
 
 @Injectable()
 export class ArticuloService {
@@ -15,6 +15,7 @@ export class ArticuloService {
         private readonly articuloRepository: ArticuloRepositoryService,
         private readonly actividadRepository: ActividadRepositoryService,
         private readonly imageStorage: ImageStorageRepositoryService,
+        private readonly usuarioRepository: UsuarioRepositoryService,
     ) {}
 
     // ─── Articulos (entidad padre) ────────────────────────────────────────────
@@ -113,6 +114,6 @@ export class ArticuloService {
     }
 
     deleteArticulo(id_usuario: string, id_articulo: string) {
-        return new DeleteArticuloUseCase(this.articuloRepository, this.actividadRepository, this.imageStorage).execute(id_usuario, id_articulo);
+        return new DeleteArticuloUseCase(this.articuloRepository, this.actividadRepository, this.imageStorage, this.usuarioRepository).execute(id_usuario, id_articulo);
     }
 }

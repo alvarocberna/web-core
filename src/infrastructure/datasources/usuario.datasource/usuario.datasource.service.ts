@@ -43,7 +43,7 @@ export class UsuarioDatasourceService implements UsuarioDatasource {
     }
 
     async getUsuarioById(id_usuario: string): Promise<UsuarioEntity | null> {
-        const usuario = await this.prismaService.usuario.findFirst({
+        const usuario = await this.prismaService.usuario.findUnique({
             where: {
                 id: id_usuario
             }

@@ -19,120 +19,200 @@
 -- SECCIÓN 1: CONSTRAINTS
 -- ============================================================
 
--- ── Usuario ────────────────────────────────────────────────
+DO $$ BEGIN
 
-ALTER TABLE "Usuario"
-  ADD CONSTRAINT IF NOT EXISTS ck_usuario_rol
-    CHECK (rol IN ('admin', 'editor', 'viewer'));
+-- ── Usuario ───────────────────────────────────────────────
 
-ALTER TABLE "Usuario"
-  ADD CONSTRAINT IF NOT EXISTS ck_usuario_email
+IF NOT EXISTS (
+  SELECT 1 FROM pg_constraint WHERE conname = 'ck_usuario_rol'
+) THEN
+  ALTER TABLE "Usuario"
+    ADD CONSTRAINT ck_usuario_rol
+    CHECK (rol IN ('USER', 'ADMIN', 'SUPERADMIN'));
+END IF;
+
+IF NOT EXISTS (
+  SELECT 1 FROM pg_constraint WHERE conname = 'ck_usuario_email'
+) THEN
+  ALTER TABLE "Usuario"
+    ADD CONSTRAINT ck_usuario_email
     CHECK (email ~* '^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$');
+END IF;
 
 
--- ── Articulo ───────────────────────────────────────────────
+-- ── Articulos / Articulo ──────────────────────────────────
 
-ALTER TABLE "Articulos"
-  ADD CONSTRAINT IF NOT EXISTS uq_articulos_proyecto
+IF NOT EXISTS (
+  SELECT 1 FROM pg_constraint WHERE conname = 'uq_articulos_proyecto'
+) THEN
+  ALTER TABLE "Articulos"
+    ADD CONSTRAINT uq_articulos_proyecto
     UNIQUE (proyecto_id);
+END IF;
 
-ALTER TABLE "Articulo"
-  ADD CONSTRAINT IF NOT EXISTS ck_articulo_status
+IF NOT EXISTS (
+  SELECT 1 FROM pg_constraint WHERE conname = 'ck_articulo_status'
+) THEN
+  ALTER TABLE "Articulo"
+    ADD CONSTRAINT ck_articulo_status
     CHECK (status IN ('rejected', 'pending', 'approved'));
+END IF;
 
-ALTER TABLE "Articulo"
-  ADD CONSTRAINT IF NOT EXISTS ck_articulo_nro
+IF NOT EXISTS (
+  SELECT 1 FROM pg_constraint WHERE conname = 'ck_articulo_nro'
+) THEN
+  ALTER TABLE "Articulo"
+    ADD CONSTRAINT ck_articulo_nro
     CHECK (nro_articulo > 0);
+END IF;
 
-ALTER TABLE "Articulo"
-  ADD CONSTRAINT IF NOT EXISTS ck_articulo_image_position
+IF NOT EXISTS (
+  SELECT 1 FROM pg_constraint WHERE conname = 'ck_articulo_image_position'
+) THEN
+  ALTER TABLE "Articulo"
+    ADD CONSTRAINT ck_articulo_image_position
     CHECK (image_position IS NULL OR image_position IN ('left', 'right', 'full', 'none'));
+END IF;
 
 
--- ── SecArticulo ────────────────────────────────────────────
+-- ── SecArticulo ───────────────────────────────────────────
 
-ALTER TABLE "SecArticulo"
-  ADD CONSTRAINT IF NOT EXISTS ck_secarticulo_nro_sec
+IF NOT EXISTS (
+  SELECT 1 FROM pg_constraint WHERE conname = 'ck_secarticulo_nro_sec'
+) THEN
+  ALTER TABLE "SecArticulo"
+    ADD CONSTRAINT ck_secarticulo_nro_sec
     CHECK (nro_seccion > 0);
+END IF;
 
-ALTER TABLE "SecArticulo"
-  ADD CONSTRAINT IF NOT EXISTS ck_secarticulo_image_position
+IF NOT EXISTS (
+  SELECT 1 FROM pg_constraint WHERE conname = 'ck_secarticulo_image_position'
+) THEN
+  ALTER TABLE "SecArticulo"
+    ADD CONSTRAINT ck_secarticulo_image_position
     CHECK (image_position IS NULL OR image_position IN ('left', 'right', 'full', 'none'));
+END IF;
 
 
--- ── Empleado ───────────────────────────────────────────────
+-- ── Empleado ──────────────────────────────────────────────
 
-ALTER TABLE "Empleado"
-  ADD CONSTRAINT IF NOT EXISTS ck_empleado_orden
+IF NOT EXISTS (
+  SELECT 1 FROM pg_constraint WHERE conname = 'ck_empleado_orden'
+) THEN
+  ALTER TABLE "Empleado"
+    ADD CONSTRAINT ck_empleado_orden
     CHECK (orden IS NULL OR orden > 0);
+END IF;
 
 
--- ── SecEmpleado ────────────────────────────────────────────
+-- ── SecEmpleado ───────────────────────────────────────────
 
-ALTER TABLE "SecEmpleado"
-  ADD CONSTRAINT IF NOT EXISTS ck_secempleado_nro_sec
+IF NOT EXISTS (
+  SELECT 1 FROM pg_constraint WHERE conname = 'ck_secempleado_nro_sec'
+) THEN
+  ALTER TABLE "SecEmpleado"
+    ADD CONSTRAINT ck_secempleado_nro_sec
     CHECK (nro_seccion > 0);
+END IF;
 
-ALTER TABLE "SecEmpleado"
-  ADD CONSTRAINT IF NOT EXISTS ck_secempleado_image_position
+IF NOT EXISTS (
+  SELECT 1 FROM pg_constraint WHERE conname = 'ck_secempleado_image_position'
+) THEN
+  ALTER TABLE "SecEmpleado"
+    ADD CONSTRAINT ck_secempleado_image_position
     CHECK (image_position IS NULL OR image_position IN ('left', 'right', 'full', 'none'));
+END IF;
 
 
--- ── Servicio ───────────────────────────────────────────────
+-- ── Servicios / Servicio ──────────────────────────────────
 
-ALTER TABLE "Servicios"
-  ADD CONSTRAINT IF NOT EXISTS uq_servicios_proyecto
+IF NOT EXISTS (
+  SELECT 1 FROM pg_constraint WHERE conname = 'uq_servicios_proyecto'
+) THEN
+  ALTER TABLE "Servicios"
+    ADD CONSTRAINT uq_servicios_proyecto
     UNIQUE (proyecto_id);
+END IF;
 
-ALTER TABLE "Servicio"
-  ADD CONSTRAINT IF NOT EXISTS ck_servicio_valor
+IF NOT EXISTS (
+  SELECT 1 FROM pg_constraint WHERE conname = 'ck_servicio_valor'
+) THEN
+  ALTER TABLE "Servicio"
+    ADD CONSTRAINT ck_servicio_valor
     CHECK (valor IS NULL OR valor >= 0);
+END IF;
 
-ALTER TABLE "Servicio"
-  ADD CONSTRAINT IF NOT EXISTS ck_servicio_descuento
+IF NOT EXISTS (
+  SELECT 1 FROM pg_constraint WHERE conname = 'ck_servicio_descuento'
+) THEN
+  ALTER TABLE "Servicio"
+    ADD CONSTRAINT ck_servicio_descuento
     CHECK (porcentaje_descuento IS NULL OR (porcentaje_descuento >= 0 AND porcentaje_descuento <= 100));
+END IF;
 
-ALTER TABLE "Servicio"
-  ADD CONSTRAINT IF NOT EXISTS ck_servicio_orden
+IF NOT EXISTS (
+  SELECT 1 FROM pg_constraint WHERE conname = 'ck_servicio_orden'
+) THEN
+  ALTER TABLE "Servicio"
+    ADD CONSTRAINT ck_servicio_orden
     CHECK (orden IS NULL OR orden > 0);
+END IF;
 
 
--- ── SecServicio ────────────────────────────────────────────
+-- ── SecServicio ───────────────────────────────────────────
 
-ALTER TABLE "SecServicio"
-  ADD CONSTRAINT IF NOT EXISTS ck_secservicio_nro_sec
+IF NOT EXISTS (
+  SELECT 1 FROM pg_constraint WHERE conname = 'ck_secservicio_nro_sec'
+) THEN
+  ALTER TABLE "SecServicio"
+    ADD CONSTRAINT ck_secservicio_nro_sec
     CHECK (nro_seccion > 0);
+END IF;
 
-ALTER TABLE "SecServicio"
-  ADD CONSTRAINT IF NOT EXISTS ck_secservicio_image_position
+IF NOT EXISTS (
+  SELECT 1 FROM pg_constraint WHERE conname = 'ck_secservicio_image_position'
+) THEN
+  ALTER TABLE "SecServicio"
+    ADD CONSTRAINT ck_secservicio_image_position
     CHECK (image_position IS NULL OR image_position IN ('left', 'right', 'full', 'none'));
+END IF;
 
 
--- ── Testimonio ─────────────────────────────────────────────
+-- ── Testimonios / Testimonio ──────────────────────────────
 
-ALTER TABLE "Testimonios"
-  ADD CONSTRAINT IF NOT EXISTS uq_testimonios_proyecto
+IF NOT EXISTS (
+  SELECT 1 FROM pg_constraint WHERE conname = 'uq_testimonios_proyecto'
+) THEN
+  ALTER TABLE "Testimonios"
+    ADD CONSTRAINT uq_testimonios_proyecto
     UNIQUE (proyecto_id);
-    
-ALTER TABLE "Testimonio"
-  ADD CONSTRAINT IF NOT EXISTS ck_testimonio_status
+END IF;
+
+IF NOT EXISTS (
+  SELECT 1 FROM pg_constraint WHERE conname = 'ck_testimonio_status'
+) THEN
+  ALTER TABLE "Testimonio"
+    ADD CONSTRAINT ck_testimonio_status
     CHECK (status IN ('pending', 'approved', 'rejected'));
+END IF;
 
-ALTER TABLE "Testimonio"
-  ADD CONSTRAINT IF NOT EXISTS ck_testimonio_calificacion
+IF NOT EXISTS (
+  SELECT 1 FROM pg_constraint WHERE conname = 'ck_testimonio_calificacion'
+) THEN
+  ALTER TABLE "Testimonio"
+    ADD CONSTRAINT ck_testimonio_calificacion
     CHECK (calificacion IS NULL OR (calificacion >= 1 AND calificacion <= 5));
+END IF;
 
-ALTER TABLE "Testimonio"
-  ADD CONSTRAINT IF NOT EXISTS ck_testimonio_correo
+IF NOT EXISTS (
+  SELECT 1 FROM pg_constraint WHERE conname = 'ck_testimonio_correo'
+) THEN
+  ALTER TABLE "Testimonio"
+    ADD CONSTRAINT ck_testimonio_correo
     CHECK (correo ~* '^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$');
+END IF;
 
-
--- ── Actividad ──────────────────────────────────────────────
-
-ALTER TABLE "Actividad"
-  ADD CONSTRAINT IF NOT EXISTS ck_actividad_accion
-    CHECK (accion IN ('CREADO', 'PUBLICADO', 'ACTUALIZADO', 'ARCHIVADO', 'ELIMINADO', 'APROBADO', 'RECHAZADO'));
-
+END $$;
 
 -- ============================================================
 -- SECCIÓN 2: ÍNDICES DE RENDIMIENTO
@@ -167,30 +247,6 @@ CREATE INDEX IF NOT EXISTS idx_click_entidad       ON "Click"       (entidad_id)
 -- SECCIÓN 3: FUNCIONES
 -- ============================================================
 
--- ── Utilidad: generar slug URL-friendly ───────────────────
-
-CREATE OR REPLACE FUNCTION generate_slug(input TEXT)
-RETURNS TEXT
-LANGUAGE plpgsql IMMUTABLE
-AS $$
-DECLARE
-  result TEXT;
-BEGIN
-  result := lower(trim(input));
-  -- Reemplazar caracteres acentuados
-  result := translate(result,
-    'áàäâéèëêíìïîóòöôúùüûñçãõ',
-    'aaaaeeeeiiiioooouuuuncao'
-  );
-  -- Reemplazar cualquier caracter no alfanumérico por guión
-  result := regexp_replace(result, '[^a-z0-9]+', '-', 'g');
-  -- Eliminar guiones al inicio y al final
-  result := trim(both '-' from result);
-  RETURN result;
-END;
-$$;
-
-
 -- ── Helpers RLS: leer claims del JWT ──────────────────────
 -- Requiere que el JWT del backend incluya "proyecto_id" y "rol"
 -- en su payload. El secret del JWT debe coincidir con
@@ -217,76 +273,6 @@ AS $$
 $$;
 
 
--- ── Trigger: auto-generar slug en Articulo ────────────────
-
-CREATE OR REPLACE FUNCTION trg_fn_slug_articulo()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-BEGIN
-  IF NEW.slug IS NULL OR trim(NEW.slug) = '' THEN
-    NEW.slug := generate_slug(NEW.titulo) || '-' || left(replace(NEW.id::text, '-', ''), 8);
-  END IF;
-  RETURN NEW;
-END;
-$$;
-
-
--- ── Trigger: auto-generar slug en Empleado ────────────────
-
-CREATE OR REPLACE FUNCTION trg_fn_slug_empleado()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-BEGIN
-  IF NEW.slug IS NULL OR trim(NEW.slug) = '' THEN
-    NEW.slug := generate_slug(NEW.nombre_primero || ' ' || NEW.apellido_paterno)
-                || '-' || left(replace(NEW.id::text, '-', ''), 8);
-  END IF;
-  RETURN NEW;
-END;
-$$;
-
-
--- ── Trigger: auto-generar slug en Servicio ────────────────
-
-CREATE OR REPLACE FUNCTION trg_fn_slug_servicio()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-BEGIN
-  IF NEW.slug IS NULL OR trim(NEW.slug) IN ('', '-') THEN
-    NEW.slug := generate_slug(NEW.nombre_servicio)
-                || '-' || left(replace(NEW.id::text, '-', ''), 8);
-  END IF;
-  RETURN NEW;
-END;
-$$;
-
-
--- ── Trigger: normalizar emails a minúsculas ───────────────
-
-CREATE OR REPLACE FUNCTION trg_fn_normalize_email_usuario()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-BEGIN
-  NEW.email := lower(trim(NEW.email));
-  RETURN NEW;
-END;
-$$;
-
-CREATE OR REPLACE FUNCTION trg_fn_normalize_correo_testimonio()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
-BEGIN
-  NEW.correo := lower(trim(NEW.correo));
-  RETURN NEW;
-END;
-$$;
-
-
 -- ── Trigger: prevenir eliminar el último admin del proyecto ──
 
 CREATE OR REPLACE FUNCTION trg_fn_prevent_delete_last_admin()
@@ -296,11 +282,11 @@ AS $$
 DECLARE
   remaining_admins INT;
 BEGIN
-  IF OLD.rol = 'admin' THEN
+  IF OLD.rol IN ('ADMIN', 'SUPERADMIN') THEN
     SELECT COUNT(*) INTO remaining_admins
     FROM "Usuario"
     WHERE proyecto_id = OLD.proyecto_id
-      AND rol = 'admin'
+      AND rol IN ('ADMIN', 'SUPERADMIN')
       AND id <> OLD.id;
 
     IF remaining_admins = 0 THEN
@@ -317,36 +303,8 @@ $$;
 -- ============================================================
 
 -- Eliminar antes de recrear (idempotente)
-DROP TRIGGER IF EXISTS trg_articulo_slug         ON "Articulo";
-DROP TRIGGER IF EXISTS trg_empleado_slug         ON "Empleado";
-DROP TRIGGER IF EXISTS trg_servicio_slug         ON "Servicio";
-DROP TRIGGER IF EXISTS trg_usuario_email         ON "Usuario";
-DROP TRIGGER IF EXISTS trg_testimonio_correo     ON "Testimonio";
-DROP TRIGGER IF EXISTS trg_articulo_actividad    ON "Articulo";
-DROP TRIGGER IF EXISTS trg_usuario_last_admin    ON "Usuario";
-DROP TRIGGER IF EXISTS trg_testimonio_status     ON "Testimonio";
+DROP TRIGGER IF EXISTS trg_usuario_last_admin ON "Usuario";
 
--- Auto-slug
-CREATE TRIGGER trg_articulo_slug
-  BEFORE INSERT OR UPDATE OF titulo ON "Articulo"
-  FOR EACH ROW EXECUTE FUNCTION trg_fn_slug_articulo();
-
-CREATE TRIGGER trg_empleado_slug
-  BEFORE INSERT OR UPDATE OF nombre_primero, apellido_paterno ON "Empleado"
-  FOR EACH ROW EXECUTE FUNCTION trg_fn_slug_empleado();
-
-CREATE TRIGGER trg_servicio_slug
-  BEFORE INSERT OR UPDATE OF nombre_servicio ON "Servicio"
-  FOR EACH ROW EXECUTE FUNCTION trg_fn_slug_servicio();
-
--- Normalización de emails
-CREATE TRIGGER trg_usuario_email
-  BEFORE INSERT OR UPDATE OF email ON "Usuario"
-  FOR EACH ROW EXECUTE FUNCTION trg_fn_normalize_email_usuario();
-
-CREATE TRIGGER trg_testimonio_correo
-  BEFORE INSERT OR UPDATE OF correo ON "Testimonio"
-  FOR EACH ROW EXECUTE FUNCTION trg_fn_normalize_correo_testimonio();
 
 -- Proteger último admin
 CREATE TRIGGER trg_usuario_last_admin

@@ -4,12 +4,15 @@ import { UpdateServiciosDtoImpl } from './dto/update-servicios.dto';
 import { CreateServicioDtoImpl } from './dto/create-servicio.dto';
 import { UpdateServicioDtoImpl } from './dto/update-servicio.dto';
 import { ServiciosRepositoryService, ImageStorageRepositoryService } from 'src/infrastructure';
+import { UsuarioRepositoryService } from 'src/infrastructure';
+import { DeleteServicioUseCase } from 'src/domain';
 
 @Injectable()
 export class ServiciosService {
     constructor(
         private readonly serviciosRepository: ServiciosRepositoryService,
         private readonly imageStorage: ImageStorageRepositoryService,
+        private readonly usuarioRepository: UsuarioRepositoryService,
     ) {}
 
     // ─── Servicios (Entidad padre) ───────────────────────────────────────────────
@@ -100,6 +103,7 @@ export class ServiciosService {
     }
 
     removeServicio(id_usuario: string, id_servicio: string) {
+        return new DeleteServicioUseCase(this.serviciosRepository, this.imageStorage, this.usuarioRepository).execute(id_usuario, id_servicio)
         return this.serviciosRepository.deleteServicio(id_usuario, id_servicio);
     }
 }

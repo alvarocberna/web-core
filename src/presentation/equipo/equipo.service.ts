@@ -3,13 +3,15 @@ import { CreateEquipoDtoImpl } from './dto/create-equipo.dto';
 import { UpdateEquipoDtoImpl } from './dto/update-equipo.dto';
 import { CreateEmpleadoDtoImpl } from './dto/create-empleado.dto';
 import { UpdateEmpleadoDtoImpl } from './dto/update-empleado.dto';
-import { EquipoRepositoryService, ImageStorageRepositoryService } from 'src/infrastructure';
+import { EquipoRepositoryService, ImageStorageRepositoryService, UsuarioRepositoryService } from 'src/infrastructure';
+import { DeleteEmpleadoUseCase } from 'src/domain';
 
 @Injectable()
 export class EquipoService {
     constructor(
         private readonly equipoRepository: EquipoRepositoryService,
         private readonly imageStorage: ImageStorageRepositoryService,
+        private readonly usuarioRepository: UsuarioRepositoryService,
     ) {}
 
     // ─── Equipo (Entidad padre) ──────────────────────────────────────────────────
@@ -100,6 +102,6 @@ export class EquipoService {
     }
 
     removeEmpleado(id_usuario: string, id_empleado: string) {
-        return this.equipoRepository.deleteEmpleado(id_usuario, id_empleado);
+        return new DeleteEmpleadoUseCase(this.equipoRepository, this.imageStorage, this.usuarioRepository).execute(id_usuario, id_empleado)
     }
 }
