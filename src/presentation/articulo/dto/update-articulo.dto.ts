@@ -12,110 +12,121 @@ export class UpdateSecArticuloDtoImpl implements UpdateSecArticuloDto {
     @IsString()
     id!: string;
 
-    @ApiProperty({ example: 1 })
+    @ApiPropertyOptional({ example: 1 })
+    @IsOptional()
     @Type(() => Number)
     @IsNumber()
-    nro_seccion!: number;
+    nro_seccion?: number;
 
-    @ApiProperty({ example: 'Título de la sección' })
+    @ApiPropertyOptional({ example: 'Título de la sección' })
+    @IsOptional()
     @Sanitize()
     @IsString()
     @MaxLength(200)
-    titulo_sec!: string | null;
+    titulo_sec?: string | null;
 
-    @ApiProperty({ example: 'Contenido de la sección...' })
+    @ApiPropertyOptional({ example: 'Contenido de la sección...' })
+    @IsOptional()
     @SanitizeRich()
     @IsString()
     @MaxLength(5000)
-    contenido_sec!: string | null;
+    contenido_sec?: string | null;
 
     @ApiPropertyOptional({ example: 'https://example.com/image.jpg' })
     @IsOptional()
     @SanitizeUrl()
     @IsString()
     @MaxLength(500)
-    image_url!: string | null;
+    image_url?: string | null;
 
     @ApiPropertyOptional({ example: 'Texto alternativo' })
     @IsOptional()
     @Sanitize()
     @IsString()
     @MaxLength(100)
-    image_alt!: string | null;
+    image_alt?: string | null;
 
     @ApiPropertyOptional({ example: 'center' })
     @IsOptional()
     @Sanitize()
     @IsString()
     @MaxLength(50)
-    image_position!: string | null;
+    image_position?: string | null;
 }
 
 export class UpdateArticuloDtoImpl implements UpdateArticuloDto {
     @ApiPropertyOptional({ example: 'Título actualizado' })
+    @IsOptional()
     @Sanitize()
     @IsString()
     @MaxLength(200)
-    titulo!: string;
+    titulo?: string;
 
     @ApiPropertyOptional({ example: 'Subtítulo actualizado' })
     @IsOptional()
     @Sanitize()
     @IsString()
     @MaxLength(500)
-    subtitulo!: string | null;
+    subtitulo?: string | null;
 
     @ApiPropertyOptional({ example: 'Juan García' })
+    @IsOptional()
     @Sanitize()
     @IsString()
-    autor!: string;
+    autor?: string;
 
     @ApiPropertyOptional({ example: '2024-01-01T00:00:00.000Z' })
+    @IsOptional()
     @Type(() => Date)
     @IsDate()
-    fecha_publicacion!: Date;
+    fecha_publicacion?: Date;
 
     @ApiPropertyOptional({ example: '2024-06-01T00:00:00.000Z' })
+    @IsOptional()
     @Type(() => Date)
     @IsDate()
-    fecha_actualizacion!: Date | null;
+    fecha_actualizacion?: Date | null;
 
     @ApiPropertyOptional({ example: 'PUBLISHED', enum: ArticuloStatus })
+    @IsOptional()
     @IsEnum(ArticuloStatus)
-    status!: ArticuloStatus;
+    status?: ArticuloStatus;
 
     @ApiPropertyOptional({ example: true })
+    @IsOptional()
     @IsBoolean()
-    activo!: boolean;
+    activo?: boolean;
 
     @ApiPropertyOptional({ example: 'titulo-actualizado' })
+    @IsOptional()
     @Sanitize()
     @IsString()
-    slug!: string;
+    slug?: string;
 
     @ApiPropertyOptional({ example: 'https://example.com/image.jpg' })
     @IsOptional()
     @SanitizeUrl()
     @IsString()
     @MaxLength(500)
-    image_url!: string | null;
+    image_url?: string | null;
 
     @ApiPropertyOptional({ example: 'Texto alternativo' })
     @IsOptional()
     @Sanitize()
     @IsString()
     @MaxLength(100)
-    image_alt!: string | null;
+    image_alt?: string | null;
 
     @ApiPropertyOptional({ example: 'center' })
     @IsOptional()
     @Sanitize()
     @IsString()
     @MaxLength(50)
-    image_position!: string | null;
+    image_position?: string | null;
 
     @ApiPropertyOptional({ type: [UpdateSecArticuloDtoImpl] })
-    @ValidateNested()
+    @IsOptional()
+    @ValidateNested({ each: true })
     @Type(() => UpdateSecArticuloDtoImpl)
-    sec_articulo!: UpdateSecArticuloDtoImpl[];
+    sec_articulo?: UpdateSecArticuloDtoImpl[];
 }

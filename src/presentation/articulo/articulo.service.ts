@@ -108,6 +108,10 @@ export class ArticuloService {
         return new UpdateArticuloUseCase(this.articuloRepository, this.actividadRepository).execute(id_usuario, id_articulo, updateArticuloDto);
     }
 
+    updateArticuloStatus(id_usuario: string, id_articulo: string, data: { status: string }) {
+        return this.articuloRepository.updateArticuloStatus(id_usuario, id_articulo, data)
+    }
+
     deleteArticulo(id_usuario: string, id_articulo: string) {
         return new DeleteArticuloUseCase(this.articuloRepository, this.actividadRepository, this.imageStorage).execute(id_usuario, id_articulo);
     }

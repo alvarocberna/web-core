@@ -63,7 +63,7 @@ export class ServiciosDatasourceService implements ServiciosDatasource {
         if (!servicios) throw new NotFoundException('Servicios no encontrado');
 
         const updated = await this.prismaService.servicios.update({
-            where: { id: servicios.id },
+            where: { id: servicios.id, proyecto_id: user.proyecto_id },
             data: { ...updateServiciosDto },
         });
         return updated;
@@ -86,6 +86,7 @@ export class ServiciosDatasourceService implements ServiciosDatasource {
             data: {
                 id: this.uuidService.generate(),
                 ...data,
+                proyecto_id: user.proyecto_id,
                 servicios_id: servicios.id,
                 ...(sec_servicio && sec_servicio.length > 0 && {
                     sec_servicio: {
@@ -97,6 +98,7 @@ export class ServiciosDatasourceService implements ServiciosDatasource {
                             image_url: sec.image_url,
                             image_alt: sec.image_alt,
                             image_position: sec.image_position,
+                            proyecto_id: user.proyecto_id,
                         })),
                     },
                 }),
@@ -116,7 +118,7 @@ export class ServiciosDatasourceService implements ServiciosDatasource {
         if (!servicios) throw new NotFoundException('Servicios no encontrado');
 
         const servicio = await this.prismaService.servicio.findUnique({
-            where: { id: id_servicio, servicios_id: servicios.id },
+            where: { id: id_servicio, servicios_id: servicios.id, proyecto_id: user.proyecto_id },
             include: { sec_servicio: true },
         });
         if (!servicio) throw new NotFoundException('Servicio no encontrado');
@@ -136,7 +138,7 @@ export class ServiciosDatasourceService implements ServiciosDatasource {
         if (!servicios) throw new NotFoundException('Servicios no encontrado');
 
         const servicio_old = await this.prismaService.servicio.findUnique({
-            where: { id: id_servicio, servicios_id: servicios.id },
+            where: { id: id_servicio, servicios_id: servicios.id, proyecto_id: user.proyecto_id },
             include: { sec_servicio: true },
         });
         if (!servicio_old) throw new NotFoundException('Servicio no encontrado');
@@ -158,7 +160,7 @@ export class ServiciosDatasourceService implements ServiciosDatasource {
         }
 
         const updated = await this.prismaService.servicio.update({
-            where: { id: id_servicio },
+            where: { id: id_servicio, proyecto_id: user.proyecto_id },
             data: {
                 ...data,
                 ...(sec_servicio && {
@@ -172,6 +174,7 @@ export class ServiciosDatasourceService implements ServiciosDatasource {
                                 image_url: sec.image_url,
                                 image_alt: sec.image_alt,
                                 image_position: sec.image_position,
+                                proyecto_id: user.proyecto_id,
                             })),
                         },
                     },
@@ -192,7 +195,7 @@ export class ServiciosDatasourceService implements ServiciosDatasource {
         if (!servicios) throw new NotFoundException('Servicios no encontrado');
 
         await this.prismaService.servicio.delete({
-            where: { id: id_servicio, servicios_id: servicios.id },
+            where: { id: id_servicio, servicios_id: servicios.id, proyecto_id: user.proyecto_id },
         });
     }
 }

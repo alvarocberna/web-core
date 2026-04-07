@@ -83,6 +83,7 @@ export class UsuarioDatasourceService implements UsuarioDatasource {
         const update = await this.prismaService.usuario.update({
             where: {
                 id: id_usuario,
+                proyecto_id: usuario.proyecto_id,
             },
             data: {
                 ...(nombre !== undefined && { nombre }),
@@ -105,7 +106,7 @@ export class UsuarioDatasourceService implements UsuarioDatasource {
 
         const hashedPassword = await this.passHasherService.hash(updateUsuarioPasswordDto.newPassword);
         await this.prismaService.usuario.update({
-            where: { id: id_usuario },
+            where: { id: id_usuario, proyecto_id: usuario.proyecto_id },
             data: { password: hashedPassword },
         });
     }

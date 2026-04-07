@@ -68,7 +68,8 @@ export class TestimoniosDatasourceService implements TestimoniosDatasource {
 
         const updated = await this.prismaService.testimonios.update({
             where: { 
-                id: testimonios.id
+                id: testimonios.id,
+                proyecto_id: user.proyecto_id,
             },
             data: { ...updateTestimoniosDto },
         });
@@ -92,6 +93,7 @@ export class TestimoniosDatasourceService implements TestimoniosDatasource {
                 id: this.uuidService.generate(),
                 ...createTestimonioDto,
                 fecha_creacion: new Date(),
+                proyecto_id: usuario.proyecto_id,
                 testimonios_id: secTestimonios.id,
             },
         });
@@ -107,6 +109,7 @@ export class TestimoniosDatasourceService implements TestimoniosDatasource {
         const update = await this.prismaService.testimonio.update({
             where: {
                 id: id_testimonio,
+                proyecto_id: testimonio.proyecto_id,
             },
             data: {
                 ...(updateTestimonioDto.status !== undefined && { status: updateTestimonioDto.status }),
@@ -128,7 +131,7 @@ export class TestimoniosDatasourceService implements TestimoniosDatasource {
             throw new NotFoundException('seccion testimonios no encontrado')
         }
         await this.prismaService.testimonio.delete({
-            where: { id: id_testimonio, testimonios_id: secTestimonios.id },
+            where: { id: id_testimonio, testimonios_id: secTestimonios.id, proyecto_id: usuario.proyecto_id },
         });
     }
 }

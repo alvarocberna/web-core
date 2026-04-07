@@ -63,7 +63,7 @@ export class EquipoDatasourceService implements EquipoDatasource {
         if (!equipo) throw new NotFoundException('Equipo no encontrado');
 
         const updated = await this.prismaService.equipo.update({
-            where: { id: equipo.id },
+            where: { id: equipo.id, proyecto_id: user.proyecto_id },
             data: { ...updateEquipoDto },
         });
         return updated;
@@ -86,6 +86,7 @@ export class EquipoDatasourceService implements EquipoDatasource {
             data: {
                 id: this.uuidService.generate(),
                 ...data,
+                proyecto_id: user.proyecto_id,
                 equipo_id: equipo.id,
                 ...(sec_empleado && sec_empleado.length > 0 && {
                     sec_empleado: {
@@ -97,6 +98,7 @@ export class EquipoDatasourceService implements EquipoDatasource {
                             image_url: sec.image_url,
                             image_alt: sec.image_alt,
                             image_position: sec.image_position,
+                            proyecto_id: user.proyecto_id,
                         })),
                     },
                 }),
@@ -116,7 +118,7 @@ export class EquipoDatasourceService implements EquipoDatasource {
         if (!equipo) throw new NotFoundException('Equipo no encontrado');
 
         const empleado = await this.prismaService.empleado.findUnique({
-            where: { id: id_empleado, equipo_id: equipo.id },
+            where: { id: id_empleado, equipo_id: equipo.id, proyecto_id: user.proyecto_id },
             include: { sec_empleado: true },
         });
         if (!empleado) throw new NotFoundException('Empleado no encontrado');
@@ -136,7 +138,7 @@ export class EquipoDatasourceService implements EquipoDatasource {
         if (!equipo) throw new NotFoundException('Equipo no encontrado');
 
         const empleado_old = await this.prismaService.empleado.findUnique({
-            where: { id: id_empleado, equipo_id: equipo.id },
+            where: { id: id_empleado, equipo_id: equipo.id, proyecto_id: user.proyecto_id },
             include: { sec_empleado: true },
         });
         if (!empleado_old) throw new NotFoundException('Empleado no encontrado');
@@ -158,7 +160,7 @@ export class EquipoDatasourceService implements EquipoDatasource {
         }
 
         const updated = await this.prismaService.empleado.update({
-            where: { id: id_empleado },
+            where: { id: id_empleado, proyecto_id: user.proyecto_id },
             data: {
                 ...data,
                 ...(sec_empleado && {
@@ -172,6 +174,7 @@ export class EquipoDatasourceService implements EquipoDatasource {
                                 image_url: sec.image_url,
                                 image_alt: sec.image_alt,
                                 image_position: sec.image_position,
+                                proyecto_id: user.proyecto_id,
                             })),
                         },
                     },
@@ -192,7 +195,7 @@ export class EquipoDatasourceService implements EquipoDatasource {
         if (!equipo) throw new NotFoundException('Equipo no encontrado');
 
         await this.prismaService.empleado.delete({
-            where: { id: id_empleado, equipo_id: equipo.id },
+            where: { id: id_empleado, equipo_id: equipo.id, proyecto_id: user.proyecto_id },
         });
     }
 }

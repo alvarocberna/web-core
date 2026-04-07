@@ -183,6 +183,24 @@ export class ArticuloController {
         return this.articuloService.updateArticulo(id_usuario, id_articulo, updateArticuloDtoImpl, files);
     }
 
+
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Editar status articulo' })
+    @ApiParam({ name: 'id_articulo', description: 'ID del artículo a editar' })
+    @ApiResponse({ status: 200, description: 'Artículo actualizado' })
+    @ApiResponse({ status: 401, description: 'No autorizado' })
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Patch('/articulo/editar-status/:id_articulo')
+    updateArticuloStatus(
+        @Req() req: Request,
+        @Param('id_articulo') id_articulo: string,
+        @Body() body: { status: string },
+    ) {
+        const id_usuario = (req as any).user?.id;
+        return this.articuloService.updateArticuloStatus(id_usuario, id_articulo, body);
+    }
+
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Eliminar artículo' })
     @ApiParam({ name: 'id_articulo', description: 'ID del artículo a eliminar' })

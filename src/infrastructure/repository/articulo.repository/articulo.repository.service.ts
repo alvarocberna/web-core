@@ -45,6 +45,10 @@ export class ArticuloRepositoryService implements ArticuloRepository {
         return this.articuloDatasource.updateArticulo(id_usuario, id_articulo, updateArticuloDto);
     }
 
+    updateArticuloStatus(id_usuario: string, id_articulo: string, data: {status: string}): Promise<ArticuloEntity> {
+        return this.articuloDatasource.updateArticuloStatus(id_usuario, id_articulo, data);
+    }
+
     deleteArticulo(id_usuario: string, id_articulo: string): Promise<void> {
         return this.articuloDatasource.deleteArticulo(id_usuario, id_articulo);
     }

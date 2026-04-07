@@ -8,6 +8,7 @@ export class SecEmpleadoEntity {
         public image_url: string | null,
         public image_alt: string | null,
         public image_position: string | null,
+        public proyecto_id: string,
         public empleado_id: string,
     ){}
 }

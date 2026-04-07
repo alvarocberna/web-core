@@ -1,13 +1,16 @@
 
+
+
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
+
 
 model Proyecto {
   id                      String   @id @default(uuid())
@@ -19,10 +22,18 @@ model Proyecto {
   //REL N:M 
   usuario                 Usuario[] @relation("fk_usu_pro")
   articulos               Articulos[] @relation("fk_arts_pro")
-  actividad               Actividad[] @relation("fk_act_pro")
+  articulo                Articulo[] @relation("fk_art_pro")
+  sec_articulo            SecArticulo[] @relation("fk_secart_pro")
   equipo                  Equipo[] @relation("fk_equ_pro")
-  servicios               Servicios[] @relation("fk_ser_pro")
-  testimonios             Testimonios[] @relation("fk_tes_pro")
+  empleado                Empleado[] @relation("fk_emp_pro")
+  sec_empleado            SecEmpleado[] @relation("fk_secemp_pro")
+  servicios               Servicios[] @relation("fk_sers_pro")
+  servicio                Servicio[] @relation("fk_ser_pro")
+  sec_servicio            SecServicio[] @relation("fk_secser_pro")
+  testimonios             Testimonios[] @relation("fk_tess_pro")
+  testimonio              Testimonio[] @relation("fk_tes_pro")
+  actividad               Actividad[] @relation("fk_act_pro")
+  click                   Click[] @relation("fk_cli_pro")
 }
 
 model Usuario {
@@ -73,13 +84,15 @@ model Articulo {
     image_url            String?
     image_alt            String?
     image_position       String?         
-    articulos_id         String
+    proyecto_id          String
     usuario_id           String
+    articulos_id         String
     //REL M:N
+    proyecto             Proyecto @relation(name: "fk_art_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
     articulos            Articulos @relation(name: "fk_art_arts", fields: [articulos_id], references: [id], onDelete: Cascade)
     usuario              Usuario @relation(name: "fk_art_usu", fields: [usuario_id], references: [id], onDelete: Cascade)
     //REL N:M
-    sec_articulo         SecArticulo[]      @relation("fk_sec_art")
+    sec_articulo         SecArticulo[]      @relation("fk_secart_art")
     actividad            Actividad[]        @relation("fk_act_art")
 }
 
@@ -91,9 +104,11 @@ model SecArticulo {
     image_url            String?
     image_alt            String?   @db.VarChar(100)
     image_position       String?
+    proyecto_id          String
     articulo_id          String
     //REL M:N
-    articulo             Articulo @relation(name: "fk_sec_art", fields: [articulo_id], references: [id], onDelete: Cascade)
+    proyecto             Proyecto @relation(name: "fk_secart_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+    articulo             Articulo @relation(name: "fk_secart_art", fields: [articulo_id], references: [id], onDelete: Cascade)
 }
 
 model Equipo {
@@ -124,11 +139,13 @@ model Empleado {
   slug                   String   @default("")  
   img_url                String?
   img_alt                String?
+  proyecto_id            String
   equipo_id              String
   //REL M:N
+  proyecto               Proyecto @relation(name: "fk_emp_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
   equipo                 Equipo @relation(name: "fk_emp_equ", fields: [equipo_id], references: [id], onDelete: Cascade)
   //REL N:M
-  sec_empleado          SecEmpleado[]      @relation("fk_sec_emp")
+  sec_empleado          SecEmpleado[]      @relation("fk_secemp_emp")
 }
 
 model SecEmpleado {
@@ -139,9 +156,11 @@ model SecEmpleado {
     image_url            String?
     image_alt            String?   @db.VarChar(100)
     image_position       String?
+    proyecto_id          String
     empleado_id          String
     //REL M:N
-    empleado             Empleado @relation(name: "fk_sec_emp", fields: [empleado_id], references: [id], onDelete: Cascade)
+    proyecto             Proyecto @relation(name: "fk_secemp_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+    empleado             Empleado @relation(name: "fk_secemp_emp", fields: [empleado_id], references: [id], onDelete: Cascade)
 }
 
 model Servicios {
@@ -154,9 +173,9 @@ model Servicios {
   habilitado            Boolean    @default(true)
   proyecto_id           String
   //REL M:N
-  proyecto              Proyecto @relation(name: "fk_ser_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+  proyecto              Proyecto @relation(name: "fk_sers_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
   //REL N:M
-  servicio              Servicio[] @relation("fk_ser_ser")
+  servicio              Servicio[] @relation("fk_ser_sers")
 }
 
 model Servicio {
@@ -173,11 +192,13 @@ model Servicio {
   slug                  String  @default("-")  
   img_url               String?
   img_alt               String?
+  proyecto_id           String
   servicios_id          String
   //REL M:N
-  servicios             Servicios @relation(name: "fk_ser_ser", fields: [servicios_id], references: [id], onDelete: Cascade)
+  proyecto              Proyecto @relation(name: "fk_ser_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+  servicios             Servicios @relation(name: "fk_ser_sers", fields: [servicios_id], references: [id], onDelete: Cascade)
   //REL N:M
-  sec_servicio          SecServicio[]      @relation("fk_sec_ser")
+  sec_servicio          SecServicio[]      @relation("fk_secser_ser")
 }
 
 model SecServicio {
@@ -188,9 +209,11 @@ model SecServicio {
     image_url            String?
     image_alt            String?   @db.VarChar(100)
     image_position       String?
+    proyecto_id          String
     servicio_id          String
     //REL M:N
-    servicio             Servicio @relation(name: "fk_sec_ser", fields: [servicio_id], references: [id], onDelete: Cascade)
+    proyecto             Proyecto @relation(name: "fk_secser_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+    servicio             Servicio @relation(name: "fk_secser_ser", fields: [servicio_id], references: [id], onDelete: Cascade)
 }
 
 model Testimonios {
@@ -203,23 +226,25 @@ model Testimonios {
   habilitado            Boolean     @default(true)
   proyecto_id           String
   //REL M:N
-  proyecto              Proyecto @relation(name: "fk_tes_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+  proyecto              Proyecto @relation(name: "fk_tess_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
   //REL N:M
-  testimonio            Testimonio[] @relation("fk_tes_tes")
+  testimonio            Testimonio[] @relation("fk_tes_tess")
 }
 
 model Testimonio {
-  id              String     @id @default(uuid())
-  nombre          String     @db.VarChar(50)
-  apellido        String     @db.VarChar(50)
-  correo          String     @db.VarChar(100)
-  descripcion     String     @db.VarChar(500)
-  calificacion    Int?
-  status          String
-  fecha_creacion  DateTime
-  testimonios_id  String
+  id                    String     @id @default(uuid())
+  nombre                String     @db.VarChar(50)
+  apellido              String     @db.VarChar(50)
+  correo                String     @db.VarChar(100)
+  descripcion           String     @db.VarChar(500)
+  calificacion          Int?
+  status                String
+  fecha_creacion        DateTime
+  proyecto_id           String
+  testimonios_id        String
   //REL M:N
-  testimonios     Testimonios @relation(name: "fk_tes_tes", fields: [testimonios_id], references: [id], onDelete: Cascade)
+  proyecto              Proyecto @relation(name: "fk_tes_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+  testimonios           Testimonios @relation(name: "fk_tes_tess", fields: [testimonios_id], references: [id], onDelete: Cascade)
 }
 
 model Actividad {
@@ -241,7 +266,9 @@ model Click {
     id                    String    @id @default(uuid())
     fecha                 DateTime
     entidad_nombre        String
-    entidad_id            String 
     proyecto_id           String
+    entidad_id            String 
+    //REL M:N
+    proyecto               Proyecto @relation(name: "fk_cli_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
 
 }

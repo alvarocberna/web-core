@@ -8,6 +8,7 @@ export class TestimonioEntity {
         public calificacion: number | null,
         public status: string,
         public fecha_creacion: Date,
+        public proyecto_id: string,
         public testimonios_id: string,
     ) {}
 }
