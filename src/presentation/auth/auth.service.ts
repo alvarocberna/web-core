@@ -3,7 +3,6 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 //presentation
-import { CreateUsuarioDtoImpl } from './dto/create-user.dto';
 //infrastructure
 import { UsuarioRepositoryService } from 'src/infrastructure/repository/usuario.repository/usuario.repository.service';
 //paquetes
@@ -22,30 +21,24 @@ export class AuthService {
     if (!user) {
       return null;
     }
-    console.log('user encontrado: ' + user.nombre + ' ' + user.apellido)
     const matches = await bcrypt.compare(pass, user.password);
     if (!matches) {
       return null;
     }
-    console.log('hay match en el password')
     // omit password when returning
     const { password, hashedRt, ...rest } = user;
     return rest;
   }
 
-  async createUser(id_proyecto: string, createUsuarioDto: CreateUsuarioDtoImpl){
-    await this.usuarioService.createUsuario(id_proyecto, createUsuarioDto)
-  }
-
-  async login(user: { id: string; email: string }) {
-    const payload = { sub: user.id, email: user.email };
+  async login(user: { id: string; email: string; rol: string }) {
+    const payload = { sub: user.id, email: user.email, rol: user.rol };
     const accessToken = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
       expiresIn: this.configService.get<string>('JWT_ACCESS_EXPIRATION'),
     });
     const refreshToken = this.jwtService.sign(payload, {
-      secret: process.env.JWT_REFRESH_SECRET,
-      expiresIn: process.env.JWT_REFRESH_EXPIRATION,
+      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+      expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRATION'),
     });
     // hash refresh token and store in DB
     const saltRounds = this.configService.get<number>('BCRYPT_SALT_OR_ROUNDS');
@@ -58,22 +51,28 @@ export class AuthService {
     await this.usuarioService.removeRefreshToken(userId);
   }
 
+  verifyRefreshToken(rt: string): { sub: string; email: string } {
+    const secret = this.configService.get<string>('JWT_REFRESH_SECRET');
+    if (!secret) throw new UnauthorizedException('JWT_REFRESH_SECRET no configurado');
+    return this.jwtService.verify<{ sub: string; email: string }>(rt, { secret });
+  }
+
   async refresh(userId: string, rt: string) {
     const user = await this.usuarioService.getUsuarioById(userId);
-    if (!user || !user.hashedRt){ //el user.hashdRt es NULL ! AQUI ESTÁ EL ERROR
+    if (!user || !user.hashedRt){ 
         throw new UnauthorizedException();
     } 
     const isMatch = await bcrypt.compare(rt, user.hashedRt);
     if (!isMatch) throw new UnauthorizedException();
     // create new tokens
-    const payload = { sub: user.id, email: user.email };
+    const payload = { sub: user.id, email: user.email, rol: user.rol };
     const accessToken = this.jwtService.sign(payload, {
-      secret: process.env.JWT_ACCESS_SECRET,
-      expiresIn: process.env.JWT_ACCESS_EXPIRATION,
+      secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
+      expiresIn: this.configService.get<string>('JWT_ACCESS_EXPIRATION'),
     });
     const refreshToken = this.jwtService.sign(payload, {
-      secret: process.env.JWT_REFRESH_SECRET,
-      expiresIn: process.env.JWT_REFRESH_EXPIRATION,
+      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+      expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRATION'),
     });
     const saltRounds = this.configService.get<number>('BCRYPT_SALT_OR_ROUNDS');
     const newHashedRt = await bcrypt.hash(refreshToken, +saltRounds!);

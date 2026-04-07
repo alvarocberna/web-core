@@ -1,87 +1,255 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
+
 model Proyecto {
-  id              String   @id @default(uuid())
-  nombre_proyecto String
-  descripcion     String
-  cliente         String
-  fecha_inicio    DateTime
+  id                      String   @id @default(uuid())
+  nombre_proyecto         String   @db.VarChar(200)
+  descripcion             String   @db.VarChar(500)
+  cliente                 String 
+  fecha_inicio            DateTime
+  activo                  Boolean    @default(true)
   //REL N:M 
-  usuario        Usuario[] @relation("fk_usu_pro")
-  articulo       Articulo[] @relation("fk_art_pro")
-  actividad         Actividad[]        @relation("fk_act_pro")
+  usuario                 Usuario[] @relation("fk_usu_pro")
+  articulos               Articulos[] @relation("fk_arts_pro")
+  articulo                Articulo[] @relation("fk_art_pro")
+  sec_articulo            SecArticulo[] @relation("fk_secart_pro")
+  equipo                  Equipo[] @relation("fk_equ_pro")
+  empleado                Empleado[] @relation("fk_emp_pro")
+  sec_empleado            SecEmpleado[] @relation("fk_secemp_pro")
+  servicios               Servicios[] @relation("fk_sers_pro")
+  servicio                Servicio[] @relation("fk_ser_pro")
+  sec_servicio            SecServicio[] @relation("fk_secser_pro")
+  testimonios             Testimonios[] @relation("fk_tess_pro")
+  testimonio              Testimonio[] @relation("fk_tes_pro")
+  actividad               Actividad[] @relation("fk_act_pro")
+  click                   Click[] @relation("fk_cli_pro")
 }
 
 model Usuario {
-  id            String   @id @default(uuid())
-  nombre        String
-  apellido      String
-  email         String   @unique
-  fechaCreacion DateTime
-  password      String
-  hashedRt      String?
-  rol           String
-  proyecto_id   String
-  actividad_id  String?
+  id                     String   @id @default(uuid())
+  nombre                 String   @db.VarChar(50)
+  apellido               String   @db.VarChar(50)
+  email                  String   @unique @db.VarChar(100)
+  fechaCreacion          DateTime
+  password               String   
+  hashedRt               String?
+  rol                    String    
+  img_url                String? @default("")
+  img_alt                String? @default("") @db.VarChar(100)
+  proyecto_id            String
   //REL M:N
-  proyecto      Proyecto @relation(name: "fk_usu_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+  proyecto               Proyecto @relation(name: "fk_usu_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
   //REL N:M 
-  actividad         Actividad[]        @relation("fk_act_usu")
+  actividad              Actividad[]        @relation("fk_act_usu")
+  articulo               Articulo[]         @relation("fk_art_usu")
+}
+
+model Articulos {
+  id                    String     @id @default(uuid())
+  titulo                String     @default("Articulos") @db.VarChar(200)
+  descripcion           String?    @db.VarChar(500)
+  activo                Boolean    @default(true)
+  aprobar               Boolean    @default(false)   
+  habilitado            Boolean    @default(true)
+  notificacion          Boolean    @default(false)
+  proyecto_id           String
+  //REL M:N
+  proyecto              Proyecto @relation(name: "fk_arts_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+  //REL N:M
+  articulo              Articulo[] @relation("fk_art_arts")   
 }
 
 model Articulo {
     id                   String              @id @default(uuid())
     nro_articulo         Int
-    titulo               String
-    subtitulo            String
+    titulo               String              @db.VarChar(200)
+    subtitulo            String?             @db.VarChar(500)
     autor                String
     fecha_publicacion    DateTime
     fecha_actualizacion  DateTime?
     status               String
+    activo               Boolean
     slug                 String    
     image_url            String?
     image_alt            String?
     image_position       String?         
-    autor_id             String
     proyecto_id          String
+    usuario_id           String
+    articulos_id         String
     //REL M:N
-    proyectos            Proyecto @relation(name: "fk_art_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+    proyecto             Proyecto @relation(name: "fk_art_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+    articulos            Articulos @relation(name: "fk_art_arts", fields: [articulos_id], references: [id], onDelete: Cascade)
+    usuario              Usuario @relation(name: "fk_art_usu", fields: [usuario_id], references: [id], onDelete: Cascade)
     //REL N:M
-    sec_articulo       SecArticulo[]      @relation("fk_sec_art")
-    actividad         Actividad[]        @relation("fk_act_art")
+    sec_articulo         SecArticulo[]      @relation("fk_secart_art")
+    actividad            Actividad[]        @relation("fk_act_art")
 }
 
 model SecArticulo {
-    id          String @id @default(uuid())
-    nro_seccion Int
-    titulo_sec      String
-    contenido_sec   String
-    image_url       String?
-    image_alt       String?
-    image_position  String?
-    articulo_id String
-    proyecto_id String
+    id                   String    @id @default(uuid())
+    nro_seccion          Int
+    titulo_sec           String?    @db.VarChar(200)
+    contenido_sec        String?    
+    image_url            String?
+    image_alt            String?   @db.VarChar(100)
+    image_position       String?
+    proyecto_id          String
+    articulo_id          String
     //REL M:N
-    articulo    Articulo @relation(name: "fk_sec_art", fields: [articulo_id], references: [id], onDelete: Cascade)
+    proyecto             Proyecto @relation(name: "fk_secart_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+    articulo             Articulo @relation(name: "fk_secart_art", fields: [articulo_id], references: [id], onDelete: Cascade)
+}
+
+model Equipo {
+  id                     String     @id @default(uuid())
+  titulo                 String     @default("Equipo")      @db.VarChar(200)
+  descripcion            String?                            @db.VarChar(500)
+  activo                 Boolean    @default(true)
+  notificacion           Boolean    @default(false)
+  habilitado             Boolean    @default(true)
+  proyecto_id            String
+  //REL M:N
+  proyecto               Proyecto @relation(name: "fk_equ_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+  //REL N:M
+  empleado               Empleado[] @relation("fk_emp_equ")
+}
+
+model Empleado {
+  id                     String   @id @default(uuid())
+  nombre_primero         String   @db.VarChar(50)
+  nombre_segundo         String?  @db.VarChar(50)
+  apellido_paterno       String   @db.VarChar(50)
+  apellido_materno       String?  @db.VarChar(50)
+  profesion              String?   @db.VarChar(100)
+  especialidad           String?  @db.VarChar(200)
+  descripcion            String?  @db.VarChar(500)
+  orden                  Int?
+  activo                 Boolean
+  slug                   String   @default("")  
+  img_url                String?
+  img_alt                String?
+  proyecto_id            String
+  equipo_id              String
+  //REL M:N
+  proyecto               Proyecto @relation(name: "fk_emp_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+  equipo                 Equipo @relation(name: "fk_emp_equ", fields: [equipo_id], references: [id], onDelete: Cascade)
+  //REL N:M
+  sec_empleado          SecEmpleado[]      @relation("fk_secemp_emp")
+}
+
+model SecEmpleado {
+    id                   String    @id @default(uuid())
+    nro_seccion          Int
+    titulo_sec           String?    @db.VarChar(200)
+    contenido_sec        String?    
+    image_url            String?
+    image_alt            String?   @db.VarChar(100)
+    image_position       String?
+    proyecto_id          String
+    empleado_id          String
+    //REL M:N
+    proyecto             Proyecto @relation(name: "fk_secemp_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+    empleado             Empleado @relation(name: "fk_secemp_emp", fields: [empleado_id], references: [id], onDelete: Cascade)
+}
+
+model Servicios {
+  id                    String     @id @default(uuid())
+  titulo                String     @default("Servicios") @db.VarChar(200)
+  descripcion           String?    @db.VarChar(500)
+  icono                 String?    
+  activo                Boolean    @default(true)
+  notificacion          Boolean    @default(false)
+  habilitado            Boolean    @default(true)
+  proyecto_id           String
+  //REL M:N
+  proyecto              Proyecto @relation(name: "fk_sers_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+  //REL N:M
+  servicio              Servicio[] @relation("fk_ser_sers")
+}
+
+model Servicio {
+  id                    String   @id @default(uuid())
+  nombre_servicio       String   @db.VarChar(200)
+  descripcion           String?  @db.VarChar(500)
+  valor                 Int?  
+  nombre_promocion      String?  @db.VarChar(200)
+  porcentaje_descuento  Int?
+  destacado             Boolean
+  icono                 String?
+  orden                 Int?
+  activo                Boolean
+  slug                  String  @default("-")  
+  img_url               String?
+  img_alt               String?
+  proyecto_id           String
+  servicios_id          String
+  //REL M:N
+  proyecto              Proyecto @relation(name: "fk_ser_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+  servicios             Servicios @relation(name: "fk_ser_sers", fields: [servicios_id], references: [id], onDelete: Cascade)
+  //REL N:M
+  sec_servicio          SecServicio[]      @relation("fk_secser_ser")
+}
+
+model SecServicio {
+    id                   String    @id @default(uuid())
+    nro_seccion          Int
+    titulo_sec           String?    @db.VarChar(200)
+    contenido_sec        String?    
+    image_url            String?
+    image_alt            String?   @db.VarChar(100)
+    image_position       String?
+    proyecto_id          String
+    servicio_id          String
+    //REL M:N
+    proyecto             Proyecto @relation(name: "fk_secser_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+    servicio             Servicio @relation(name: "fk_secser_ser", fields: [servicio_id], references: [id], onDelete: Cascade)
+}
+
+model Testimonios {
+  id                    String      @id @default(uuid())
+  titulo                String      @default("Testimonios") @db.VarChar(200)
+  descripcion           String?     @db.VarChar(500)
+  activo                Boolean     @default(true)
+  aprobar               Boolean     @default(false)
+  notificacion          Boolean     @default(false)
+  habilitado            Boolean     @default(true)
+  proyecto_id           String
+  //REL M:N
+  proyecto              Proyecto @relation(name: "fk_tess_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+  //REL N:M
+  testimonio            Testimonio[] @relation("fk_tes_tess")
+}
+
+model Testimonio {
+  id                    String     @id @default(uuid())
+  nombre                String     @db.VarChar(50)
+  apellido              String     @db.VarChar(50)
+  correo                String     @db.VarChar(100)
+  descripcion           String     @db.VarChar(500)
+  calificacion          Int?
+  status                String
+  fecha_creacion        DateTime
+  proyecto_id           String
+  testimonios_id        String
+  //REL M:N
+  proyecto              Proyecto @relation(name: "fk_tes_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+  testimonios           Testimonios @relation(name: "fk_tes_tess", fields: [testimonios_id], references: [id], onDelete: Cascade)
 }
 
 model Actividad {
     id                    String   @id @default(uuid())
-    accion                String
+    accion                String   
     titulo_articulo       String
     responsable           String
     fecha                 DateTime
@@ -89,7 +257,18 @@ model Actividad {
     usuario_id            String?
     articulo_id           String?
     //REL M:N
-    proyecto             Proyecto @relation(name: "fk_act_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
-    usuario              Usuario? @relation(name: "fk_act_usu", fields: [usuario_id], references: [id], onDelete: SetNull)
-    articulo             Articulo? @relation(name: "fk_act_art", fields: [articulo_id], references: [id], onDelete: SetNull)
+    proyecto              Proyecto @relation(name: "fk_act_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+    usuario               Usuario? @relation(name: "fk_act_usu", fields: [usuario_id], references: [id], onDelete: SetNull)
+    articulo              Articulo? @relation(name: "fk_act_art", fields: [articulo_id], references: [id], onDelete: SetNull)
+}
+
+model Click {
+    id                    String    @id @default(uuid())
+    fecha                 DateTime
+    entidad_nombre        String
+    proyecto_id           String
+    entidad_id            String 
+    //REL M:N
+    proyecto               Proyecto @relation(name: "fk_cli_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+
 }

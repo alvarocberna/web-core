@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException, Inject } from '@nestjs/common
 import { ConfigService } from '@nestjs/config';
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import * as path from 'path';
-import { ImageStorageDatasource } from 'src/domain';
+import { ImageStorageDatasource, ImageEntityType } from 'src/domain';
 import { PrismaService } from 'src/infrastructure/orm/prisma/prisma.service';
 import { NotFoundException } from '@nestjs/common';
 
@@ -63,62 +63,51 @@ export class AwsStorageDatasourceService implements ImageStorageDatasource{
         }
     }
 
-    async deleteImage(id_usuario: string, id_articulo: string): Promise<void> {
-
-        console.log('id articulo a eliminar: ' + id_articulo)
-
-        const articulo = await this.prismaService.articulo.findUnique({
-            where: {
-                id: id_articulo,
-                // autor_id: id_usuario,
-            },
-            include: {
-                sec_articulo: true,
-            }   
-        })
-        if(!articulo){
-            throw new NotFoundException("Articulo no encontrado")
+    private async deleteS3Url(imageUrl: string | null | undefined): Promise<void> {
+        if (!imageUrl) return;
+        try {
+            const url = new URL(imageUrl);
+            const key = url.pathname.replace(/^\//, '');
+            if (!key) return;
+            await this.s3.send(
+                new DeleteObjectCommand({ Bucket: this.bucketName, Key: key })
+            );
+        } catch (error) {
+            throw new InternalServerErrorException('Error al eliminar la imagen en S3');
         }
-        
-        //eliminamos imagen de articulo
-        const imageUrl = articulo.image_url;
-        if(imageUrl){
-            try {
-                const url = new URL(imageUrl);
-                const key = url.pathname.replace(/^\//, '');
-    
-                if (!key) return;
-    
-                await this.s3.send(
-                    new DeleteObjectCommand({
-                        Bucket: this.bucketName,
-                        Key: key,
-                    })
-                );
-            } catch (error) {
-                throw new InternalServerErrorException('Error al eliminar la imagen en S3');
-            }
+    }
+
+    async deleteImage(id_proyecto: string, id_entidad: string, entityType: ImageEntityType): Promise<void> {
+
+        if (entityType === 'articulo') {
+            const articulo = await this.prismaService.articulo.findUnique({
+                where: { id: id_entidad, proyecto_id: id_proyecto },
+                include: { sec_articulo: true },
+            });
+            if (!articulo) throw new NotFoundException('Articulo no encontrado');
+
+            await this.deleteS3Url(articulo.image_url);
+            await Promise.all(articulo.sec_articulo.map(s => this.deleteS3Url(s.image_url)));
+
+        } else if (entityType === 'servicio') {
+            const servicio = await this.prismaService.servicio.findUnique({
+                where: { id: id_entidad },
+                include: { sec_servicio: true },
+            });
+            if (!servicio) throw new NotFoundException('Servicio no encontrado');
+
+            await this.deleteS3Url(servicio.img_url);
+            await Promise.all(servicio.sec_servicio.map(s => this.deleteS3Url(s.image_url)));
+
+        } else if (entityType === 'empleado') {
+            const empleado = await this.prismaService.empleado.findUnique({
+                where: { id: id_entidad },
+                include: { sec_empleado: true },
+            });
+            if (!empleado) throw new NotFoundException('Empleado no encontrado');
+
+            await this.deleteS3Url(empleado.img_url);
+            await Promise.all(empleado.sec_empleado.map(s => this.deleteS3Url(s.image_url)));
         }
-        //eliminamos imagenes de las secciones
-        articulo.sec_articulo.forEach(async (sec_articulo) => {
-            const imageUrl = sec_articulo.image_url;
-            if(imageUrl){
-                try {
-                    const url = new URL(imageUrl);
-                    const key = url.pathname.replace(/^\//, '');
-        
-                    if (!key) return;
-        
-                    await this.s3.send(
-                        new DeleteObjectCommand({
-                            Bucket: this.bucketName,
-                            Key: key,
-                        })
-                    );
-                } catch (error) {
-                    throw new InternalServerErrorException('Error al eliminar la imagen en S3');
-                }
-            }
-        })
     }
 }

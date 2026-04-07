@@ -1,59 +1,132 @@
-import { IsString, IsDate, IsNumber, ValidateNested, IsOptional } from 'class-validator';
+import { IsEnum, IsString, IsDate, IsBoolean, IsNumber, ValidateNested, IsOptional, MinLength, MaxLength } from 'class-validator';
 import { Type } from 'class-transformer';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 //domain
 import { UpdateArticuloDto, UpdateSecArticuloDto } from "src/domain";
-
-
-export class UpdateArticuloDtoImpl implements UpdateArticuloDto {
-    @IsString()
-    titulo: string;
-    @IsString()
-    subtitulo: string;
-    @IsString()
-    autor: string;
-    @Type(() => Date)
-    @IsDate()
-    fecha_publicacion: Date;
-    @Type(() => Date)
-    @IsDate()
-    fecha_actualizacion: Date | null;
-    @IsString()
-    status: string;
-    @IsString()
-    slug: string;
-    @IsOptional()
-    @IsString()
-    image_url: string | null;
-    @IsOptional()
-    @IsString()
-    image_alt: string | null;
-    @IsOptional()
-    @IsString()
-    image_position: string | null;
-    @IsString()
-    autor_id: string;
-    @ValidateNested()
-    @Type(() => UpdateSecArticuloDtoImpl)
-    sec_articulo: UpdateSecArticuloDtoImpl[];
-}
+import { ArticuloStatus } from 'src/domain/enums/articulo-status.enum';
+//sanitize
+import { Sanitize, SanitizeRich, SanitizeUrl } from 'src/common/decorators/sanitize.decorator';
 
 export class UpdateSecArticuloDtoImpl implements UpdateSecArticuloDto {
+    @ApiProperty({ example: 'uuid-de-la-seccion' })
     @IsString()
-    id: string;
+    id!: string;
+
+    @ApiPropertyOptional({ example: 1 })
+    @IsOptional()
     @Type(() => Number)
     @IsNumber()
-    nro_seccion: number;
-    @IsString()
-    titulo_sec: string;
-    @IsString()
-    contenido_sec: string;
+    nro_seccion?: number;
+
+    @ApiPropertyOptional({ example: 'Título de la sección' })
     @IsOptional()
+    @Sanitize()
     @IsString()
-    image_url: string | null;
+    @MaxLength(200)
+    titulo_sec?: string | null;
+
+    @ApiPropertyOptional({ example: 'Contenido de la sección...' })
     @IsOptional()
+    @SanitizeRich()
     @IsString()
-    image_alt: string | null;
+    @MaxLength(5000)
+    contenido_sec?: string | null;
+
+    @ApiPropertyOptional({ example: 'https://example.com/image.jpg' })
     @IsOptional()
+    @SanitizeUrl()
     @IsString()
-    image_position: string | null;
+    @MaxLength(500)
+    image_url?: string | null;
+
+    @ApiPropertyOptional({ example: 'Texto alternativo' })
+    @IsOptional()
+    @Sanitize()
+    @IsString()
+    @MaxLength(100)
+    image_alt?: string | null;
+
+    @ApiPropertyOptional({ example: 'center' })
+    @IsOptional()
+    @Sanitize()
+    @IsString()
+    @MaxLength(50)
+    image_position?: string | null;
+}
+
+export class UpdateArticuloDtoImpl implements UpdateArticuloDto {
+    @ApiPropertyOptional({ example: 'Título actualizado' })
+    @IsOptional()
+    @Sanitize()
+    @IsString()
+    @MaxLength(200)
+    titulo?: string;
+
+    @ApiPropertyOptional({ example: 'Subtítulo actualizado' })
+    @IsOptional()
+    @Sanitize()
+    @IsString()
+    @MaxLength(500)
+    subtitulo?: string | null;
+
+    @ApiPropertyOptional({ example: 'Juan García' })
+    @IsOptional()
+    @Sanitize()
+    @IsString()
+    autor?: string;
+
+    @ApiPropertyOptional({ example: '2024-01-01T00:00:00.000Z' })
+    @IsOptional()
+    @Type(() => Date)
+    @IsDate()
+    fecha_publicacion?: Date;
+
+    @ApiPropertyOptional({ example: '2024-06-01T00:00:00.000Z' })
+    @IsOptional()
+    @Type(() => Date)
+    @IsDate()
+    fecha_actualizacion?: Date | null;
+
+    @ApiPropertyOptional({ example: 'PUBLISHED', enum: ArticuloStatus })
+    @IsOptional()
+    @IsEnum(ArticuloStatus)
+    status?: ArticuloStatus;
+
+    @ApiPropertyOptional({ example: true })
+    @IsOptional()
+    @IsBoolean()
+    activo?: boolean;
+
+    @ApiPropertyOptional({ example: 'titulo-actualizado' })
+    @IsOptional()
+    @Sanitize()
+    @IsString()
+    slug?: string;
+
+    @ApiPropertyOptional({ example: 'https://example.com/image.jpg' })
+    @IsOptional()
+    @SanitizeUrl()
+    @IsString()
+    @MaxLength(500)
+    image_url?: string | null;
+
+    @ApiPropertyOptional({ example: 'Texto alternativo' })
+    @IsOptional()
+    @Sanitize()
+    @IsString()
+    @MaxLength(100)
+    image_alt?: string | null;
+
+    @ApiPropertyOptional({ example: 'center' })
+    @IsOptional()
+    @Sanitize()
+    @IsString()
+    @MaxLength(50)
+    image_position?: string | null;
+
+    @ApiPropertyOptional({ type: [UpdateSecArticuloDtoImpl] })
+    @IsOptional()
+    @ValidateNested({ each: true })
+    @Type(() => UpdateSecArticuloDtoImpl)
+    sec_articulo?: UpdateSecArticuloDtoImpl[];
 }

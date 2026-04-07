@@ -60,7 +60,7 @@ describe('CreateArticuloUseCase', () => {
         image_url: '/',
         image_alt: 'alt',
         image_position: 'left',
-        autor_id: '12345test678910',
+        usuario_id: '12345test678910',
         sec_articulo: [createSecArtDto],
       } as CreateArticuloDto;
 
@@ -77,7 +77,7 @@ describe('CreateArticuloUseCase', () => {
         image_url: '/',
         image_alt: 'alt' ,
         image_position: 'left' ,
-        autor_id: '12345test678910',
+        usuario_id: '12345test678910',
         proyecto_id: '12345proyecto678910',
       } as ArticuloEntity;
 

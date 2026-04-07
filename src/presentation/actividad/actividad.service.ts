@@ -10,7 +10,7 @@ export class ActividadService {
     return this.actividadRepository.getActividadAll(id_usuario);
   }
 
-  findByArticulo(id: number) {
+  findOneByArticuloId(id: number) {
     return `This action returns a #${id} actividad`;
   }
 

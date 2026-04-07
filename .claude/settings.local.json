@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd \"C:\\\\Users\\\\cbern\\\\OneDrive\\\\Desktop\\\\PROYECTOS\\\\PRODUCTOS\\\\web-core-root\\\\web-core\" && npm install @nestjs/swagger swagger-ui-express)",
+      "Bash(cd \"C:\\\\Users\\\\cbern\\\\OneDrive\\\\Desktop\\\\PROYECTOS\\\\PRODUCTOS\\\\web-core-root\\\\web-core\" && npm install joi)",
+      "Bash(cd \"C:\\\\Users\\\\cbern\\\\OneDrive\\\\Desktop\\\\PROYECTOS\\\\PRODUCTOS\\\\web-core-root\\\\web-core\" && npx tsc --noEmit 2>&1 | head -30)",
+      "Bash(wc -l /c/Users/cbern/OneDrive/Desktop/PROYECTOS/PRODUCTOS/web-core-root/web-core/src/presentation/*/*.ts)",
+      "Bash(grep -r innerHTML /c/Users/cbern/OneDrive/Desktop/PROYECTOS/PRODUCTOS/web-core-root/web-core/src --include=*.ts)",
+      "Bash(grep -r \"class-sanitizer\\\\|xss\\\\|dompurify\\\\|sanitize\" /c/Users/cbern/OneDrive/Desktop/PROYECTOS/PRODUCTOS/web-core-root/web-core --include=*.json --include=*.ts)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)"
+    ]
+  }
+}

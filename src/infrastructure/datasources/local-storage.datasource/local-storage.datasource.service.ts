@@ -40,7 +40,7 @@ export class LocalStorageDatasourceService {
         const articulo = await this.prismaService.articulo.findUnique({
             where: {
                 id: id_articulo,
-                autor_id: id_usuario,
+                usuario_id: id_usuario,
             },
             include: {
                 sec_articulo: true,
@@ -68,21 +68,21 @@ export class LocalStorageDatasourceService {
         }
 
         //eliminamos imagenes de las secciones
-        articulo.sec_articulo.forEach(async (sec_articulo) => {
+        for (const sec_articulo of articulo.sec_articulo) {
             const imageUrl = sec_articulo.image_url;
             if(imageUrl){
                 try {
                     const filename = path.basename(imageUrl);
                     const filePath = path.join(this.uploadDir, filename);
-                    
+
                     if (fs.existsSync(filePath)) {
                         fs.unlinkSync(filePath);
                     }
                 } catch (error) {
-                    throw new InternalServerErrorException('Error al eliminar la imagen en S3');
+                    throw new InternalServerErrorException('Error al eliminar la imagen en local');
                 }
             }
-        })
+        }
         
     }
 }

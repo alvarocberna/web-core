@@ -26,7 +26,7 @@ export class ActividadDatasourceService implements ActividadDatasource {
         const articulo = await this.prismaService.articulo.findUnique({
             where: { 
                 id: id_articulo, 
-                proyecto_id: user.proyecto_id   
+                proyecto_id: user.proyecto_id,
             }
         });
         if (!articulo) {
@@ -101,7 +101,6 @@ export class ActividadDatasourceService implements ActividadDatasource {
         if (!user) {
             throw new NotFoundException('Usuario no encontrado');
         }
-        const proyecto_id = user.proyecto_id;
 
         return this.prismaService.actividad.findMany({
             where: {

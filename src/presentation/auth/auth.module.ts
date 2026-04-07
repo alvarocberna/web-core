@@ -8,8 +8,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
 
 @Module({
-  imports: [UsuarioRepositoryModule, JwtModule, ConfigModule, 
-    JwtModule.register({global: true}),],
+  imports: [UsuarioRepositoryModule, ConfigModule, JwtModule.register({ global: true })],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, RefreshTokenGuard],
   exports: [AuthService, JwtStrategy, RefreshTokenGuard]

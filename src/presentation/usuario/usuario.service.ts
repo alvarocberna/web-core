@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
-// import { CreateUsuarioDto } from './dto/create-usuario.dto';
-// import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { CreateUsuarioDtoImpl } from './dto/create-user.dto';
+import {UpdateUsuarioDtoImpl} from './dto/update-user.dto';
+import { UpdateUsuarioInfoDtoImpl } from './dto/update-user-info.dto';
+import { UpdateUsuarioPasswordDtoImpl } from './dto/update-user-password.dto';
 import { UsuarioRepositoryService } from 'src/infrastructure/repository/usuario.repository/usuario.repository.service';
 
 @Injectable()
@@ -9,23 +11,31 @@ export class UsuarioService {
     private readonly usuarioService: UsuarioRepositoryService
   ){}
 
-  create(createUsuarioDto: any) {
-    return 'This action adds a new usuario';
+  //servicios para rol admin y superadmin
+  async create(proyecto_id: string, createUsuarioDto: CreateUsuarioDtoImpl){
+    await this.usuarioService.createUsuario(proyecto_id, createUsuarioDto)
   }
 
-  findAll() {
-    return `This action returns all usuario`;
+  findAll(proyecto_id: string) {
+    return this.usuarioService.getAllUsuarios(proyecto_id);
   }
 
-  findOne(id_usuario: string) {
-    return this.usuarioService.getUsuarioById(id_usuario)
+  findById(usuario_id: string) {
+    return this.usuarioService.getUsuarioById(usuario_id)
   }
 
-  update(id: number, updateUsuarioDto: any) {
-    return `This action updates a #${id} usuario`;
+  update(usuario_id: string, updateUsuarioDto: UpdateUsuarioDtoImpl) {
+    return this.usuarioService.updateUsuario(usuario_id, updateUsuarioDto)
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} usuario`;
+  remove(proyecto_id: string, usuario_id: string) {
+    return this.usuarioService.deleteUsuario(proyecto_id, usuario_id);
   }
+
+  //servicios para rol user
+
+  updatePassword(usuario_id: string, updateUsuarioPasswordDto: UpdateUsuarioPasswordDtoImpl) {
+    return this.usuarioService.updateUsuarioPassword(usuario_id, updateUsuarioPasswordDto);
+  }
+
 }

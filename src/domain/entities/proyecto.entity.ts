@@ -6,5 +6,6 @@ export class ProyectoEntity {
     public descripcion: string,
     public cliente: string,
     public fecha_inicio: Date,
+    public activo: boolean,
   ){}
 }  
