@@ -15,7 +15,7 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.set('trust proxy', 1);
-  
+
   const configService = app.get(ConfigService);
 
   const corsOrigins = configService.get<string>('CORS_ORIGINS', '')
