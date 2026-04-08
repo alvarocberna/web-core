@@ -9,7 +9,7 @@ import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 // import { createRequire } from 'module';
 // const require = createRequire(import.meta.url);
 // const { PrismaClient } = require('../../../../generated/prisma/client');
-import { PrismaClient } from '../../../../generated/prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
@@ -34,7 +34,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
 // import "dotenv/config";
 // import { PrismaPg } from '@prisma/adapter-pg'
 // // import { PrismaClient } from '../generated/prisma/client'
-// import { PrismaClient } from '../../../../generated/prisma/client';
+// import { PrismaClient } from '@prisma/client';
 
 // const connectionString = `${process.env.DATABASE_URL}`
 
