@@ -63,7 +63,7 @@ export class AwsStorageDatasourceService implements ImageStorageDatasource{
         }
     }
 
-    private async deleteS3Url(imageUrl: string | null | undefined): Promise<void> {
+    async deleteImageByUrl(imageUrl: string | null | undefined): Promise<void> {
         if (!imageUrl) return;
         try {
             const url = new URL(imageUrl);
@@ -86,8 +86,8 @@ export class AwsStorageDatasourceService implements ImageStorageDatasource{
             });
             if (!articulo) throw new NotFoundException('Articulo no encontrado');
 
-            await this.deleteS3Url(articulo.image_url);
-            await Promise.all(articulo.sec_articulo.map(s => this.deleteS3Url(s.image_url)));
+            await this.deleteImageByUrl(articulo.image_url);
+            await Promise.all(articulo.sec_articulo.map(s => this.deleteImageByUrl(s.image_url)));
 
         } else if (entityType === 'servicio') {
             const servicio = await this.prismaService.servicio.findUnique({
@@ -96,8 +96,8 @@ export class AwsStorageDatasourceService implements ImageStorageDatasource{
             });
             if (!servicio) throw new NotFoundException('Servicio no encontrado');
 
-            await this.deleteS3Url(servicio.img_url);
-            await Promise.all(servicio.sec_servicio.map(s => this.deleteS3Url(s.image_url)));
+            await this.deleteImageByUrl(servicio.img_url);
+            await Promise.all(servicio.sec_servicio.map(s => this.deleteImageByUrl(s.image_url)));
 
         } else if (entityType === 'empleado') {
             const empleado = await this.prismaService.empleado.findUnique({
@@ -106,8 +106,8 @@ export class AwsStorageDatasourceService implements ImageStorageDatasource{
             });
             if (!empleado) throw new NotFoundException('Empleado no encontrado');
 
-            await this.deleteS3Url(empleado.img_url);
-            await Promise.all(empleado.sec_empleado.map(s => this.deleteS3Url(s.image_url)));
+            await this.deleteImageByUrl(empleado.img_url);
+            await Promise.all(empleado.sec_empleado.map(s => this.deleteImageByUrl(s.image_url)));
         }
     }
 }
