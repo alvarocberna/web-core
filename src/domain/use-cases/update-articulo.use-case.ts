@@ -1,5 +1,7 @@
 // import { ArticuloEntity } from "../entities/articulo.entity"
-import { ArticuloEntity, ArticuloRepository, ActividadRepository, UpdateArticuloDto} from "src/domain"
+import { ArticuloRepository, ActividadRepository, ImageStorageRepository, UsuarioRepository} from "src/domain"
+import { ArticuloEntity, UpdateArticuloDto} from "src/domain"
+import { NotFoundException } from "@nestjs/common"
 
 interface UpdateArticuloUseCaseInterface{
     execute(
@@ -19,7 +21,6 @@ export class UpdateArticuloUseCase implements UpdateArticuloUseCaseInterface{
         id_articulo: string,
         updateArticuloDto: UpdateArticuloDto, 
     ): Promise<ArticuloEntity> {
-
         //entregamos la info al repository para actualizar articulo
         const articulo = await this.articuloRepository.updateArticulo(id_usuario, id_articulo, updateArticuloDto);
         //registramos esta accion

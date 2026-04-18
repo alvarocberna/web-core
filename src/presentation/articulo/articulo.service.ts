@@ -82,10 +82,26 @@ export class ArticuloService {
             sec_images?: Express.Multer.File[];
         },
     ) {
+        const currentArticulo = await this.articuloRepository.getArticuloById(id_usuario, id_articulo) as any;
+
         // Procesar imagen principal del artículo si existe
         if (files?.image_file?.[0]) {
+            if (currentArticulo?.image_url) {
+                await this.imageStorage.deleteImageByUrl(currentArticulo.image_url);
+            }
             const imageUrl = await this.imageStorage.saveImage(files.image_file[0]);
             updateArticuloDto.image_url = imageUrl;
+        }
+
+        // Eliminar imágenes de secciones que ya no están en la nueva data
+        if (currentArticulo?.sec_articulo?.length) {
+            const nuevosIds = new Set((updateArticuloDto.sec_articulo ?? []).map((s) => s.id));
+            const seccionesEliminadas = currentArticulo.sec_articulo.filter((s: any) => !nuevosIds.has(s.id));
+            await Promise.all(
+                seccionesEliminadas
+                    .filter((s: any) => s.image_url)
+                    .map((s: any) => this.imageStorage.deleteImageByUrl(s.image_url)),
+            );
         }
 
         // Procesar imágenes de las secciones si existen
@@ -101,12 +117,19 @@ export class ArticuloService {
                     continue;
                 }
 
+                const seccionId = updateArticuloDto.sec_articulo[index].id;
+                const oldSeccion = currentArticulo?.sec_articulo?.find((s: any) => s.id === seccionId);
+                if (oldSeccion?.image_url) {
+                    await this.imageStorage.deleteImageByUrl(oldSeccion.image_url);
+                }
+
                 const imageUrl = await this.imageStorage.saveImage(file);
                 updateArticuloDto.sec_articulo[index].image_url = imageUrl;
             }
         }
 
-        return new UpdateArticuloUseCase(this.articuloRepository, this.actividadRepository).execute(id_usuario, id_articulo, updateArticuloDto);
+        return new UpdateArticuloUseCase(this.articuloRepository, this.actividadRepository)
+        .execute(id_usuario, id_articulo, updateArticuloDto);
     }
 
     updateArticuloStatus(id_usuario: string, id_articulo: string, data: { status: string }) {

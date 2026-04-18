@@ -13,4 +13,8 @@ export class ImageStorageRepositoryService implements ImageStorageDatasource {
     async deleteImage(id_usuario: string, id_entidad: string, entityType: ImageEntityType): Promise<void> {
         return this.imageStorage.deleteImage(id_usuario, id_entidad, entityType);
     }
+
+    async deleteImageByUrl(imageUrl: string): Promise<void> {
+        return this.imageStorage.deleteImageByUrl(imageUrl);
+    }
 }

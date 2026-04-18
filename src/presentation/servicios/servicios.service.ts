@@ -77,9 +77,25 @@ export class ServiciosService {
             sec_images?: Express.Multer.File[];
         },
     ) {
+        const currentServicio = await this.serviciosRepository.getServicio(id_usuario, id_servicio) as any;
+
         if (files?.image_file?.[0]) {
+            if (currentServicio?.img_url) {
+                await this.imageStorage.deleteImageByUrl(currentServicio.img_url);
+            }
             const imageUrl = await this.imageStorage.saveImage(files.image_file[0]);
             updateServicioDto.img_url = imageUrl;
+        }
+
+        // Eliminar imágenes de secciones que ya no están en la nueva data
+        if (currentServicio?.sec_servicio?.length) {
+            const nuevosIds = new Set((updateServicioDto.sec_servicio ?? []).map((s) => s.id));
+            const seccionesEliminadas = currentServicio.sec_servicio.filter((s: any) => !nuevosIds.has(s.id));
+            await Promise.all(
+                seccionesEliminadas
+                    .filter((s: any) => s.image_url)
+                    .map((s: any) => this.imageStorage.deleteImageByUrl(s.image_url)),
+            );
         }
 
         if (files?.sec_images && updateServicioDto.sec_servicio) {
@@ -92,6 +108,12 @@ export class ServiciosService {
                     if ((file.buffer as Buffer).length === 0) continue;
                 } else {
                     continue;
+                }
+
+                const seccionId = updateServicioDto.sec_servicio[index].id;
+                const oldSeccion = currentServicio?.sec_servicio?.find((s: any) => s.id === seccionId);
+                if (oldSeccion?.image_url) {
+                    await this.imageStorage.deleteImageByUrl(oldSeccion.image_url);
                 }
 
                 const imageUrl = await this.imageStorage.saveImage(file);
