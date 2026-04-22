@@ -206,7 +206,7 @@ export class ArticuloDatasourceService implements ArticuloDatasource {
         if (!user) throw new NotFoundException('Usuario no encontrado');
 
         await this.prismaService.articulo.delete({
-            where: { id: id_articulo, usuario_id: id_usuario, proyecto_id: user.proyecto_id },
+            where: { id: id_articulo, proyecto_id: user.proyecto_id },
             include: {
                 sec_articulo: true,
                 actividad: false,
