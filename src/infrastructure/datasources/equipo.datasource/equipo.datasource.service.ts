@@ -46,6 +46,7 @@ export class EquipoDatasourceService implements EquipoDatasource {
             include: {
                 empleado: {
                     include: { sec_empleado: true },
+                    orderBy: { orden: 'asc' },
                 },
             },
         });
@@ -81,6 +82,21 @@ export class EquipoDatasourceService implements EquipoDatasource {
             where: { proyecto_id: user.proyecto_id },
         });
         if (!equipo) throw new NotFoundException('Equipo no encontrado');
+
+        //buscamos el valor máximo del campo 'orden'
+        const result = await this.prismaService.empleado.aggregate({
+        where: {
+            proyecto_id: user.proyecto_id, 
+            equipo_id: equipo.id,
+        },
+        _max: {
+            orden: true,
+        },
+        });
+
+        const maxOrden = result._max.orden ?? 0;
+        
+        data.orden = maxOrden +  1000;
 
         const empleado = await this.prismaService.empleado.create({
             data: {
