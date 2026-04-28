@@ -220,30 +220,32 @@ export class ArticuloController {
     // ─── Ruta pública: ver artículos desde projects públicos ─────────────────
 
     @ApiOperation({ summary: 'Obtener artículos con sus secciones por proyecto (público)' })
-    @ApiQuery({ name: 'usuario_id', required: true, description: 'ID del usuario' })
+    @ApiQuery({ name: 'proyecto_id', required: true, description: 'ID del proyecto' })
     @ApiResponse({ status: 200, description: 'Sección artículos con artículos y sec_artículos' })
-    @ApiResponse({ status: 400, description: 'id de usuario no encontrado' })
+    @ApiResponse({ status: 400, description: 'id del proyecto no encontrado' })
     @Public()
     @Get('/project/ver-todo')
     findAllPublic(
-        @Query('usuario_id') usuario_id: string,
+        @Query('proyecto_id') id_proyecto: string,
     ) {
-        if (!usuario_id) throw new BadRequestException('id de usuario no encontrado');
-        return this.articuloService.findArticulos(usuario_id);
+        if (!id_proyecto) throw new BadRequestException('id del proyecto no encontrado');
+        return this.articuloService.findArticulosPublic(id_proyecto);
     }
 
     @ApiOperation({ summary: 'Obtener un artículo por ID' })
-    @ApiQuery({ name: 'usuario_id', required: true, description: 'ID del usuario' })
+    @ApiQuery({ name: 'proyecto_id', required: true, description: 'ID del usuario' })
     @ApiParam({ name: 'id_articulo', description: 'ID del artículo' })
     @ApiResponse({ status: 200, description: 'Artículo encontrado' })
     @ApiResponse({ status: 401, description: 'No autorizado' })
     @Public()
-    @Get('/project/ver/:id_articulo')
+    @Get('/project/ver/:proyecto_id')
     findArticuloByIdPublic(
         @Req() req: Request,
         @Param('id_articulo') id_articulo: string,
-        @Query('usuario_id') usuario_id: string,
+        @Query('proyecto_id') id_proyecto: string,
     ) {
-        return this.articuloService.findArticuloById(usuario_id, id_articulo);
+        return this.articuloService.findArticuloByIdPublic(id_proyecto, id_articulo);
     }
+
+
 }

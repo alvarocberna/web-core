@@ -139,4 +139,16 @@ export class ArticuloService {
     deleteArticulo(id_usuario: string, id_articulo: string) {
         return new DeleteArticuloUseCase(this.articuloRepository, this.actividadRepository, this.imageStorage, this.usuarioRepository).execute(id_usuario, id_articulo);
     }
+
+
+    //PUBLIC 
+
+    findArticulosPublic(id_proyecto: string) {
+        return this.articuloRepository.getArticulosPublic(id_proyecto);
+    }
+
+    findArticuloByIdPublic(id_proyecto: string, id_articulo: string) {
+        return this.articuloRepository.getArticuloByIdPublic(id_proyecto, id_articulo);
+    }
+
 }

@@ -46,7 +46,9 @@ export class TestimoniosDatasourceService implements TestimoniosDatasource {
                 proyecto_id: user.proyecto_id 
             },
             include: {
-               testimonio: true
+               testimonio: {
+                   orderBy: { fecha_creacion  : 'desc' }
+               }
             }
         });
 
@@ -133,5 +135,45 @@ export class TestimoniosDatasourceService implements TestimoniosDatasource {
         await this.prismaService.testimonio.delete({
             where: { id: id_testimonio, testimonios_id: secTestimonios.id, proyecto_id: usuario.proyecto_id },
         });
+    }
+
+
+    // PUBLIC ------------------------------------------------
+
+    async getSecTestimoniosPublic(id_proyecto: string): Promise<TestimoniosEntity | null> {
+
+        const secTestimonios = this.prismaService.testimonios.findFirst({
+            where: { 
+                proyecto_id: id_proyecto 
+            },
+            include: {
+               testimonio: {
+                   orderBy: { fecha_creacion: 'desc' }
+               },
+            }
+        });
+
+        if(!secTestimonios){
+            throw new NotFoundException('')
+        }
+
+        return secTestimonios;
+    }
+
+    async createTestimonioPublic(id_proyecto: string, createTestimonioDto: CreateTestimonioDto): Promise<TestimonioEntity> {
+
+        const secTestimonios = await this.prismaService.testimonios.findFirst({ where: { proyecto_id: id_proyecto } });
+        if (!secTestimonios) throw new NotFoundException('sec testimonios no encontrada');
+
+        const testimonio = await this.prismaService.testimonio.create({
+            data: {
+                id: this.uuidService.generate(),
+                ...createTestimonioDto,
+                fecha_creacion: new Date(),
+                proyecto_id: id_proyecto,
+                testimonios_id: secTestimonios.id,
+            },
+        });
+        return testimonio;
     }
 }

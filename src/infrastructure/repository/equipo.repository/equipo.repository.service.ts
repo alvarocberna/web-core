@@ -46,4 +46,10 @@ export class EquipoRepositoryService implements EquipoRepository {
     deleteEmpleado(id_usuario: string, id_empleado: string): Promise<void> {
         return this.equipoDatasource.deleteEmpleado(id_usuario, id_empleado);
     }
+
+    // PUBLIC ---------------------------------------------------------------
+
+    getEquipoPublic(id_proyecto: string): Promise<EquipoEntity | null> {
+        return this.equipoDatasource.getEquipoPublic(id_proyecto);
+    }
 }

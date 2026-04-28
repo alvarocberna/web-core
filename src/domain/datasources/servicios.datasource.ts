@@ -10,4 +10,7 @@ export abstract class ServiciosDatasource {
     abstract updateServicio(id_usuario: string, id_servicio: string, updateServicioDto: UpdateServicioDto): Promise<ServicioEntity>;
     abstract updateServicioOrden(id_usuario: string, id_servicio: string, updateServicioOrdenDto: UpdateServicioOrdenDto): Promise<ServicioEntity>;
     abstract deleteServicio(id_usuario: string, id_servicio: string): Promise<void>;
+
+    //public 
+    abstract getServiciosPublic(id_proyecto: string): Promise<ServiciosEntity | null>;
 }

@@ -46,4 +46,9 @@ export class ServiciosRepositoryService implements ServiciosRepository {
     deleteServicio(id_usuario: string, id_servicio: string): Promise<void> {
         return this.serviciosDatasource.deleteServicio(id_usuario, id_servicio);
     }
+
+    //PUBLIC --------------------------------------------------------------
+    getServiciosPublic(id_proyecto: string): Promise<ServiciosEntity | null> {
+        return this.serviciosDatasource.getServiciosPublic(id_proyecto);
+    }
 }

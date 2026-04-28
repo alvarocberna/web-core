@@ -37,4 +37,14 @@ export class TestimoniosRepositoryService implements TestimoniosRepository {
     deleteTestimonio(id_usuario: string, id_testimonio: string): Promise<void> {
         return this.testimoniosDatasource.deleteTestimonio(id_usuario, id_testimonio);
     }
+
+    // ---- public -----------------------------------------------------------
+
+    getSecTestimoniosPublic(id_proyecto: string): Promise<TestimoniosEntity | null> {
+        return this.testimoniosDatasource.getSecTestimoniosPublic(id_proyecto);
+    }
+
+    createTestimonioPublic(id_proyecto: string, createTestimonioDto: CreateTestimonioDto): Promise<TestimonioEntity> {
+        return this.testimoniosDatasource.createTestimonioPublic(id_proyecto, createTestimonioDto);
+    }
 }

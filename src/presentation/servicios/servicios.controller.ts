@@ -248,10 +248,10 @@ export class ServiciosController {
     @Public()
     @Get('/project/ver-todo')
     findAllPublic(
-        @Query('usuario_id') usuario_id: string,
+        @Query('proyecto_id') proyecto_id: string,
     ) {
-        const id_usuario = usuario_id;
-        if (!id_usuario) throw new BadRequestException('id de usuario no encontrado');
-        return this.serviciosService.find(id_usuario);
+        const id_proyecto = proyecto_id;
+        if (!id_proyecto) throw new BadRequestException('id del proyecto no encontrado');
+        return this.serviciosService.findServiciosPublic(id_proyecto);
     }
 }

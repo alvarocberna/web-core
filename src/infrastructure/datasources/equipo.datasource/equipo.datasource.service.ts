@@ -237,4 +237,21 @@ export class EquipoDatasourceService implements EquipoDatasource {
             where: { id: id_empleado, equipo_id: equipo.id, proyecto_id: user.proyecto_id },
         });
     }
+
+    // PUBLIC ----------------------------------------------------------------
+
+    async getEquipoPublic(id_proyecto: string): Promise<EquipoEntity | null> {
+
+        const equipo = await this.prismaService.equipo.findFirst({
+            where: { proyecto_id: id_proyecto },
+            include: {
+                empleado: {
+                    include: { sec_empleado: true },
+                    orderBy: { orden: 'asc' },
+                },
+            },
+        });
+
+        return equipo;
+    }
 }

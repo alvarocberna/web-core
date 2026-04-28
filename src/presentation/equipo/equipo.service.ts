@@ -131,4 +131,10 @@ export class EquipoService {
     removeEmpleado(id_usuario: string, id_empleado: string) {
         return new DeleteEmpleadoUseCase(this.equipoRepository, this.imageStorage, this.usuarioRepository).execute(id_usuario, id_empleado)
     }
+
+    // PUBLIC --------------------------------------------------------------
+
+    findEquipoPublic(id_proyecto: string) {
+        return this.equipoRepository.getEquipoPublic(id_proyecto);
+    }
 }

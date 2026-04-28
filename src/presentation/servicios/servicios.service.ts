@@ -133,4 +133,10 @@ export class ServiciosService {
         return new DeleteServicioUseCase(this.serviciosRepository, this.imageStorage, this.usuarioRepository).execute(id_usuario, id_servicio)
         return this.serviciosRepository.deleteServicio(id_usuario, id_servicio);
     }
+
+    // PUBLIC -----------------------------------------------------------
+
+    findServiciosPublic(id_proyecto: string) {
+        return this.serviciosRepository.getServiciosPublic(id_proyecto);
+    }
 }

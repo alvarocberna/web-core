@@ -208,15 +208,15 @@ export class EquipoController {
     // ─── Ruta pública: ver equipo desde projects públicos ───────────────────────
 
     @ApiOperation({ summary: 'Obtener la info del equipo con empleados por proyecto (público)' })
-    @ApiQuery({ name: 'usuario_id', required: true, description: 'ID del usuario' })
+    @ApiQuery({ name: 'proyecto_id', required: true, description: 'ID del usuario' })
     @ApiResponse({ status: 200, description: 'Sec equipo con lista de empleados' })
     @Public()
     @Get('/project/ver-todo')
     findAllPublic(
-        @Query('usuario_id') usuario_id: string,
+        @Query('proyecto_id') proyecto_id: string,
     ) {
-        const id_usuario = usuario_id;
-        if (!id_usuario) throw new BadRequestException('id de usuario no encontrado');
-        return this.equipoService.find(id_usuario);
+        const id_proyecto = proyecto_id;
+        if (!id_proyecto) throw new BadRequestException('id del proyecto no encontrado');
+        return this.equipoService.findEquipoPublic(id_proyecto);
     }
 }

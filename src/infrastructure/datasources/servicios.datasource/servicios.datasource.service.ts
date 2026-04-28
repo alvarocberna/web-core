@@ -237,4 +237,20 @@ export class ServiciosDatasourceService implements ServiciosDatasource {
             where: { id: id_servicio, servicios_id: servicios.id, proyecto_id: user.proyecto_id },
         });
     }
+
+    // PUBLIC ----------------------------------------------
+    async getServiciosPublic(id_proyecto: string): Promise<ServiciosEntity | null> {
+
+        const servicios = await this.prismaService.servicios.findFirst({
+            where: { proyecto_id: id_proyecto },
+            include: {
+                servicio: {
+                    include: { sec_servicio: true },
+                    orderBy: { orden: 'asc' },
+                },
+            },
+        });
+
+        return servicios;
+    }
 }

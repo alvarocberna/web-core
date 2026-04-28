@@ -10,4 +10,7 @@ export abstract class EquipoDatasource {
     abstract updateEmpleado(id_usuario: string, id_empleado: string, updateEmpleadoDto: UpdateEmpleadoDto): Promise<EmpleadoEntity>;
     abstract updateEmpleadoOrden(id_usuario: string, id_empleado: string, updateEmpleadoOrdenDto: UpdateEmpleadoOrdenDto): Promise<EmpleadoEntity>;
     abstract deleteEmpleado(id_usuario: string, id_empleado: string): Promise<void>;
+
+    // public 
+    abstract getEquipoPublic(id_proyecto: string): Promise<EquipoEntity | null>;
 }

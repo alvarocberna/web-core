@@ -11,4 +11,8 @@ export abstract class ArticuloDatasource {
     abstract getArticuloById(id_usuario: string, id_articulo: string): Promise<ArticuloEntity | null>;
     abstract updateArticulo(id_usuario: string, id_articulo: string, updateArticuloDto: UpdateArticuloDto): Promise<ArticuloEntity>;
     abstract deleteArticulo(id_usuario: string, id_articulo: string): Promise<void>;
+
+    // ─── Articulos Public ────────────────────────────────────────────
+    abstract getArticulosPublic(id_proyecto: string): Promise<ArticulosEntity | null>;
+    abstract getArticuloByIdPublic(id_proyecto: string, id_articulo: string): Promise<ArticuloEntity | null>;
 }
