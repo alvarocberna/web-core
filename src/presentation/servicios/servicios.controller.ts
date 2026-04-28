@@ -8,6 +8,7 @@ import { CreateServiciosDtoImpl } from './dto/create-servicios.dto';
 import { UpdateServiciosDtoImpl } from './dto/update-servicios.dto';
 import { CreateServicioDtoImpl } from './dto/create-servicio.dto';
 import { UpdateServicioDtoImpl } from './dto/update-servicio.dto';
+import { UpdateServicioOrdenDtoImpl } from './dto/update-servicio-orden.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Public } from '../decorators/public.decorator';
 import { Roles } from '../decorators/roles.decorator';
@@ -204,6 +205,23 @@ export class ServiciosController {
         updateServicioDto.porcentaje_descuento = this.parseOptionalIntField(updateServicioDto.porcentaje_descuento, 'porcentaje_descuento');
         updateServicioDto.orden = this.parseOptionalIntField(updateServicioDto.orden, 'orden');
         return this.serviciosService.updateServicio(id_usuario, id_servicio, updateServicioDto, files);
+    }
+
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Actualizar el orden de un servicio' })
+    @ApiParam({ name: 'id_servicio', description: 'ID del servicio' })
+    @ApiResponse({ status: 200, description: 'Orden del servicio actualizado' })
+    @ApiResponse({ status: 401, description: 'No autorizado' })
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Patch('/servicio/editar/orden/:id_servicio')
+    updateServicioOrden(
+        @Req() req: Request,
+        @Param('id_servicio') id_servicio: string,
+        @Body() updateServicioOrdenDto: UpdateServicioOrdenDtoImpl,
+    ) {
+        const id_usuario = (req as any).user?.id;
+        return this.serviciosService.updateServicioOrden(id_usuario, id_servicio, updateServicioOrdenDto);
     }
 
     @ApiBearerAuth()

@@ -3,6 +3,7 @@ import { CreateServiciosDtoImpl } from './dto/create-servicios.dto';
 import { UpdateServiciosDtoImpl } from './dto/update-servicios.dto';
 import { CreateServicioDtoImpl } from './dto/create-servicio.dto';
 import { UpdateServicioDtoImpl } from './dto/update-servicio.dto';
+import { UpdateServicioOrdenDtoImpl } from './dto/update-servicio-orden.dto';
 import { ServiciosRepositoryService, ImageStorageRepositoryService } from 'src/infrastructure';
 import { UsuarioRepositoryService } from 'src/infrastructure';
 import { DeleteServicioUseCase } from 'src/domain';
@@ -122,6 +123,10 @@ export class ServiciosService {
         }
 
         return this.serviciosRepository.updateServicio(id_usuario, id_servicio, updateServicioDto);
+    }
+
+    updateServicioOrden(id_usuario: string, id_servicio: string, updateServicioOrdenDto: UpdateServicioOrdenDtoImpl) {
+        return this.serviciosRepository.updateServicioOrden(id_usuario, id_servicio, updateServicioOrdenDto);
     }
 
     removeServicio(id_usuario: string, id_servicio: string) {

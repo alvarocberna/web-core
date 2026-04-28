@@ -7,6 +7,7 @@ import {
     UpdateEquipoDto,
     CreateEmpleadoDto,
     UpdateEmpleadoDto,
+    UpdateEmpleadoOrdenDto,
 } from 'src/domain';
 import { EquipoDatasourceService } from 'src/infrastructure';
 
@@ -36,6 +37,10 @@ export class EquipoRepositoryService implements EquipoRepository {
 
     updateEmpleado(id_usuario: string, id_empleado: string, updateEmpleadoDto: UpdateEmpleadoDto): Promise<EmpleadoEntity> {
         return this.equipoDatasource.updateEmpleado(id_usuario, id_empleado, updateEmpleadoDto);
+    }
+
+    updateEmpleadoOrden(id_usuario: string, id_empleado: string, updateEmpleadoOrdenDto: UpdateEmpleadoOrdenDto): Promise<EmpleadoEntity> {
+        return this.equipoDatasource.updateEmpleadoOrden(id_usuario, id_empleado, updateEmpleadoOrdenDto);
     }
 
     deleteEmpleado(id_usuario: string, id_empleado: string): Promise<void> {

@@ -9,6 +9,7 @@ import {
     UpdateEquipoDto,
     CreateEmpleadoDto,
     UpdateEmpleadoDto,
+    UpdateEmpleadoOrdenDto,
 } from 'src/domain';
 //infrastructure
 import { PrismaService } from 'src/infrastructure/orm/prisma/prisma.service';
@@ -196,6 +197,28 @@ export class EquipoDatasourceService implements EquipoDatasource {
                     },
                 }),
             },
+            include: { sec_empleado: true },
+        });
+        return updated;
+    }
+
+    async updateEmpleadoOrden(id_usuario: string, id_empleado: string, updateEmpleadoOrdenDto: UpdateEmpleadoOrdenDto): Promise<EmpleadoEntity> {
+        const user = await this.prismaService.usuario.findUnique({ where: { id: id_usuario } });
+        if (!user) throw new NotFoundException('Usuario no encontrado');
+
+        const equipo = await this.prismaService.equipo.findFirst({
+            where: { proyecto_id: user.proyecto_id },
+        });
+        if (!equipo) throw new NotFoundException('Equipo no encontrado');
+
+        const empleado = await this.prismaService.empleado.findUnique({
+            where: { id: id_empleado, equipo_id: equipo.id, proyecto_id: user.proyecto_id },
+        });
+        if (!empleado) throw new NotFoundException('Empleado no encontrado');
+
+        const updated = await this.prismaService.empleado.update({
+            where: { id: id_empleado, proyecto_id: user.proyecto_id },
+            data: { orden: updateEmpleadoOrdenDto.orden },
             include: { sec_empleado: true },
         });
         return updated;

@@ -8,6 +8,7 @@ import { CreateEquipoDtoImpl } from './dto/create-equipo.dto';
 import { UpdateEquipoDtoImpl } from './dto/update-equipo.dto';
 import { CreateEmpleadoDtoImpl } from './dto/create-empleado.dto';
 import { UpdateEmpleadoDtoImpl } from './dto/update-empleado.dto';
+import { UpdateEmpleadoOrdenDtoImpl } from './dto/update-empleado-orden.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Public } from '../decorators/public.decorator';
 import { Roles } from '../decorators/roles.decorator';
@@ -169,6 +170,23 @@ export class EquipoController {
             throw new BadRequestException('El campo "data" no es un JSON válido');
         }
         return this.equipoService.updateEmpleado(id_usuario, id_empleado, updateEmpleadoDto, files);
+    }
+
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Actualizar el orden de un empleado' })
+    @ApiParam({ name: 'id_empleado', description: 'ID del empleado' })
+    @ApiResponse({ status: 200, description: 'Orden del empleado actualizado' })
+    @ApiResponse({ status: 401, description: 'No autorizado' })
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Patch('/empleado/editar/orden/:id_empleado')
+    updateEmpleadoOrden(
+        @Req() req: Request,
+        @Param('id_empleado') id_empleado: string,
+        @Body() updateEmpleadoOrdenDto: UpdateEmpleadoOrdenDtoImpl,
+    ) {
+        const id_usuario = (req as any).user?.id;
+        return this.equipoService.updateEmpleadoOrden(id_usuario, id_empleado, updateEmpleadoOrdenDto);
     }
 
     @ApiBearerAuth()

@@ -9,6 +9,7 @@ import {
     UpdateServiciosDto,
     CreateServicioDto,
     UpdateServicioDto,
+    UpdateServicioOrdenDto,
 } from 'src/domain';
 //infrastructure
 import { PrismaService } from 'src/infrastructure/orm/prisma/prisma.service';
@@ -46,6 +47,7 @@ export class ServiciosDatasourceService implements ServiciosDatasource {
             include: {
                 servicio: {
                     include: { sec_servicio: true },
+                    orderBy: { orden: 'asc' },
                 },
             },
         });
@@ -81,6 +83,21 @@ export class ServiciosDatasourceService implements ServiciosDatasource {
             where: { proyecto_id: user.proyecto_id },
         });
         if (!servicios) throw new NotFoundException('Servicios no encontrado');
+
+        //buscamos el valor máximo del campo 'orden'
+        const result = await this.prismaService.servicio.aggregate({
+        where: {
+            proyecto_id: user.proyecto_id, 
+            servicios_id: servicios.id,
+        },
+        _max: {
+            orden: true,
+        },
+        });
+
+        const maxOrden = result._max.orden ?? 0;
+        
+        data.orden = maxOrden +  1000;
 
         const servicio = await this.prismaService.servicio.create({
             data: {
@@ -180,6 +197,28 @@ export class ServiciosDatasourceService implements ServiciosDatasource {
                     },
                 }),
             },
+            include: { sec_servicio: true },
+        });
+        return updated;
+    }
+
+    async updateServicioOrden(id_usuario: string, id_servicio: string, updateServicioOrdenDto: UpdateServicioOrdenDto): Promise<ServicioEntity> {
+        const user = await this.prismaService.usuario.findUnique({ where: { id: id_usuario } });
+        if (!user) throw new NotFoundException('Usuario no encontrado');
+
+        const servicios = await this.prismaService.servicios.findFirst({
+            where: { proyecto_id: user.proyecto_id },
+        });
+        if (!servicios) throw new NotFoundException('Servicios no encontrado');
+
+        const servicio = await this.prismaService.servicio.findUnique({
+            where: { id: id_servicio, servicios_id: servicios.id, proyecto_id: user.proyecto_id },
+        });
+        if (!servicio) throw new NotFoundException('Servicio no encontrado');
+
+        const updated = await this.prismaService.servicio.update({
+            where: { id: id_servicio, proyecto_id: user.proyecto_id },
+            data: { orden: updateServicioOrdenDto.orden },
             include: { sec_servicio: true },
         });
         return updated;

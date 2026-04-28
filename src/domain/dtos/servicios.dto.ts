@@ -35,6 +35,11 @@ export abstract class CreateServicioDto {
     abstract sec_servicio: CreateSecServicioDto[] | null; 
 }
 
+export abstract class UpdateServicioOrdenDto {
+    abstract id: string;
+    abstract orden: number;
+}
+
 export abstract class UpdateServicioDto {
     abstract id: string;
     abstract nombre_servicio: string;

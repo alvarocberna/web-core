@@ -33,6 +33,11 @@ export abstract class CreateEmpleadoDto {
     abstract sec_empleado: CreateSecEmpleadoDto[] | null; 
 }
 
+export abstract class UpdateEmpleadoOrdenDto {
+    abstract id: string;
+    abstract orden: number;
+}
+
 export abstract class UpdateEmpleadoDto {
     abstract id: string;
     abstract nombre_primero: string;
