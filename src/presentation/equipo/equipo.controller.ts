@@ -8,6 +8,7 @@ import { CreateEquipoDtoImpl } from './dto/create-equipo.dto';
 import { UpdateEquipoDtoImpl } from './dto/update-equipo.dto';
 import { CreateEmpleadoDtoImpl } from './dto/create-empleado.dto';
 import { UpdateEmpleadoDtoImpl } from './dto/update-empleado.dto';
+import { UpdateEmpleadoOrdenDtoImpl } from './dto/update-empleado-orden.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Public } from '../decorators/public.decorator';
 import { Roles } from '../decorators/roles.decorator';
@@ -172,6 +173,23 @@ export class EquipoController {
     }
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Actualizar el orden de un empleado' })
+    @ApiParam({ name: 'id_empleado', description: 'ID del empleado' })
+    @ApiResponse({ status: 200, description: 'Orden del empleado actualizado' })
+    @ApiResponse({ status: 401, description: 'No autorizado' })
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Patch('/empleado/editar/orden/:id_empleado')
+    updateEmpleadoOrden(
+        @Req() req: Request,
+        @Param('id_empleado') id_empleado: string,
+        @Body() updateEmpleadoOrdenDto: UpdateEmpleadoOrdenDtoImpl,
+    ) {
+        const id_usuario = (req as any).user?.id;
+        return this.equipoService.updateEmpleadoOrden(id_usuario, id_empleado, updateEmpleadoOrdenDto);
+    }
+
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Eliminar un empleado' })
     @ApiParam({ name: 'id_empleado', description: 'ID del empleado' })
     @ApiResponse({ status: 200, description: 'Empleado eliminado' })
@@ -190,15 +208,15 @@ export class EquipoController {
     // ─── Ruta pública: ver equipo desde projects públicos ───────────────────────
 
     @ApiOperation({ summary: 'Obtener la info del equipo con empleados por proyecto (público)' })
-    @ApiQuery({ name: 'usuario_id', required: true, description: 'ID del usuario' })
+    @ApiQuery({ name: 'proyecto_id', required: true, description: 'ID del usuario' })
     @ApiResponse({ status: 200, description: 'Sec equipo con lista de empleados' })
     @Public()
     @Get('/project/ver-todo')
     findAllPublic(
-        @Query('usuario_id') usuario_id: string,
+        @Query('proyecto_id') proyecto_id: string,
     ) {
-        const id_usuario = usuario_id;
-        if (!id_usuario) throw new BadRequestException('id de usuario no encontrado');
-        return this.equipoService.find(id_usuario);
+        const id_proyecto = proyecto_id;
+        if (!id_proyecto) throw new BadRequestException('id del proyecto no encontrado');
+        return this.equipoService.findEquipoPublic(id_proyecto);
     }
 }

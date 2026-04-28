@@ -9,6 +9,7 @@ import {
     UpdateEquipoDto,
     CreateEmpleadoDto,
     UpdateEmpleadoDto,
+    UpdateEmpleadoOrdenDto,
 } from 'src/domain';
 //infrastructure
 import { PrismaService } from 'src/infrastructure/orm/prisma/prisma.service';
@@ -46,6 +47,7 @@ export class EquipoDatasourceService implements EquipoDatasource {
             include: {
                 empleado: {
                     include: { sec_empleado: true },
+                    orderBy: { orden: 'asc' },
                 },
             },
         });
@@ -81,6 +83,21 @@ export class EquipoDatasourceService implements EquipoDatasource {
             where: { proyecto_id: user.proyecto_id },
         });
         if (!equipo) throw new NotFoundException('Equipo no encontrado');
+
+        //buscamos el valor máximo del campo 'orden'
+        const result = await this.prismaService.empleado.aggregate({
+        where: {
+            proyecto_id: user.proyecto_id, 
+            equipo_id: equipo.id,
+        },
+        _max: {
+            orden: true,
+        },
+        });
+
+        const maxOrden = result._max.orden ?? 0;
+        
+        data.orden = maxOrden +  1000;
 
         const empleado = await this.prismaService.empleado.create({
             data: {
@@ -185,6 +202,28 @@ export class EquipoDatasourceService implements EquipoDatasource {
         return updated;
     }
 
+    async updateEmpleadoOrden(id_usuario: string, id_empleado: string, updateEmpleadoOrdenDto: UpdateEmpleadoOrdenDto): Promise<EmpleadoEntity> {
+        const user = await this.prismaService.usuario.findUnique({ where: { id: id_usuario } });
+        if (!user) throw new NotFoundException('Usuario no encontrado');
+
+        const equipo = await this.prismaService.equipo.findFirst({
+            where: { proyecto_id: user.proyecto_id },
+        });
+        if (!equipo) throw new NotFoundException('Equipo no encontrado');
+
+        const empleado = await this.prismaService.empleado.findUnique({
+            where: { id: id_empleado, equipo_id: equipo.id, proyecto_id: user.proyecto_id },
+        });
+        if (!empleado) throw new NotFoundException('Empleado no encontrado');
+
+        const updated = await this.prismaService.empleado.update({
+            where: { id: id_empleado, proyecto_id: user.proyecto_id },
+            data: { orden: updateEmpleadoOrdenDto.orden },
+            include: { sec_empleado: true },
+        });
+        return updated;
+    }
+
     async deleteEmpleado(id_usuario: string, id_empleado: string): Promise<void> {
         const user = await this.prismaService.usuario.findUnique({ where: { id: id_usuario } });
         if (!user) throw new NotFoundException('Usuario no encontrado');
@@ -197,5 +236,22 @@ export class EquipoDatasourceService implements EquipoDatasource {
         await this.prismaService.empleado.delete({
             where: { id: id_empleado, equipo_id: equipo.id, proyecto_id: user.proyecto_id },
         });
+    }
+
+    // PUBLIC ----------------------------------------------------------------
+
+    async getEquipoPublic(id_proyecto: string): Promise<EquipoEntity | null> {
+
+        const equipo = await this.prismaService.equipo.findFirst({
+            where: { proyecto_id: id_proyecto },
+            include: {
+                empleado: {
+                    include: { sec_empleado: true },
+                    orderBy: { orden: 'asc' },
+                },
+            },
+        });
+
+        return equipo;
     }
 }

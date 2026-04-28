@@ -7,6 +7,7 @@ import {
     UpdateServiciosDto,
     CreateServicioDto,
     UpdateServicioDto,
+    UpdateServicioOrdenDto,
 } from 'src/domain';
 import { ServiciosDatasourceService } from 'src/infrastructure';
 
@@ -38,7 +39,16 @@ export class ServiciosRepositoryService implements ServiciosRepository {
         return this.serviciosDatasource.updateServicio(id_usuario, id_servicio, updateServicioDto);
     }
 
+    updateServicioOrden(id_usuario: string, id_servicio: string, updateServicioOrdenDto: UpdateServicioOrdenDto): Promise<ServicioEntity> {
+        return this.serviciosDatasource.updateServicioOrden(id_usuario, id_servicio, updateServicioOrdenDto);
+    }
+
     deleteServicio(id_usuario: string, id_servicio: string): Promise<void> {
         return this.serviciosDatasource.deleteServicio(id_usuario, id_servicio);
+    }
+
+    //PUBLIC --------------------------------------------------------------
+    getServiciosPublic(id_proyecto: string): Promise<ServiciosEntity | null> {
+        return this.serviciosDatasource.getServiciosPublic(id_proyecto);
     }
 }

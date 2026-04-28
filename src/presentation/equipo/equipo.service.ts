@@ -3,6 +3,7 @@ import { CreateEquipoDtoImpl } from './dto/create-equipo.dto';
 import { UpdateEquipoDtoImpl } from './dto/update-equipo.dto';
 import { CreateEmpleadoDtoImpl } from './dto/create-empleado.dto';
 import { UpdateEmpleadoDtoImpl } from './dto/update-empleado.dto';
+import { UpdateEmpleadoOrdenDtoImpl } from './dto/update-empleado-orden.dto';
 import { EquipoRepositoryService, ImageStorageRepositoryService, UsuarioRepositoryService } from 'src/infrastructure';
 import { DeleteEmpleadoUseCase } from 'src/domain';
 
@@ -123,7 +124,17 @@ export class EquipoService {
         return this.equipoRepository.updateEmpleado(id_usuario, id_empleado, updateEmpleadoDto);
     }
 
+    updateEmpleadoOrden(id_usuario: string, id_empleado: string, updateEmpleadoOrdenDto: UpdateEmpleadoOrdenDtoImpl) {
+        return this.equipoRepository.updateEmpleadoOrden(id_usuario, id_empleado, updateEmpleadoOrdenDto);
+    }
+
     removeEmpleado(id_usuario: string, id_empleado: string) {
         return new DeleteEmpleadoUseCase(this.equipoRepository, this.imageStorage, this.usuarioRepository).execute(id_usuario, id_empleado)
+    }
+
+    // PUBLIC --------------------------------------------------------------
+
+    findEquipoPublic(id_proyecto: string) {
+        return this.equipoRepository.getEquipoPublic(id_proyecto);
     }
 }

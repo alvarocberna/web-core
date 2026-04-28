@@ -117,25 +117,25 @@ export class TestimoniosController {
     @Public()
     @Get('/project/ver-todo')
     findAllPublic(
-        @Query('usuario_id') usuario_id: string,
+        @Query('proyecto_id') proyecto_id: string,
     ) {
-        const id_usuario = usuario_id;
-        if (!id_usuario) throw new BadRequestException('id de usuario no encontrado');
-        return this.testimoniosService.find(id_usuario);
+        const id_proyecto = proyecto_id;
+        if (!id_proyecto) throw new BadRequestException('id del proyecto no encontrado');
+        return this.testimoniosService.findTestimoniosPublic(id_proyecto);
     }
 
 
     @ApiOperation({ summary: 'Enviar un nuevo testimonio (público)' })
-    @ApiQuery({ name: 'usuario_id', required: false, description: 'ID del usuario' })
+    @ApiQuery({ name: 'proyecto_id', required: false, description: 'ID del proyecto' })
     @ApiResponse({ status: 201, description: 'Testimonio enviado exitosamente' })
     @Public()
     @Post('/project/testimonio/crear')
     createTestimonioPublic(
         @Body() createTestimonioDto: CreateTestimonioDtoImpl,
-        @Query('usuario_id') usuario_id: string,
+        @Query('proyecto_id') proyecto_id: string,
     ) {
-        const id_usuario = usuario_id;
-        if (!id_usuario) throw new BadRequestException('id de usuario no encontrado');
-        return this.testimoniosService.createTestimonio(id_usuario, createTestimonioDto);
+        const id_proyecto = proyecto_id;
+        if (!id_proyecto) throw new BadRequestException('id del proyecto no encontrado');
+        return this.testimoniosService.createTestimonioPublic(id_proyecto, createTestimonioDto);
     }
 }

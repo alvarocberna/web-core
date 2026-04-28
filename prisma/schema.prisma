@@ -134,7 +134,7 @@ model Empleado {
   profesion              String?   @db.VarChar(100)
   especialidad           String?  @db.VarChar(200)
   descripcion            String?  @db.VarChar(500)
-  orden                  Int?
+  orden                  Float?
   activo                 Boolean
   slug                   String   @default("")  
   img_url                String?
@@ -187,7 +187,7 @@ model Servicio {
   porcentaje_descuento  Int?
   destacado             Boolean
   icono                 String?
-  orden                 Int?
+  orden                 Float?
   activo                Boolean
   slug                  String  @default("-")  
   img_url               String?

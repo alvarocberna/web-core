@@ -8,6 +8,7 @@ import { CreateServiciosDtoImpl } from './dto/create-servicios.dto';
 import { UpdateServiciosDtoImpl } from './dto/update-servicios.dto';
 import { CreateServicioDtoImpl } from './dto/create-servicio.dto';
 import { UpdateServicioDtoImpl } from './dto/update-servicio.dto';
+import { UpdateServicioOrdenDtoImpl } from './dto/update-servicio-orden.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Public } from '../decorators/public.decorator';
 import { Roles } from '../decorators/roles.decorator';
@@ -207,6 +208,23 @@ export class ServiciosController {
     }
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Actualizar el orden de un servicio' })
+    @ApiParam({ name: 'id_servicio', description: 'ID del servicio' })
+    @ApiResponse({ status: 200, description: 'Orden del servicio actualizado' })
+    @ApiResponse({ status: 401, description: 'No autorizado' })
+    @Roles(Rol.ADMIN, Rol.SUPERADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Patch('/servicio/editar/orden/:id_servicio')
+    updateServicioOrden(
+        @Req() req: Request,
+        @Param('id_servicio') id_servicio: string,
+        @Body() updateServicioOrdenDto: UpdateServicioOrdenDtoImpl,
+    ) {
+        const id_usuario = (req as any).user?.id;
+        return this.serviciosService.updateServicioOrden(id_usuario, id_servicio, updateServicioOrdenDto);
+    }
+
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Eliminar un servicio' })
     @ApiParam({ name: 'id_servicio', description: 'ID del servicio' })
     @ApiResponse({ status: 200, description: 'Servicio eliminado' })
@@ -230,10 +248,10 @@ export class ServiciosController {
     @Public()
     @Get('/project/ver-todo')
     findAllPublic(
-        @Query('usuario_id') usuario_id: string,
+        @Query('proyecto_id') proyecto_id: string,
     ) {
-        const id_usuario = usuario_id;
-        if (!id_usuario) throw new BadRequestException('id de usuario no encontrado');
-        return this.serviciosService.find(id_usuario);
+        const id_proyecto = proyecto_id;
+        if (!id_proyecto) throw new BadRequestException('id del proyecto no encontrado');
+        return this.serviciosService.findServiciosPublic(id_proyecto);
     }
 }

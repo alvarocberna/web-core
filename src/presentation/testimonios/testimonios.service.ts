@@ -36,4 +36,13 @@ export class TestimoniosService {
     removeTestimonio(id_usuario: string, id_testimonio: string) {
         return this.testimoniosRepository.deleteTestimonio(id_usuario, id_testimonio);
     }
+
+    // ------ PUBLIC -------------------------------------------------------------------
+    findTestimoniosPublic(id_proyecto: string) {
+        return this.testimoniosRepository.getSecTestimoniosPublic(id_proyecto);
+    }
+
+    createTestimonioPublic(id_proyecto: string, createTestimonioDto: CreateTestimonioDtoImpl) {
+        return this.testimoniosRepository.createTestimonioPublic(id_proyecto, createTestimonioDto);
+    }
 }

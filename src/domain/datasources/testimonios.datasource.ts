@@ -8,4 +8,8 @@ export abstract class TestimoniosDatasource {
     abstract createTestimonio(id_usuario: string, createTestimonioDto: CreateTestimonioDto): Promise<TestimonioEntity>;
     abstract updateTestimonio(id_testimonio: string, updateTestimonioDto: UpdateTestimonioDto): Promise<TestimonioEntity>;
     abstract deleteTestimonio(id_usuario: string, id_testimonio: string): Promise<void>;
+
+    //public
+    abstract getSecTestimoniosPublic(id_proyecto: string): Promise<TestimoniosEntity | null>;
+    abstract createTestimonioPublic(id_proyecto: string, createTestimonioDto: CreateTestimonioDto): Promise<TestimonioEntity>;
 }

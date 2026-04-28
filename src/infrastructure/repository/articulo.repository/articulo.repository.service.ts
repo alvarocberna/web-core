@@ -52,4 +52,14 @@ export class ArticuloRepositoryService implements ArticuloRepository {
     deleteArticulo(id_usuario: string, id_articulo: string): Promise<void> {
         return this.articuloDatasource.deleteArticulo(id_usuario, id_articulo);
     }
+
+        // ─── Articulos Public ──────────────────────────────────────────────
+
+    getArticulosPublic(id_proyecto: string): Promise<ArticulosEntity | null> {
+        return this.articuloDatasource.getArticulosPublic(id_proyecto);
+    }
+
+    getArticuloByIdPublic(id_proyecto: string, id_articulo: string): Promise<ArticuloEntity | null> {
+        return this.articuloDatasource.getArticuloByIdPublic(id_proyecto, id_articulo);
+    }
 }

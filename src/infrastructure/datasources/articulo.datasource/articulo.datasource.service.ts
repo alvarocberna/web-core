@@ -46,6 +46,7 @@ export class ArticuloDatasourceService implements ArticuloDatasource {
             include: {
                 articulo: {
                     include: { sec_articulo: true },
+                    orderBy: { fecha_publicacion  : 'desc' }
                 },
             },
         });
@@ -206,11 +207,43 @@ export class ArticuloDatasourceService implements ArticuloDatasource {
         if (!user) throw new NotFoundException('Usuario no encontrado');
 
         await this.prismaService.articulo.delete({
-            where: { id: id_articulo, usuario_id: id_usuario, proyecto_id: user.proyecto_id },
+            where: { id: id_articulo, proyecto_id: user.proyecto_id },
             include: {
                 sec_articulo: true,
                 actividad: false,
             },
         });
+    }
+
+    // Articulos Public ------------------------------------------------------------
+
+    async getArticulosPublic(id_proyecto: string): Promise<ArticulosEntity | null> {
+
+        const articulos = await this.prismaService.articulos.findFirst({
+            where: { proyecto_id: id_proyecto },
+            include: {
+                articulo: {
+                    include: { sec_articulo: true },
+                    orderBy: { fecha_publicacion  : 'desc' }
+                },
+            },
+        });
+        return articulos;
+    }
+
+    async getArticuloByIdPublic(id_proyecto: string, id_articulo: string): Promise<ArticuloEntity | null> {
+
+        const articulos = await this.prismaService.articulos.findFirst({
+            where: { proyecto_id: id_proyecto },
+        });
+        if (!articulos) throw new NotFoundException('Sección artículos no encontrada');
+
+        const articulo = await this.prismaService.articulo.findUnique({
+            where: { id: id_articulo, articulos_id: articulos.id, proyecto_id: id_proyecto },
+            include: { sec_articulo: true },
+        });
+        if (!articulo) throw new NotFoundException('Artículo no encontrado');
+
+        return articulo;
     }
 }
