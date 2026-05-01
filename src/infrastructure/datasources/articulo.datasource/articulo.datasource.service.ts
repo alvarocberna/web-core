@@ -93,7 +93,6 @@ export class ArticuloDatasourceService implements ArticuloDatasource {
                 nro_articulo,
                 ...data,
                 proyecto_id: user.proyecto_id,
-                usuario_id: id_usuario,
                 articulos_id: articulos.id,
                 sec_articulo: {
                     create: sec_articulo.map((sec, index) => ({

@@ -33,6 +33,7 @@ export class ActividadDatasourceService implements ActividadDatasource {
             throw new NotFoundException('Artículo no encontrado');
         }
 
+
         // Crear la actividad
         const actividad = await this.prismaService.actividad.create({
             data: {
@@ -42,7 +43,6 @@ export class ActividadDatasourceService implements ActividadDatasource {
                 responsable: user.email,
                 fecha: new Date(),
                 articulo_id: id_articulo,
-                usuario_id: id_usuario,
                 proyecto_id: user.proyecto_id,
             }
         });
@@ -62,7 +62,6 @@ export class ActividadDatasourceService implements ActividadDatasource {
         const actividad = await this.prismaService.actividad.findUnique({
             where: {
                 id: id_actividad,
-                usuario_id: user.id,
                 proyecto_id: user.proyecto_id
             }
         });
@@ -108,10 +107,6 @@ export class ActividadDatasourceService implements ActividadDatasource {
             },
             orderBy: {
                 fecha: 'desc'
-            },
-            include: {
-                usuario: true,
-                articulo: true,
             }
         });
     }
@@ -128,7 +123,6 @@ export class ActividadDatasourceService implements ActividadDatasource {
         await this.prismaService.actividad.delete({
             where: {
                 id: id_actividad,
-                usuario_id: user.id,
                 proyecto_id: user.proyecto_id
             }
         });

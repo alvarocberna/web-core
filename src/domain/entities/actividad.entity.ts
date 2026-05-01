@@ -7,7 +7,6 @@ export class ActividadEntity{
         public responsable: string,
         public fecha: Date,
         public proyecto_id: string,
-        public usuario_id: string | null,
         public articulo_id: string | null,
     ){}
 }
