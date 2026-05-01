@@ -50,9 +50,6 @@ model Usuario {
   proyecto_id            String
   //REL M:N
   proyecto               Proyecto @relation(name: "fk_usu_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
-  //REL N:M 
-  actividad              Actividad[]        @relation("fk_act_usu")
-  articulo               Articulo[]         @relation("fk_art_usu")
 }
 
 model Articulos {
@@ -85,12 +82,10 @@ model Articulo {
     image_alt            String?
     image_position       String?         
     proyecto_id          String
-    usuario_id           String
     articulos_id         String
     //REL M:N
     proyecto             Proyecto @relation(name: "fk_art_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
     articulos            Articulos @relation(name: "fk_art_arts", fields: [articulos_id], references: [id], onDelete: Cascade)
-    usuario              Usuario @relation(name: "fk_art_usu", fields: [usuario_id], references: [id], onDelete: Cascade)
     //REL N:M
     sec_articulo         SecArticulo[]      @relation("fk_secart_art")
     actividad            Actividad[]        @relation("fk_act_art")
@@ -254,11 +249,9 @@ model Actividad {
     responsable           String
     fecha                 DateTime
     proyecto_id           String
-    usuario_id            String?
     articulo_id           String?
     //REL M:N
     proyecto              Proyecto @relation(name: "fk_act_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
-    usuario               Usuario? @relation(name: "fk_act_usu", fields: [usuario_id], references: [id], onDelete: SetNull)
     articulo              Articulo? @relation(name: "fk_act_art", fields: [articulo_id], references: [id], onDelete: SetNull)
 }
 

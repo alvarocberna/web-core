@@ -71,7 +71,7 @@ IF NOT EXISTS (
 ) THEN
   ALTER TABLE "Articulo"
     ADD CONSTRAINT ck_articulo_image_position
-    CHECK (image_position IS NULL OR image_position IN ('left', 'right', 'full', 'none'));
+    CHECK (image_position IS NULL OR image_position IN ('left', 'right', 'all', 'none'));
 END IF;
 
 
@@ -90,7 +90,7 @@ IF NOT EXISTS (
 ) THEN
   ALTER TABLE "SecArticulo"
     ADD CONSTRAINT ck_secarticulo_image_position
-    CHECK (image_position IS NULL OR image_position IN ('left', 'right', 'full', 'none'));
+    CHECK (image_position IS NULL OR image_position IN ('left', 'right', 'all', 'none'));
 END IF;
 
 
@@ -120,7 +120,7 @@ IF NOT EXISTS (
 ) THEN
   ALTER TABLE "SecEmpleado"
     ADD CONSTRAINT ck_secempleado_image_position
-    CHECK (image_position IS NULL OR image_position IN ('left', 'right', 'full', 'none'));
+    CHECK (image_position IS NULL OR image_position IN ('left', 'right', 'all', 'none'));
 END IF;
 
 
@@ -174,7 +174,7 @@ IF NOT EXISTS (
 ) THEN
   ALTER TABLE "SecServicio"
     ADD CONSTRAINT ck_secservicio_image_position
-    CHECK (image_position IS NULL OR image_position IN ('left', 'right', 'full', 'none'));
+    CHECK (image_position IS NULL OR image_position IN ('left', 'right', 'all', 'none'));
 END IF;
 
 
