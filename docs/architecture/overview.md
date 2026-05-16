@@ -104,15 +104,14 @@ Los roles se verifican en cascada mediante tres guards globales:
 
 Los siguientes endpoints no requieren JWT y están pensados para el consumo desde el sitio web público:
 
-- `GET /articulos/project/ver-todo?usuario_id=...`
-- `GET /articulos/project/ver/:id`
-- `GET /equipo/project/ver-todo?usuario_id=...`
-- `GET /servicios/project/ver-todo?usuario_id=...`
-- `GET /testimonios/project/ver-todo?usuario_id=...`
-- `POST /testimonios/project/testomino/crear`
+- `GET /articulos/project/ver-todo?proyecto_id=...`
+- `GET /articulos/project/ver/:proyecto_id`
+- `GET /equipo/project/ver-todo?proyecto_id=...`
+- `GET /servicios/project/ver-todo?proyecto_id=...`
+- `GET /testimonios/project/ver-todo?proyecto_id=...`
+- `POST /testimonios/project/testimonio/crear`
 
-Nota: Los endpoints privados obtienen el 'usuario_id' del payload del request. Pero, en el caso de los 
-endpoints publcios, el usuario_id es enviado por el client como un query param.
+Nota: Los endpoints privados obtienen el `usuario_id` del payload del JWT. En cambio, los endpoints públicos reciben el `proyecto_id` directamente desde el cliente como query param (o param de ruta).
 ---
 
 ## Subida de imágenes
