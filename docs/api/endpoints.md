@@ -120,7 +120,7 @@
 | POST | `/articulos/crear` | `[ADMIN]` | Crear sección de artículos para un proyecto |
 | GET | `/articulos/ver-todo` | `[USER]` | Obtener la sección con todos los artículos |
 | PUT | `/articulos/editar` | `[ADMIN]` | Actualizar configuración de la sección |
-| GET | `/articulos/project/ver-todo` | `[PUBLIC]` | Ver artículos públicos (query: `?usuario_id=...`) |
+| GET | `/articulos/project/ver-todo` | `[PUBLIC]` | Ver artículos públicos (query: `?proyecto_id=...`) |
 
 ### Artículo individual
 
@@ -130,7 +130,7 @@
 | GET | `/articulos/articulo/ver/:id_articulo` | `[USER]` | Ver artículo con sus secciones |
 | PUT | `/articulos/articulo/editar/:id_articulo` | `[ADMIN]` | Actualizar artículo con imagen (`multipart/form-data`) |
 | DELETE | `/articulos/articulo/eliminar/:id_articulo` | `[ADMIN]` | Eliminar artículo |
-| GET | `/articulos/project/ver/:id_articulo` | `[PUBLIC]` | Ver artículo público |
+| GET | `/articulos/project/ver/:proyecto_id` | `[PUBLIC]` | Ver artículo público por proyecto |
 
 ### POST /articulos/articulo/crear — Form data
 
@@ -159,7 +159,7 @@
 | POST | `/equipo/crear` | `[ADMIN]` | Crear sección de equipo para un proyecto |
 | GET | `/equipo/ver-todo` | `[USER]` | Obtener sección con todos los empleados |
 | PUT | `/equipo/editar` | `[ADMIN]` | Actualizar configuración de la sección |
-| GET | `/equipo/project/ver-todo` | `[PUBLIC]` | Ver equipo público (query: `?usuario_id=...`) |
+| GET | `/equipo/project/ver-todo` | `[PUBLIC]` | Ver equipo público (query: `?proyecto_id=...`) |
 
 ### Empleado
 
@@ -199,7 +199,7 @@
 | POST | `/servicios/crear` | `[ADMIN]` | Crear sección de servicios |
 | GET | `/servicios/ver-todo` | `[USER]` | Obtener sección con todos los servicios |
 | PUT | `/servicios/editar` | `[ADMIN]` | Actualizar configuración de la sección |
-| GET | `/servicios/project/ver-todo` | `[PUBLIC]` | Ver servicios públicos (query: `?usuario_id=...`) |
+| GET | `/servicios/project/ver-todo` | `[PUBLIC]` | Ver servicios públicos (query: `?proyecto_id=...`) |
 
 ### Servicio individual
 
@@ -238,16 +238,17 @@
 | POST | `/testimonios/crear` | `[ADMIN]` | Crear sección de testimonios |
 | GET | `/testimonios/ver-todo` | `[USER]` | Obtener sección con todos los testimonios |
 | PUT | `/testimonios/editar` | `[ADMIN]` | Actualizar configuración de la sección |
-| GET | `/testimonios/project/ver-todo` | `[PUBLIC]` | Ver testimonios públicos (query: `?usuario_id=...`) |
+| GET | `/testimonios/project/ver-todo` | `[PUBLIC]` | Ver testimonios públicos (query: `?proyecto_id=...`) |
 
 ### Testimonio individual
 
 | Método | Ruta | Auth | Descripción |
 |--------|------|------|-------------|
-| POST | `/testimonios/testimonio/crear` | `[PUBLIC]` | Crear testimonio (formulario público del sitio) |
+| POST | `/testimonios/testimonio/crear` | `[ADMIN]` | Crear testimonio desde el panel de administración |
+| POST | `/testimonios/project/testimonio/crear` | `[PUBLIC]` | Crear testimonio (formulario público del sitio, query: `?proyecto_id=...`) |
 | DELETE | `/testimonios/testimonio/eliminar/:id_testimonio` | `[ADMIN]` | Eliminar testimonio |
 
-### POST /testimonios/testimonio/crear — Body
+### POST /testimonios/project/testimonio/crear — Body
 
 ```json
 {
