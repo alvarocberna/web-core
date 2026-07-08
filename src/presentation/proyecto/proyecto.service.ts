@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateProyectoDtoImpl } from './dto/create-proyecto.dto';
 import { UpdateProyectoDtoImpl } from './dto/update-proyecto.dto';
 import { ProyectoRepositoryService } from 'src/infrastructure';
-import { CreateProyectoUseCase } from '../../domain/use-cases/create-proyecto.use-case';
+import { CreateProyectoUseCase } from '../../domain/use-cases/proyecto/create-proyecto.use-case';
 import { EquipoRepositoryService, ServiciosRepositoryService, ArticuloRepositoryService, TestimoniosRepositoryService, UsuarioRepositoryService } from 'src/infrastructure';
 
 

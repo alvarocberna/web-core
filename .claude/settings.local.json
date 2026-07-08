@@ -8,7 +8,21 @@
       "Bash(grep -r innerHTML /c/Users/cbern/OneDrive/Desktop/PROYECTOS/PRODUCTOS/web-core-root/web-core/src --include=*.ts)",
       "Bash(grep -r \"class-sanitizer\\\\|xss\\\\|dompurify\\\\|sanitize\" /c/Users/cbern/OneDrive/Desktop/PROYECTOS/PRODUCTOS/web-core-root/web-core --include=*.json --include=*.ts)",
       "Bash(npm install:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(timeout 60 npm test)",
+      "Bash(timeout 60 npx jest src/domain/use-cases/articulo/delete-articulo.use-case.spec.ts)",
+      "Bash(git rm *)",
+      "Bash(timeout 60 npx jest src/domain/use-cases --verbose)",
+      "Bash(timeout 60 npx jest src/common/utils/sanitize.util.spec.ts --verbose)",
+      "Bash(timeout 60 npx jest src/presentation/guards --verbose)",
+      "Bash(timeout 60 npx jest src/presentation/auth --verbose)",
+      "Bash(timeout 60 npx jest src/presentation/articulo --verbose)",
+      "Bash(timeout 60 npx jest src/presentation/equipo --verbose)",
+      "Bash(timeout 60 npx jest src/presentation/servicios --verbose)",
+      "Bash(timeout 60 npx jest src/presentation/proyecto --verbose)",
+      "Bash(timeout 60 npx jest src/presentation/testimonios src/presentation/usuario src/presentation/actividad --verbose)",
+      "Bash(timeout 90 npm test -- --coverage=false)",
+      "Bash(timeout 90 npx jest --coverage=false --verbose)"
     ]
   }
 }
