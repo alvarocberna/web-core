@@ -40,12 +40,12 @@ export * from './repository/testimonios.repository';
 export * from './repository/equipo.repository';
 export * from './repository/servicios.repository';
 //USE-CASES
-export * from './use-cases/create-articulo.use-case';
-export * from './use-cases/update-articulo.use-case';
-export * from './use-cases/delete-articulo.use-case';
-export * from './use-cases/create-proyecto.use-case';
-export * from './use-cases/delete-articulo.use-case';
-export * from './use-cases/delete-empleado.use-case';
-export * from './use-cases/delete-servicio.use-case'
+export * from './use-cases/articulo/create-articulo.use-case';
+export * from './use-cases/articulo/update-articulo.use-case';
+export * from './use-cases/articulo/delete-articulo.use-case';
+export * from './use-cases/proyecto/create-proyecto.use-case';
+export * from './use-cases/articulo/delete-articulo.use-case';
+export * from './use-cases/usuarios/delete-empleado.use-case';
+export * from './use-cases/servicio/delete-servicio.use-case'
 //ENUMS
 export * from './enums/rol.enum';

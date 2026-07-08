@@ -15,6 +15,8 @@ API backend multi-tenant con esquemas compartidos construida con **NestJS**, **P
 | [Guía / Deploy](./guides/deploy.md) | Despliegue en producción |
 | [Decisions / ADR-001](./decisions/adr-001-auth.md) | Decisión: estrategia de autenticación JWT + CSRF |
 | [Decisions / ADR-002](./decisions/adr-002-storage.md) | Decisión: almacenamiento de imágenes S3 + local |
+| [Deuda técnica](./technical-debt.md) | Mezcla de casos de uso y repositories en la capa de presentación |
+| [Tests / Unitarios](./tests/unit-tests.md) | Inventario de la suite de tests unitarios, configuración de Jest y qué falta cubrir |
 
 ---
 
