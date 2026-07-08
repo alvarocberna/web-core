@@ -1,0 +1,44 @@
+name: CI
+
+# Se ejecuta en cada push a cualquier rama y en cada pull request hacia main o develop
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Clona el repositorio en el runner
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Configura Node.js con la versión usada en producción
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # 3. Instala dependencias de forma determinista (usa package-lock.json)
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Genera el cliente de Prisma (requerido antes de compilar o testear)
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+      # 5. Verifica que el proyecto compila sin errores de TypeScript
+      - name: Build
+        run: npm run build
+
+      # 6. Ejecuta todos los tests unitarios
+      - name: Run unit tests
+        run: npm run test:ci

@@ -144,7 +144,8 @@ curl -b cookies.txt -c cookies.txt -X POST http://localhost:3001/auth/login \
 | `npm run start:dev` | Servidor en modo desarrollo con hot-reload |
 | `npm run build` | Compila el proyecto (`prisma generate` + `nest build`) |
 | `npm run start:prod` | Inicia el build de producción (`dist/main.js`) |
-| `npm run test` | Ejecuta tests unitarios |
+| `npm run test` | Ejecuta tests unitarios en modo watch |
+| `npm run test:ci` | Ejecuta tests en modo CI (sin watch, forceExit). Usado por Husky y GitHub Actions |
 | `npm run test:cov` | Tests con reporte de cobertura |
 | `npm run lint` | Linting y auto-fix con ESLint |
 
