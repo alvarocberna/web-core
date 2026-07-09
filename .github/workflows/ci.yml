@@ -1,6 +1,6 @@
 name: CI
 
-# Se ejecuta en cada push a cualquier rama y en cada pull request hacia main o develop
+# Se ejecuta en cada push a cualquier rama y en cada pull request hacia main o dev
 on:
   push:
     branches:
@@ -8,7 +8,7 @@ on:
   pull_request:
     branches:
       - main
-      - develop
+      - dev
 
 jobs:
   test:
