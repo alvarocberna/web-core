@@ -7,14 +7,6 @@ Estrategia de validación automática implementada con **GitHub Actions** (servi
 ## Resumen del flujo
 
 ```
-git commit
-    │
-    └─ pre-commit (Husky)
-           └─ npm run lint      ← ESLint con auto-fix
-                  │
-                  ├─ ✅ Commit creado
-                  └─ ❌ Commit bloqueado si hay errores de lint no corregibles
-
 git push
     │
     └─ pre-push (Husky)
@@ -54,18 +46,6 @@ Se dispara automáticamente en:
 | `npx prisma generate` | Genera el cliente Prisma (necesario antes de compilar) |
 | `npm run build` | Valida que el TypeScript compile sin errores |
 | `npm run test:ci` | Ejecuta la suite completa de tests unitarios |
-
----
-
-### `.husky/pre-commit` — Hook local de pre-commit
-
-Ejecuta el linter antes de crear cada commit:
-
-```bash
-npm run lint
-```
-
-Esto corre `eslint --fix` sobre `src/` y `test/`. Si ESLint encuentra errores que no puede corregir automáticamente, el commit se cancela.
 
 ---
 
@@ -124,7 +104,7 @@ git push --no-verify
 Una vez que el pipeline haya corrido al menos una vez en GitHub, activar la protección de ramas para que los PRs no puedan mergearse si el CI falla:
 
 1. Ir a **Settings → Branches → Add branch protection rule**
-2. Branch name pattern: `main` (repetir para `develop` si aplica)
+2. Branch name pattern: `main` (repetir para `dev` si aplica)
 3. Activar:
    - ✅ **Require a pull request before merging**
    - ✅ **Require status checks to pass before merging**
