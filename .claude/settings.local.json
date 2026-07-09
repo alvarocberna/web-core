@@ -22,7 +22,13 @@
       "Bash(timeout 60 npx jest src/presentation/proyecto --verbose)",
       "Bash(timeout 60 npx jest src/presentation/testimonios src/presentation/usuario src/presentation/actividad --verbose)",
       "Bash(timeout 90 npm test -- --coverage=false)",
-      "Bash(timeout 90 npx jest --coverage=false --verbose)"
+      "Bash(timeout 90 npx jest --coverage=false --verbose)",
+      "Bash(gh pr *)",
+      "Bash(gh run *)",
+      "Bash(gh workflow *)",
+      "Bash(git fetch *)",
+      "Bash(git ls-tree *)",
+      "Bash(export MSYS_NO_PATHCONV=1)"
     ]
   }
 }
