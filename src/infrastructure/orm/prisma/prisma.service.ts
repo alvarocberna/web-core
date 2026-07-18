@@ -8,8 +8,8 @@ import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 //prisma
 // import { createRequire } from 'module';
 // const require = createRequire(import.meta.url);
-// const { PrismaClient } = require('../../../../generated/prisma/client');
-import { PrismaClient } from '@prisma/client';
+const { PrismaClient } = require('../../../../generated/prisma/client');
+// import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
