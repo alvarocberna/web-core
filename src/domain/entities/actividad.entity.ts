@@ -1,12 +1,11 @@
-
-export class ActividadEntity{
-    constructor(
-        public id : string,
-        public accion: string,
-        public titulo_articulo: string,
-        public responsable: string,
-        public fecha: Date,
-        public proyecto_id: string,
-        public articulo_id: string | null,
-    ){}
+export class ActividadEntity {
+  constructor(
+    public id: string,
+    public accion: string,
+    public tituloArticulo: string,
+    public responsable: string,
+    public fecha: Date,
+    public proyectoId: string,
+    public articuloId: string | null,
+  ) {}
 }

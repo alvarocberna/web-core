@@ -7,6 +7,6 @@ import { UsuarioRepositoryModule } from 'src/infrastructure/repository/usuario.r
   imports: [UsuarioRepositoryModule],
   controllers: [UsuarioController],
   providers: [UsuarioService],
-  exports: [UsuarioService]
+  exports: [UsuarioService],
 })
 export class UsuarioModule {}

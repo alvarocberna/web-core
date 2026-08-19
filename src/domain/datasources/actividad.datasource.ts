@@ -1,9 +1,22 @@
-import { ActividadEntity } from "src/domain";
+import { ActividadEntity } from 'src/domain';
 
-export abstract class ActividadDatasource{
-    abstract createActividad(id_usuario: string, id_articulo: string, accion: string): Promise<ActividadEntity>;
-    abstract getActividadById(id_usuario: string, id_actividad: string): Promise<ActividadEntity | null>;
-    abstract getActividadByArticulo(id_usuario: string, id_articulo: string): Promise<ActividadEntity[]>;
-    abstract getActividadAll(id_usuario: string): Promise<ActividadEntity[]>;
-    abstract deleteActividad(id_usuario: string, id_actividad: string): Promise<void>;
+export abstract class ActividadDatasource {
+  abstract createActividad(
+    usuarioId: string,
+    articuloId: string,
+    accion: string,
+  ): Promise<ActividadEntity>;
+  abstract getActividadById(
+    usuarioId: string,
+    actividadId: string,
+  ): Promise<ActividadEntity | null>;
+  abstract getActividadByArticulo(
+    usuarioId: string,
+    articuloId: string,
+  ): Promise<ActividadEntity[]>;
+  abstract getActividadAll(usuarioId: string): Promise<ActividadEntity[]>;
+  abstract deleteActividad(
+    usuarioId: string,
+    actividadId: string,
+  ): Promise<void>;
 }

@@ -1,113 +1,131 @@
-import { Injectable, InternalServerErrorException, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Inject,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+} from '@aws-sdk/client-s3';
 import * as path from 'path';
 import { ImageStorageDatasource, ImageEntityType } from 'src/domain';
 import { PrismaService } from 'src/infrastructure/orm/prisma/prisma.service';
 import { NotFoundException } from '@nestjs/common';
 
 @Injectable()
-export class AwsStorageDatasourceService implements ImageStorageDatasource{
-    //definimos propiedades internas
-    private s3: S3Client;
-    private bucketName: string;
-    private region: string;
-    private publicBaseUrl: string;
+export class AwsStorageDatasourceService implements ImageStorageDatasource {
+  //definimos propiedades internas
+  private s3: S3Client;
+  private bucketName: string;
+  private region: string;
+  private publicBaseUrl: string;
 
-    //inyectamos instancia de la dependencia ConfigService
-    constructor(
-        @Inject(ConfigService)
-        private configService: ConfigService, 
-        @Inject(PrismaService)
-        private readonly prismaService: PrismaService
-    ) {
-        //inicializamos propiedades internas
-        this.region = this.configService.get<string>('AWS_REGION') || 'us-east-1';
-        this.bucketName = this.configService.get<string>('AWS_S3_BUCKET') || '';
+  //inyectamos instancia de la dependencia ConfigService
+  constructor(
+    @Inject(ConfigService)
+    private configService: ConfigService,
+    @Inject(PrismaService)
+    private readonly prismaService: PrismaService,
+  ) {
+    //inicializamos propiedades internas
+    this.region = this.configService.get<string>('AWS_REGION') || 'us-east-1';
+    this.bucketName = this.configService.get<string>('AWS_S3_BUCKET') || '';
 
-        if (!this.bucketName) {
-            throw new Error('AWS_S3_BUCKET no está configurado');
-        }
-
-        //configuramos el clienteo o usuario que nos proporciona AWS que consumirá el bucket
-        this.s3 = new S3Client({
-            region: this.region,
-            credentials: {
-                accessKeyId: this.configService.get<string>('AWS_ACCESS_KEY_ID') || '',
-                secretAccessKey: this.configService.get<string>('AWS_SECRET_ACCESS_KEY') || '',
-            },
-        });
-
-        this.publicBaseUrl = `https://${this.bucketName}.s3.${this.region}.amazonaws.com`;
+    if (!this.bucketName) {
+      throw new Error('AWS_S3_BUCKET no está configurado');
     }
 
-    async saveImage(file: any): Promise<string> {
-        try {
-            const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-            const ext = path.extname(file.originalname || '');
-            const filename = `image-${uniqueSuffix}${ext}`;
-            const key = `uploads/images/${filename}`;
+    //configuramos el clienteo o usuario que nos proporciona AWS que consumirá el bucket
+    this.s3 = new S3Client({
+      region: this.region,
+      credentials: {
+        accessKeyId: this.configService.get<string>('AWS_ACCESS_KEY_ID') || '',
+        secretAccessKey:
+          this.configService.get<string>('AWS_SECRET_ACCESS_KEY') || '',
+      },
+    });
 
-            await this.s3.send(
-                new PutObjectCommand({
-                    Bucket: this.bucketName,
-                    Key: key,
-                    Body: file.buffer,
-                    ContentType: file.mimetype || 'application/octet-stream',
-                })
-            );
+    this.publicBaseUrl = `https://${this.bucketName}.s3.${this.region}.amazonaws.com`;
+  }
 
-            return `${this.publicBaseUrl}/${key}`;
-        } catch (error) {
-            throw new InternalServerErrorException('Error al subir la imagen a S3');
-        }
+  async saveImage(file: any): Promise<string> {
+    try {
+      const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+      const ext = path.extname(file.originalname || '');
+      const filename = `image-${uniqueSuffix}${ext}`;
+      const key = `uploads/images/${filename}`;
+
+      await this.s3.send(
+        new PutObjectCommand({
+          Bucket: this.bucketName,
+          Key: key,
+          Body: file.buffer,
+          ContentType: file.mimetype || 'application/octet-stream',
+        }),
+      );
+
+      return `${this.publicBaseUrl}/${key}`;
+    } catch (error) {
+      throw new InternalServerErrorException('Error al subir la imagen a S3');
     }
+  }
 
-    async deleteImageByUrl(imageUrl: string | null | undefined): Promise<void> {
-        if (!imageUrl) return;
-        try {
-            const url = new URL(imageUrl);
-            const key = url.pathname.replace(/^\//, '');
-            if (!key) return;
-            await this.s3.send(
-                new DeleteObjectCommand({ Bucket: this.bucketName, Key: key })
-            );
-        } catch (error) {
-            throw new InternalServerErrorException('Error al eliminar la imagen en S3');
-        }
+  async deleteImageByUrl(imageUrl: string | null | undefined): Promise<void> {
+    if (!imageUrl) return;
+    try {
+      const url = new URL(imageUrl);
+      const key = url.pathname.replace(/^\//, '');
+      if (!key) return;
+      await this.s3.send(
+        new DeleteObjectCommand({ Bucket: this.bucketName, Key: key }),
+      );
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Error al eliminar la imagen en S3',
+      );
     }
+  }
 
-    async deleteImage(id_proyecto: string, id_entidad: string, entityType: ImageEntityType): Promise<void> {
+  async deleteImage(
+    proyectoId: string,
+    entidadId: string,
+    entityType: ImageEntityType,
+  ): Promise<void> {
+    if (entityType === 'articulo') {
+      const articulo = await this.prismaService.articulo.findUnique({
+        where: { id: entidadId, proyectoId: proyectoId },
+        include: { secArticulo: true },
+      });
+      if (!articulo) throw new NotFoundException('Articulo no encontrado');
 
-        if (entityType === 'articulo') {
-            const articulo = await this.prismaService.articulo.findUnique({
-                where: { id: id_entidad, proyecto_id: id_proyecto },
-                include: { sec_articulo: true },
-            });
-            if (!articulo) throw new NotFoundException('Articulo no encontrado');
+      await this.deleteImageByUrl(articulo.imageUrl);
+      await Promise.all(
+        articulo.secArticulo.map((s) => this.deleteImageByUrl(s.imageUrl)),
+      );
+    } else if (entityType === 'servicio') {
+      const servicio = await this.prismaService.servicio.findUnique({
+        where: { id: entidadId },
+        include: { secServicio: true },
+      });
+      if (!servicio) throw new NotFoundException('Servicio no encontrado');
 
-            await this.deleteImageByUrl(articulo.image_url);
-            await Promise.all(articulo.sec_articulo.map(s => this.deleteImageByUrl(s.image_url)));
+      await this.deleteImageByUrl(servicio.imgUrl);
+      await Promise.all(
+        servicio.secServicio.map((s) => this.deleteImageByUrl(s.imageUrl)),
+      );
+    } else if (entityType === 'empleado') {
+      const empleado = await this.prismaService.empleado.findUnique({
+        where: { id: entidadId },
+        include: { secEmpleado: true },
+      });
+      if (!empleado) throw new NotFoundException('Empleado no encontrado');
 
-        } else if (entityType === 'servicio') {
-            const servicio = await this.prismaService.servicio.findUnique({
-                where: { id: id_entidad },
-                include: { sec_servicio: true },
-            });
-            if (!servicio) throw new NotFoundException('Servicio no encontrado');
-
-            await this.deleteImageByUrl(servicio.img_url);
-            await Promise.all(servicio.sec_servicio.map(s => this.deleteImageByUrl(s.image_url)));
-
-        } else if (entityType === 'empleado') {
-            const empleado = await this.prismaService.empleado.findUnique({
-                where: { id: id_entidad },
-                include: { sec_empleado: true },
-            });
-            if (!empleado) throw new NotFoundException('Empleado no encontrado');
-
-            await this.deleteImageByUrl(empleado.img_url);
-            await Promise.all(empleado.sec_empleado.map(s => this.deleteImageByUrl(s.image_url)));
-        }
+      await this.deleteImageByUrl(empleado.imgUrl);
+      await Promise.all(
+        empleado.secEmpleado.map((s) => this.deleteImageByUrl(s.imageUrl)),
+      );
     }
+  }
 }

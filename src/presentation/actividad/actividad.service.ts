@@ -3,11 +3,12 @@ import { ActividadRepositoryService } from 'src/infrastructure';
 
 @Injectable()
 export class ActividadService {
+  constructor(
+    private readonly actividadRepository: ActividadRepositoryService,
+  ) {}
 
-  constructor(private readonly actividadRepository: ActividadRepositoryService){}
-
-  findAll(id_usuario: string) {
-    return this.actividadRepository.getActividadAll(id_usuario);
+  findAll(usuarioId: string) {
+    return this.actividadRepository.getActividadAll(usuarioId);
   }
 
   findOneByArticuloId(id: number) {

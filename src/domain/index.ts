@@ -46,6 +46,6 @@ export * from './use-cases/articulo/delete-articulo.use-case';
 export * from './use-cases/proyecto/create-proyecto.use-case';
 export * from './use-cases/articulo/delete-articulo.use-case';
 export * from './use-cases/usuarios/delete-empleado.use-case';
-export * from './use-cases/servicio/delete-servicio.use-case'
+export * from './use-cases/servicio/delete-servicio.use-case';
 //ENUMS
 export * from './enums/rol.enum';

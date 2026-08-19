@@ -4,8 +4,8 @@ import { PrismaModule } from 'src/infrastructure/orm/prisma/prisma.module';
 import { UuidModule } from '../../adapters/uuid/uuid.module';
 
 @Module({
-    imports: [PrismaModule, UuidModule],
-    providers: [ServiciosDatasourceService],
-    exports: [ServiciosDatasourceService],
+  imports: [PrismaModule, UuidModule],
+  providers: [ServiciosDatasourceService],
+  exports: [ServiciosDatasourceService],
 })
 export class ServiciosDatasourceModule {}

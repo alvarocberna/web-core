@@ -4,139 +4,176 @@ import { UpdateServiciosDtoImpl } from './dto/update-servicios.dto';
 import { CreateServicioDtoImpl } from './dto/create-servicio.dto';
 import { UpdateServicioDtoImpl } from './dto/update-servicio.dto';
 import { UpdateServicioOrdenDtoImpl } from './dto/update-servicio-orden.dto';
-import { ServiciosRepositoryService, ImageStorageRepositoryService } from 'src/infrastructure';
+import {
+  ServiciosRepositoryService,
+  ImageStorageRepositoryService,
+} from 'src/infrastructure';
 import { UsuarioRepositoryService } from 'src/infrastructure';
 import { DeleteServicioUseCase } from 'src/domain';
 
 @Injectable()
 export class ServiciosService {
-    constructor(
-        private readonly serviciosRepository: ServiciosRepositoryService,
-        private readonly imageStorage: ImageStorageRepositoryService,
-        private readonly usuarioRepository: UsuarioRepositoryService,
-    ) {}
+  constructor(
+    private readonly serviciosRepository: ServiciosRepositoryService,
+    private readonly imageStorage: ImageStorageRepositoryService,
+    private readonly usuarioRepository: UsuarioRepositoryService,
+  ) {}
 
-    // ─── Servicios (Entidad padre) ───────────────────────────────────────────────
+  // ─── Servicios (Entidad padre) ───────────────────────────────────────────────
 
-    create(id_usuario: string, createServiciosDto: CreateServiciosDtoImpl) {
-        return this.serviciosRepository.createServicios(id_usuario, createServiciosDto);
+  create(usuarioId: string, createServiciosDto: CreateServiciosDtoImpl) {
+    return this.serviciosRepository.createServicios(
+      usuarioId,
+      createServiciosDto,
+    );
+  }
+
+  find(usuarioId: string) {
+    return this.serviciosRepository.getServicios(usuarioId);
+  }
+
+  update(usuarioId: string, updateServiciosDto: UpdateServiciosDtoImpl) {
+    return this.serviciosRepository.updateServicios(
+      usuarioId,
+      updateServiciosDto,
+    );
+  }
+
+  // ─── Servicio (entidad hijo) ─────────────────────────────────────────────────
+
+  async createServicio(
+    usuarioId: string,
+    createServicioDto: CreateServicioDtoImpl,
+    files?: {
+      imageFile?: Express.Multer.File[];
+      secImages?: Express.Multer.File[];
+    },
+  ) {
+    if (files?.imageFile?.[0]) {
+      const imageUrl = await this.imageStorage.saveImage(files.imageFile[0]);
+      createServicioDto.imgUrl = imageUrl;
     }
 
-    find(id_usuario: string) {
-        return this.serviciosRepository.getServicios(id_usuario);
-    }
+    if (files?.secImages && createServicioDto.secServicio) {
+      for (const [index, file] of files.secImages.entries()) {
+        if (!createServicioDto.secServicio[index]) continue;
 
-    update(id_usuario: string, updateServiciosDto: UpdateServiciosDtoImpl) {
-        return this.serviciosRepository.updateServicios(id_usuario, updateServiciosDto);
-    }
-
-    // ─── Servicio (entidad hijo) ─────────────────────────────────────────────────
-
-    async createServicio(
-        id_usuario: string,
-        createServicioDto: CreateServicioDtoImpl,
-        files?: {
-            image_file?: Express.Multer.File[];
-            sec_images?: Express.Multer.File[];
-        },
-    ) {
-        if (files?.image_file?.[0]) {
-            const imageUrl = await this.imageStorage.saveImage(files.image_file[0]);
-            createServicioDto.img_url = imageUrl;
+        if (typeof file.size === 'number') {
+          if (file.size === 0) continue;
+        } else if (file.buffer) {
+          if (file.buffer.length === 0) continue;
+        } else {
+          continue;
         }
 
-        if (files?.sec_images && createServicioDto.sec_servicio) {
-            for (const [index, file] of files.sec_images.entries()) {
-                if (!createServicioDto.sec_servicio[index]) continue;
+        const imageUrl = await this.imageStorage.saveImage(file);
+        createServicioDto.secServicio[index].imageUrl = imageUrl;
+      }
+    }
 
-                if (typeof file.size === 'number') {
-                    if (file.size === 0) continue;
-                } else if (file.buffer) {
-                    if ((file.buffer as Buffer).length === 0) continue;
-                } else {
-                    continue;
-                }
+    return this.serviciosRepository.createServicio(
+      usuarioId,
+      createServicioDto,
+    );
+  }
 
-                const imageUrl = await this.imageStorage.saveImage(file);
-                createServicioDto.sec_servicio[index].image_url = imageUrl;
-            }
+  findServicio(usuarioId: string, servicioId: string) {
+    return this.serviciosRepository.getServicio(usuarioId, servicioId);
+  }
+
+  async updateServicio(
+    usuarioId: string,
+    servicioId: string,
+    updateServicioDto: UpdateServicioDtoImpl,
+    files?: {
+      imageFile?: Express.Multer.File[];
+      secImages?: Express.Multer.File[];
+    },
+  ) {
+    const currentServicio = (await this.serviciosRepository.getServicio(
+      usuarioId,
+      servicioId,
+    )) as any;
+
+    if (files?.imageFile?.[0]) {
+      if (currentServicio?.imgUrl) {
+        await this.imageStorage.deleteImageByUrl(currentServicio.imgUrl);
+      }
+      const imageUrl = await this.imageStorage.saveImage(files.imageFile[0]);
+      updateServicioDto.imgUrl = imageUrl;
+    }
+
+    // Eliminar imágenes de secciones que ya no están en la nueva data
+    if (currentServicio?.secServicio?.length) {
+      const nuevosIds = new Set(
+        (updateServicioDto.secServicio ?? []).map((s) => s.id),
+      );
+      const seccionesEliminadas = currentServicio.secServicio.filter(
+        (s: any) => !nuevosIds.has(s.id),
+      );
+      await Promise.all(
+        seccionesEliminadas
+          .filter((s: any) => s.imageUrl)
+          .map((s: any) => this.imageStorage.deleteImageByUrl(s.imageUrl)),
+      );
+    }
+
+    if (files?.secImages && updateServicioDto.secServicio) {
+      for (const [index, file] of files.secImages.entries()) {
+        if (!updateServicioDto.secServicio[index]) continue;
+
+        if (typeof file.size === 'number') {
+          if (file.size === 0) continue;
+        } else if (file.buffer) {
+          if (file.buffer.length === 0) continue;
+        } else {
+          continue;
         }
 
-        return this.serviciosRepository.createServicio(id_usuario, createServicioDto);
-    }
-
-    findServicio(id_usuario: string, id_servicio: string) {
-        return this.serviciosRepository.getServicio(id_usuario, id_servicio);
-    }
-
-    async updateServicio(
-        id_usuario: string,
-        id_servicio: string,
-        updateServicioDto: UpdateServicioDtoImpl,
-        files?: {
-            image_file?: Express.Multer.File[];
-            sec_images?: Express.Multer.File[];
-        },
-    ) {
-        const currentServicio = await this.serviciosRepository.getServicio(id_usuario, id_servicio) as any;
-
-        if (files?.image_file?.[0]) {
-            if (currentServicio?.img_url) {
-                await this.imageStorage.deleteImageByUrl(currentServicio.img_url);
-            }
-            const imageUrl = await this.imageStorage.saveImage(files.image_file[0]);
-            updateServicioDto.img_url = imageUrl;
+        const seccionId = updateServicioDto.secServicio[index].id;
+        const oldSeccion = currentServicio?.secServicio?.find(
+          (s: any) => s.id === seccionId,
+        );
+        if (oldSeccion?.imageUrl) {
+          await this.imageStorage.deleteImageByUrl(oldSeccion.imageUrl);
         }
 
-        // Eliminar imágenes de secciones que ya no están en la nueva data
-        if (currentServicio?.sec_servicio?.length) {
-            const nuevosIds = new Set((updateServicioDto.sec_servicio ?? []).map((s) => s.id));
-            const seccionesEliminadas = currentServicio.sec_servicio.filter((s: any) => !nuevosIds.has(s.id));
-            await Promise.all(
-                seccionesEliminadas
-                    .filter((s: any) => s.image_url)
-                    .map((s: any) => this.imageStorage.deleteImageByUrl(s.image_url)),
-            );
-        }
-
-        if (files?.sec_images && updateServicioDto.sec_servicio) {
-            for (const [index, file] of files.sec_images.entries()) {
-                if (!updateServicioDto.sec_servicio[index]) continue;
-
-                if (typeof file.size === 'number') {
-                    if (file.size === 0) continue;
-                } else if (file.buffer) {
-                    if ((file.buffer as Buffer).length === 0) continue;
-                } else {
-                    continue;
-                }
-
-                const seccionId = updateServicioDto.sec_servicio[index].id;
-                const oldSeccion = currentServicio?.sec_servicio?.find((s: any) => s.id === seccionId);
-                if (oldSeccion?.image_url) {
-                    await this.imageStorage.deleteImageByUrl(oldSeccion.image_url);
-                }
-
-                const imageUrl = await this.imageStorage.saveImage(file);
-                updateServicioDto.sec_servicio[index].image_url = imageUrl;
-            }
-        }
-
-        return this.serviciosRepository.updateServicio(id_usuario, id_servicio, updateServicioDto);
+        const imageUrl = await this.imageStorage.saveImage(file);
+        updateServicioDto.secServicio[index].imageUrl = imageUrl;
+      }
     }
 
-    updateServicioOrden(id_usuario: string, id_servicio: string, updateServicioOrdenDto: UpdateServicioOrdenDtoImpl) {
-        return this.serviciosRepository.updateServicioOrden(id_usuario, id_servicio, updateServicioOrdenDto);
-    }
+    return this.serviciosRepository.updateServicio(
+      usuarioId,
+      servicioId,
+      updateServicioDto,
+    );
+  }
 
-    removeServicio(id_usuario: string, id_servicio: string) {
-        return new DeleteServicioUseCase(this.serviciosRepository, this.imageStorage, this.usuarioRepository).execute(id_usuario, id_servicio)
-        return this.serviciosRepository.deleteServicio(id_usuario, id_servicio);
-    }
+  updateServicioOrden(
+    usuarioId: string,
+    servicioId: string,
+    updateServicioOrdenDto: UpdateServicioOrdenDtoImpl,
+  ) {
+    return this.serviciosRepository.updateServicioOrden(
+      usuarioId,
+      servicioId,
+      updateServicioOrdenDto,
+    );
+  }
 
-    // PUBLIC -----------------------------------------------------------
+  removeServicio(usuarioId: string, servicioId: string) {
+    return new DeleteServicioUseCase(
+      this.serviciosRepository,
+      this.imageStorage,
+      this.usuarioRepository,
+    ).execute(usuarioId, servicioId);
+    return this.serviciosRepository.deleteServicio(usuarioId, servicioId);
+  }
 
-    findServiciosPublic(id_proyecto: string) {
-        return this.serviciosRepository.getServiciosPublic(id_proyecto);
-    }
+  // PUBLIC -----------------------------------------------------------
+
+  findServiciosPublic(proyectoId: string) {
+    return this.serviciosRepository.getServiciosPublic(proyectoId);
+  }
 }

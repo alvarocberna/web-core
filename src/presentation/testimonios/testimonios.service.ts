@@ -2,47 +2,73 @@ import { Injectable } from '@nestjs/common';
 import { CreateTestimoniosDtoImpl } from './dto/create-testimonios.dto';
 import { UpdateTestimoniosDtoImpl } from './dto/update-testimonios.dto';
 import { CreateTestimonioDtoImpl } from './dto/create-testimonio.dto';
-import { UpdateTestimonioDtoImpl } from './dto/update-testimonio.dto'
+import { UpdateTestimonioDtoImpl } from './dto/update-testimonio.dto';
 import { TestimoniosRepositoryService } from 'src/infrastructure';
 
 @Injectable()
 export class TestimoniosService {
-    constructor(private readonly testimoniosRepository: TestimoniosRepositoryService) {}
+  constructor(
+    private readonly testimoniosRepository: TestimoniosRepositoryService,
+  ) {}
 
-    // ─── Testimonios (Entidad padre) ────────────────────────────────────────────
+  // ─── Testimonios (Entidad padre) ────────────────────────────────────────────
 
-    create(id_usuario: string, createTestimoniosDto: CreateTestimoniosDtoImpl) {
-        return this.testimoniosRepository.createSecTestimonios(id_usuario, createTestimoniosDto);
-    }
+  create(usuarioId: string, createTestimoniosDto: CreateTestimoniosDtoImpl) {
+    return this.testimoniosRepository.createSecTestimonios(
+      usuarioId,
+      createTestimoniosDto,
+    );
+  }
 
-    find(id_usuario: string) {
-        return this.testimoniosRepository.getSecTestimonios(id_usuario);
-    }
+  find(usuarioId: string) {
+    return this.testimoniosRepository.getSecTestimonios(usuarioId);
+  }
 
-    update(id_usuario: string, updateTestimoniosDto: UpdateTestimoniosDtoImpl) {
-        return this.testimoniosRepository.updateSecTestimonios(id_usuario, updateTestimoniosDto);
-    }
+  update(usuarioId: string, updateTestimoniosDto: UpdateTestimoniosDtoImpl) {
+    return this.testimoniosRepository.updateSecTestimonios(
+      usuarioId,
+      updateTestimoniosDto,
+    );
+  }
 
-    // ─── Testimonio (entidad hijo / ítem individual) ────────────────────────────────────────
+  // ─── Testimonio (entidad hijo / ítem individual) ────────────────────────────────────────
 
-    createTestimonio(id_usuario: string, createTestimonioDto: CreateTestimonioDtoImpl) {
-        return this.testimoniosRepository.createTestimonio(id_usuario, createTestimonioDto);
-    }
+  createTestimonio(
+    usuarioId: string,
+    createTestimonioDto: CreateTestimonioDtoImpl,
+  ) {
+    return this.testimoniosRepository.createTestimonio(
+      usuarioId,
+      createTestimonioDto,
+    );
+  }
 
-    updateTestimonio(id_testimonio: string, updateTestimonioDto: UpdateTestimonioDtoImpl) {
-        return this.testimoniosRepository.updateTestimonio(id_testimonio, updateTestimonioDto);
-    }
+  updateTestimonio(
+    testimonioId: string,
+    updateTestimonioDto: UpdateTestimonioDtoImpl,
+  ) {
+    return this.testimoniosRepository.updateTestimonio(
+      testimonioId,
+      updateTestimonioDto,
+    );
+  }
 
-    removeTestimonio(id_usuario: string, id_testimonio: string) {
-        return this.testimoniosRepository.deleteTestimonio(id_usuario, id_testimonio);
-    }
+  removeTestimonio(usuarioId: string, testimonioId: string) {
+    return this.testimoniosRepository.deleteTestimonio(usuarioId, testimonioId);
+  }
 
-    // ------ PUBLIC -------------------------------------------------------------------
-    findTestimoniosPublic(id_proyecto: string) {
-        return this.testimoniosRepository.getSecTestimoniosPublic(id_proyecto);
-    }
+  // ------ PUBLIC -------------------------------------------------------------------
+  findTestimoniosPublic(proyectoId: string) {
+    return this.testimoniosRepository.getSecTestimoniosPublic(proyectoId);
+  }
 
-    createTestimonioPublic(id_proyecto: string, createTestimonioDto: CreateTestimonioDtoImpl) {
-        return this.testimoniosRepository.createTestimonioPublic(id_proyecto, createTestimonioDto);
-    }
+  createTestimonioPublic(
+    proyectoId: string,
+    createTestimonioDto: CreateTestimonioDtoImpl,
+  ) {
+    return this.testimoniosRepository.createTestimonioPublic(
+      proyectoId,
+      createTestimonioDto,
+    );
+  }
 }

@@ -28,14 +28,18 @@ describe('ActividadService', () => {
 
     const result = await service.findAll('usuario-123');
 
-    expect(mockActividadRepository.getActividadAll).toHaveBeenCalledWith('usuario-123');
+    expect(mockActividadRepository.getActividadAll).toHaveBeenCalledWith(
+      'usuario-123',
+    );
     expect(result).toBe(mockActividades);
   });
 
   // Los siguientes métodos aún no están implementados (placeholders del CLI de Nest);
   // estos tests documentan el comportamiento actual para detectar cuando se implementen.
   it('findOneByArticuloId is not implemented yet and returns a placeholder string', () => {
-    expect(service.findOneByArticuloId(1)).toBe('This action returns a #1 actividad');
+    expect(service.findOneByArticuloId(1)).toBe(
+      'This action returns a #1 actividad',
+    );
   });
 
   it('findOneById is not implemented yet and returns a placeholder string', () => {

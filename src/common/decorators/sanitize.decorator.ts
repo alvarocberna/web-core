@@ -1,5 +1,9 @@
 import { Transform } from 'class-transformer';
-import { stripHtml, sanitizeRichHtml, sanitizeUrl } from '../utils/sanitize.util';
+import {
+  stripHtml,
+  sanitizeRichHtml,
+  sanitizeUrl,
+} from '../utils/sanitize.util';
 
 /**
  * Strips all HTML tags from the value, leaving plain text.

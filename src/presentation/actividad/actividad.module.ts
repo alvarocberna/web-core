@@ -7,6 +7,6 @@ import { ActividadRepositoryModule } from 'src/infrastructure';
   imports: [ActividadRepositoryModule],
   controllers: [ActividadController],
   providers: [ActividadService],
-  exports: [ActividadService]
+  exports: [ActividadService],
 })
 export class ActividadModule {}

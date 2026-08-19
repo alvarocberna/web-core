@@ -1,54 +1,90 @@
 import { Injectable } from '@nestjs/common';
 import {
-    ServiciosRepository,
-    ServiciosEntity,
-    ServicioEntity,
-    CreateServiciosDto,
-    UpdateServiciosDto,
-    CreateServicioDto,
-    UpdateServicioDto,
-    UpdateServicioOrdenDto,
+  ServiciosRepository,
+  ServiciosEntity,
+  ServicioEntity,
+  CreateServiciosDto,
+  UpdateServiciosDto,
+  CreateServicioDto,
+  UpdateServicioDto,
+  UpdateServicioOrdenDto,
 } from 'src/domain';
 import { ServiciosDatasourceService } from 'src/infrastructure';
 
 @Injectable()
 export class ServiciosRepositoryService implements ServiciosRepository {
-    constructor(private readonly serviciosDatasource: ServiciosDatasourceService) {}
+  constructor(
+    private readonly serviciosDatasource: ServiciosDatasourceService,
+  ) {}
 
-    createServicios(id_usuario: string, createServiciosDto: CreateServiciosDto): Promise<ServiciosEntity> {
-        return this.serviciosDatasource.createServicios(id_usuario, createServiciosDto);
-    }
+  createServicios(
+    usuarioId: string,
+    createServiciosDto: CreateServiciosDto,
+  ): Promise<ServiciosEntity> {
+    return this.serviciosDatasource.createServicios(
+      usuarioId,
+      createServiciosDto,
+    );
+  }
 
-    getServicios(id_usuario: string): Promise<ServiciosEntity | null> {
-        return this.serviciosDatasource.getServicios(id_usuario);
-    }
+  getServicios(usuarioId: string): Promise<ServiciosEntity | null> {
+    return this.serviciosDatasource.getServicios(usuarioId);
+  }
 
-    updateServicios(id_usuario: string, updateServiciosDto: UpdateServiciosDto): Promise<ServiciosEntity> {
-        return this.serviciosDatasource.updateServicios(id_usuario, updateServiciosDto);
-    }
+  updateServicios(
+    usuarioId: string,
+    updateServiciosDto: UpdateServiciosDto,
+  ): Promise<ServiciosEntity> {
+    return this.serviciosDatasource.updateServicios(
+      usuarioId,
+      updateServiciosDto,
+    );
+  }
 
-    createServicio(id_usuario: string, createServicioDto: CreateServicioDto): Promise<ServicioEntity> {
-        return this.serviciosDatasource.createServicio(id_usuario, createServicioDto);
-    }
+  createServicio(
+    usuarioId: string,
+    createServicioDto: CreateServicioDto,
+  ): Promise<ServicioEntity> {
+    return this.serviciosDatasource.createServicio(
+      usuarioId,
+      createServicioDto,
+    );
+  }
 
-    getServicio(id_usuario: string, id_servicio: string): Promise<ServicioEntity> {
-        return this.serviciosDatasource.getServicio(id_usuario, id_servicio);
-    }
+  getServicio(usuarioId: string, servicioId: string): Promise<ServicioEntity> {
+    return this.serviciosDatasource.getServicio(usuarioId, servicioId);
+  }
 
-    updateServicio(id_usuario: string, id_servicio: string, updateServicioDto: UpdateServicioDto): Promise<ServicioEntity> {
-        return this.serviciosDatasource.updateServicio(id_usuario, id_servicio, updateServicioDto);
-    }
+  updateServicio(
+    usuarioId: string,
+    servicioId: string,
+    updateServicioDto: UpdateServicioDto,
+  ): Promise<ServicioEntity> {
+    return this.serviciosDatasource.updateServicio(
+      usuarioId,
+      servicioId,
+      updateServicioDto,
+    );
+  }
 
-    updateServicioOrden(id_usuario: string, id_servicio: string, updateServicioOrdenDto: UpdateServicioOrdenDto): Promise<ServicioEntity> {
-        return this.serviciosDatasource.updateServicioOrden(id_usuario, id_servicio, updateServicioOrdenDto);
-    }
+  updateServicioOrden(
+    usuarioId: string,
+    servicioId: string,
+    updateServicioOrdenDto: UpdateServicioOrdenDto,
+  ): Promise<ServicioEntity> {
+    return this.serviciosDatasource.updateServicioOrden(
+      usuarioId,
+      servicioId,
+      updateServicioOrdenDto,
+    );
+  }
 
-    deleteServicio(id_usuario: string, id_servicio: string): Promise<void> {
-        return this.serviciosDatasource.deleteServicio(id_usuario, id_servicio);
-    }
+  deleteServicio(usuarioId: string, servicioId: string): Promise<void> {
+    return this.serviciosDatasource.deleteServicio(usuarioId, servicioId);
+  }
 
-    //PUBLIC --------------------------------------------------------------
-    getServiciosPublic(id_proyecto: string): Promise<ServiciosEntity | null> {
-        return this.serviciosDatasource.getServiciosPublic(id_proyecto);
-    }
+  //PUBLIC --------------------------------------------------------------
+  getServiciosPublic(proyectoId: string): Promise<ServiciosEntity | null> {
+    return this.serviciosDatasource.getServiciosPublic(proyectoId);
+  }
 }

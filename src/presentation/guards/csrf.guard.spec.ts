@@ -33,7 +33,6 @@ describe('CsrfGuard', () => {
   });
 
   describe('canActivate', () => {
-
     it('should allow the request when @SkipCsrfCheck() metadata is present, regardless of method', () => {
       mockReflector.getAllAndOverride.mockReturnValue(true);
       const context = buildContext('POST', {}, {});
@@ -107,12 +106,20 @@ describe('CsrfGuard', () => {
 
       expect(
         guard.canActivate(
-          buildContext('PUT', { 'x-csrf-token': 'token' }, { csrf_token: 'token' }),
+          buildContext(
+            'PUT',
+            { 'x-csrf-token': 'token' },
+            { csrf_token: 'token' },
+          ),
         ),
       ).toBe(true);
       expect(
         guard.canActivate(
-          buildContext('DELETE', { 'x-csrf-token': 'token' }, { csrf_token: 'token' }),
+          buildContext(
+            'DELETE',
+            { 'x-csrf-token': 'token' },
+            { csrf_token: 'token' },
+          ),
         ),
       ).toBe(true);
     });

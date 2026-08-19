@@ -7,9 +7,14 @@ import { ImageStorageRepositoryModule } from 'src/infrastructure';
 import { UsuarioRepositoryModule } from 'src/infrastructure';
 
 @Module({
-    imports: [ServiciosRepositoryModule, ImageStorageRepositoryModule, UsuarioRepositoryModule, ConfigModule],
-    controllers: [ServiciosController],
-    providers: [ServiciosService],
-    exports: [ServiciosService],
+  imports: [
+    ServiciosRepositoryModule,
+    ImageStorageRepositoryModule,
+    UsuarioRepositoryModule,
+    ConfigModule,
+  ],
+  controllers: [ServiciosController],
+  providers: [ServiciosService],
+  exports: [ServiciosService],
 })
 export class ServiciosModule {}

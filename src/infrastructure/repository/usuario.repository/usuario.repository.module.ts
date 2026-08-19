@@ -6,6 +6,6 @@ import { UsuarioDatasourceModule } from 'src/infrastructure/datasources/usuario.
 @Module({
   imports: [UsuarioDatasourceModule],
   providers: [UsuarioRepositoryService],
-  exports: [UsuarioRepositoryService]
+  exports: [UsuarioRepositoryService],
 })
 export class UsuarioRepositoryModule {}

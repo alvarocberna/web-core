@@ -8,123 +8,135 @@ import { UuidService } from '../../adapters/uuid/uuid.service';
 
 @Injectable()
 export class ActividadDatasourceService implements ActividadDatasource {
-    constructor(
-        private readonly prismaService: PrismaService,
-        private readonly uuidService: UuidService
-    ) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly uuidService: UuidService,
+  ) {}
 
-    async createActividad(id_usuario: string, id_articulo: string, accion: string): Promise<ActividadEntity> {
-        // Obtener el usuario y validar
-        const user = await this.prismaService.usuario.findUnique({
-            where: { id: id_usuario }
-        });
-        if (!user) {
-            throw new NotFoundException('Usuario no encontrado');
-        }
-
-        // Validar que el artículo exista
-        const articulo = await this.prismaService.articulo.findUnique({
-            where: { 
-                id: id_articulo, 
-                proyecto_id: user.proyecto_id,
-            }
-        });
-        if (!articulo) {
-            throw new NotFoundException('Artículo no encontrado');
-        }
-
-
-        // Crear la actividad
-        const actividad = await this.prismaService.actividad.create({
-            data: {
-                id: this.uuidService.generate(),
-                accion: accion,
-                titulo_articulo: articulo.titulo,
-                responsable: user.email,
-                fecha: new Date(),
-                articulo_id: id_articulo,
-                proyecto_id: user.proyecto_id,
-            }
-        });
-
-        return actividad;
+  async createActividad(
+    usuarioId: string,
+    articuloId: string,
+    accion: string,
+  ): Promise<ActividadEntity> {
+    // Obtener el usuario y validar
+    const user = await this.prismaService.usuario.findUnique({
+      where: { id: usuarioId },
+    });
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
     }
 
-    async getActividadById(id_usuario: string, id_actividad: string): Promise<ActividadEntity | null> {
-        const user = await this.prismaService.usuario.findUnique({
-            where: { id: id_usuario }
-        });
-        const proyecto_id = user?.proyecto_id;
-        if (!proyecto_id) {
-            throw new NotFoundException('Usuario o proyecto no encontrado');
-        }
-
-        const actividad = await this.prismaService.actividad.findUnique({
-            where: {
-                id: id_actividad,
-                proyecto_id: user.proyecto_id
-            }
-        });
-
-        if (!actividad) {
-            throw new NotFoundException('Actividad no encontrada');
-        }
-
-        return actividad;
+    // Validar que el artículo exista
+    const articulo = await this.prismaService.articulo.findUnique({
+      where: {
+        id: articuloId,
+        proyectoId: user.proyectoId,
+      },
+    });
+    if (!articulo) {
+      throw new NotFoundException('Artículo no encontrado');
     }
 
-    async getActividadByArticulo(id_usuario: string, id_articulo: string): Promise<ActividadEntity[]> {
-        const user = await this.prismaService.usuario.findUnique({
-            where: { id: id_usuario }
-        });
-        const proyecto_id = user?.proyecto_id;
-        if (!proyecto_id) {
-            throw new NotFoundException('Usuario o proyecto no encontrado');
-        }
+    // Crear la actividad
+    const actividad = await this.prismaService.actividad.create({
+      data: {
+        id: this.uuidService.generate(),
+        accion: accion,
+        tituloArticulo: articulo.titulo,
+        responsable: user.email,
+        fecha: new Date(),
+        articuloId: articuloId,
+        proyectoId: user.proyectoId,
+      },
+    });
 
-        return this.prismaService.actividad.findMany({
-            where: {
-                articulo_id: id_articulo,
-                proyecto_id: proyecto_id
-            },
-            orderBy: {
-                fecha: 'desc'
-            }
-        });
+    return actividad;
+  }
+
+  async getActividadById(
+    usuarioId: string,
+    actividadId: string,
+  ): Promise<ActividadEntity | null> {
+    const user = await this.prismaService.usuario.findUnique({
+      where: { id: usuarioId },
+    });
+    const proyectoId = user?.proyectoId;
+    if (!proyectoId) {
+      throw new NotFoundException('Usuario o proyecto no encontrado');
     }
 
-    async getActividadAll(id_usuario: string): Promise<ActividadEntity[]> {
-        const user = await this.prismaService.usuario.findUnique({
-            where: { id: id_usuario }
-        });
-        if (!user) {
-            throw new NotFoundException('Usuario no encontrado');
-        }
+    const actividad = await this.prismaService.actividad.findUnique({
+      where: {
+        id: actividadId,
+        proyectoId: user.proyectoId,
+      },
+    });
 
-        return this.prismaService.actividad.findMany({
-            where: {
-                proyecto_id: user.proyecto_id
-            },
-            orderBy: {
-                fecha: 'desc'
-            }
-        });
+    if (!actividad) {
+      throw new NotFoundException('Actividad no encontrada');
     }
 
-    async deleteActividad(id_usuario: string, id_actividad: string): Promise<void> {
-        const user = await this.prismaService.usuario.findUnique({
-            where: { id: id_usuario }
-        });
-        const proyecto_id = user?.proyecto_id;
-        if (!proyecto_id) {
-            throw new NotFoundException('Usuario o proyecto no encontrado');
-        }
+    return actividad;
+  }
 
-        await this.prismaService.actividad.delete({
-            where: {
-                id: id_actividad,
-                proyecto_id: user.proyecto_id
-            }
-        });
+  async getActividadByArticulo(
+    usuarioId: string,
+    articuloId: string,
+  ): Promise<ActividadEntity[]> {
+    const user = await this.prismaService.usuario.findUnique({
+      where: { id: usuarioId },
+    });
+    const proyectoId = user?.proyectoId;
+    if (!proyectoId) {
+      throw new NotFoundException('Usuario o proyecto no encontrado');
     }
+
+    return this.prismaService.actividad.findMany({
+      where: {
+        articuloId: articuloId,
+        proyectoId: proyectoId,
+      },
+      orderBy: {
+        fecha: 'desc',
+      },
+    });
+  }
+
+  async getActividadAll(usuarioId: string): Promise<ActividadEntity[]> {
+    const user = await this.prismaService.usuario.findUnique({
+      where: { id: usuarioId },
+    });
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    return this.prismaService.actividad.findMany({
+      where: {
+        proyectoId: user.proyectoId,
+      },
+      orderBy: {
+        fecha: 'desc',
+      },
+    });
+  }
+
+  async deleteActividad(
+    usuarioId: string,
+    actividadId: string,
+  ): Promise<void> {
+    const user = await this.prismaService.usuario.findUnique({
+      where: { id: usuarioId },
+    });
+    const proyectoId = user?.proyectoId;
+    if (!proyectoId) {
+      throw new NotFoundException('Usuario o proyecto no encontrado');
+    }
+
+    await this.prismaService.actividad.delete({
+      where: {
+        id: actividadId,
+        proyectoId: user.proyectoId,
+      },
+    });
+  }
 }

@@ -17,27 +17,53 @@ export function stripHtml(value: string): string {
 /**
  * Sanitizes rich HTML content, allowing a safe subset of tags and attributes.
  * Blocks scripts, event handlers, and dangerous URL protocols.
- * Use for article section content (contenido_sec) from rich-text editors.
+ * Use for article section content (contenidoSec) from rich-text editors.
  */
 export function sanitizeRichHtml(value: string): string {
   return sanitizeHtml(value, {
     allowedTags: [
-      'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-      'strong', 'em', 'b', 'i', 'u', 's', 'mark', 'code', 'pre',
-      'blockquote', 'ul', 'ol', 'li',
-      'a', 'br', 'hr', 'span', 'div',
+      'p',
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'h6',
+      'strong',
+      'em',
+      'b',
+      'i',
+      'u',
+      's',
+      'mark',
+      'code',
+      'pre',
+      'blockquote',
+      'ul',
+      'ol',
+      'li',
+      'a',
+      'br',
+      'hr',
+      'span',
+      'div',
       'img',
-      'table', 'thead', 'tbody', 'tr', 'th', 'td',
+      'table',
+      'thead',
+      'tbody',
+      'tr',
+      'th',
+      'td',
     ],
     allowedAttributes: {
-      'a': ['href', 'target', 'rel', 'title'],
-      'img': ['src', 'alt', 'width', 'height', 'title'],
+      a: ['href', 'target', 'rel', 'title'],
+      img: ['src', 'alt', 'width', 'height', 'title'],
       '*': ['class'],
     },
     allowedSchemes: ['http', 'https', 'mailto'],
     allowedSchemesByTag: {
-      'img': ['http', 'https'],
-      'a': ['http', 'https', 'mailto'],
+      img: ['http', 'https'],
+      a: ['http', 'https', 'mailto'],
     },
     disallowedTagsMode: 'discard',
     allowedIframeHostnames: [],
@@ -47,7 +73,7 @@ export function sanitizeRichHtml(value: string): string {
 /**
  * Sanitizes a URL by removing dangerous protocols (javascript:, data:, vbscript:).
  * Returns empty string if the URL uses a dangerous protocol.
- * Use for img_url and image_url fields.
+ * Use for imgUrl and imageUrl fields.
  */
 export function sanitizeUrl(value: string): string {
   const trimmed = value.trim();

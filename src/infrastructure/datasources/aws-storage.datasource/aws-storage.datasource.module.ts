@@ -6,6 +6,6 @@ import { ConfigModule } from '@nestjs/config';
 @Module({
   imports: [PrismaModule, ConfigModule],
   providers: [AwsStorageDatasourceService],
-  exports: [AwsStorageDatasourceService]
+  exports: [AwsStorageDatasourceService],
 })
 export class AwsStorageDatasourceModule {}

@@ -1,5 +1,11 @@
 import { UpdateArticuloUseCase } from './update-articulo.use-case';
-import { ArticuloRepository, ActividadRepository, UpdateArticuloDto, ArticuloEntity, ActividadEntity } from 'src/domain';
+import {
+  ArticuloRepository,
+  ActividadRepository,
+  UpdateArticuloDto,
+  ArticuloEntity,
+  ActividadEntity,
+} from 'src/domain';
 
 describe('UpdateArticuloUseCase', () => {
   let useCase: UpdateArticuloUseCase;
@@ -34,72 +40,74 @@ describe('UpdateArticuloUseCase', () => {
   });
 
   describe('execute', () => {
-
     //1: caso feliz
     it('should update articulo and register activity successfully', async () => {
       // Arrange
       // argumentos para execute
-      const id_usuario = '12345test678910';
-      const id_articulo = '12345articulo678910';
+      const usuarioId = '12345test678910';
+      const articuloId = '12345articulo678910';
       const updateDto: UpdateArticuloDto = {
         titulo: 'Título Articulo Actualizado',
         subtitulo: 'Subtitulo artículo actualizado',
         autor: 'Usuario Test',
-        fecha_actualizacion: new Date(),
+        fechaActualizacion: new Date(),
         status: 'published',
         slug: 'articulo-actualizado',
-        image_url: '/updated',
-        image_alt: 'alt updated',
-        image_position: 'right',
+        imageUrl: '/updated',
+        imageAlt: 'alt updated',
+        imagePosition: 'right',
       } as UpdateArticuloDto;
 
       const mockArticulo: ArticuloEntity = {
         id: '12345articulo678910',
-        nro_articulo: 1,
+        nroArticulo: 1,
         titulo: 'Título Articulo Actualizado',
         subtitulo: 'Subtitulo articulo actualizado',
         autor: 'Usuario Test',
-        fecha_publicacion: new Date(),
-        fecha_actualizacion: new Date(),
+        fechaPublicacion: new Date(),
+        fechaActualizacion: new Date(),
         status: 'published',
         slug: 'articulo-actualizado',
-        image_url: '/updated',
-        image_alt: 'alt updated',
-        image_position: 'right',
-        autor_id: '12345test678910',
-        proyecto_id: '12345proyecto678910',
+        imageUrl: '/updated',
+        imageAlt: 'alt updated',
+        imagePosition: 'right',
+        autorId: '12345test678910',
+        proyectoId: '12345proyecto678910',
       } as ArticuloEntity;
 
       const mockActividad: ActividadEntity = {
         id: '12345actividad',
         accion: 'modificado',
-        titulo_articulo: 'Título Articulo Actualizado',
+        tituloArticulo: 'Título Articulo Actualizado',
         responsable: 'Usuario Test',
         fecha: new Date(),
-        proyecto_id: '12345proyecto678910',
-        usuario_id: '12345test678910',
-        articulo_id: '12345articulo678910',
+        proyectoId: '12345proyecto678910',
+        usuarioId: '12345test678910',
+        articuloId: '12345articulo678910',
       } as ActividadEntity;
 
       mockArticuloRepository.updateArticulo.mockResolvedValue(mockArticulo);
       mockActividadRepository.createActividad.mockResolvedValue(mockActividad);
 
       // Act
-      const result = await useCase.execute(id_usuario, id_articulo, updateDto);
+      const result = await useCase.execute(usuarioId, articuloId, updateDto);
 
       // Assert
       expect(mockArticuloRepository.updateArticulo).toHaveBeenCalledTimes(1);
-      expect(mockArticuloRepository.updateArticulo).toHaveBeenCalledWith(id_usuario, id_articulo, updateDto);
-      
+      expect(mockArticuloRepository.updateArticulo).toHaveBeenCalledWith(
+        usuarioId,
+        articuloId,
+        updateDto,
+      );
+
       expect(mockActividadRepository.createActividad).toHaveBeenCalledTimes(1);
       expect(mockActividadRepository.createActividad).toHaveBeenCalledWith(
-        id_usuario,
+        usuarioId,
         '12345articulo678910',
-        'modificado'
+        'modificado',
       );
-      
+
       expect(result).toBe(mockArticulo);
     });
-
   });
 });

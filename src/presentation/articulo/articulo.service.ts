@@ -4,151 +4,199 @@ import { UpdateArticulosDtoImpl } from './dto/update-articulos.dto';
 import { CreateArticuloDtoImpl } from './dto/create-articulo.dto';
 import { UpdateArticuloDtoImpl } from './dto/update-articulo.dto';
 //domain
-import { CreateArticuloUseCase, UpdateArticuloUseCase, DeleteArticuloUseCase } from 'src/domain';
+import {
+  CreateArticuloUseCase,
+  UpdateArticuloUseCase,
+  DeleteArticuloUseCase,
+} from 'src/domain';
 //infrastructure
-import { ArticuloRepositoryService, ActividadRepositoryService, ImageStorageRepositoryService, UsuarioRepositoryService } from 'src/infrastructure';
+import {
+  ArticuloRepositoryService,
+  ActividadRepositoryService,
+  ImageStorageRepositoryService,
+  UsuarioRepositoryService,
+} from 'src/infrastructure';
 
 @Injectable()
 export class ArticuloService {
+  constructor(
+    private readonly articuloRepository: ArticuloRepositoryService,
+    private readonly actividadRepository: ActividadRepositoryService,
+    private readonly imageStorage: ImageStorageRepositoryService,
+    private readonly usuarioRepository: UsuarioRepositoryService,
+  ) {}
 
-    constructor(
-        private readonly articuloRepository: ArticuloRepositoryService,
-        private readonly actividadRepository: ActividadRepositoryService,
-        private readonly imageStorage: ImageStorageRepositoryService,
-        private readonly usuarioRepository: UsuarioRepositoryService,
-    ) {}
+  // ─── Articulos (entidad padre) ────────────────────────────────────────────
 
-    // ─── Articulos (entidad padre) ────────────────────────────────────────────
+  createArticulos(
+    usuarioId: string,
+    createArticulosDto: CreateArticulosDtoImpl,
+  ) {
+    return this.articuloRepository.createArticulos(
+      usuarioId,
+      createArticulosDto,
+    );
+  }
 
-    createArticulos(id_usuario: string, createArticulosDto: CreateArticulosDtoImpl) {
-        return this.articuloRepository.createArticulos(id_usuario, createArticulosDto);
+  findArticulos(usuarioId: string) {
+    return this.articuloRepository.getArticulos(usuarioId);
+  }
+
+  updateArticulos(
+    usuarioId: string,
+    updateArticulosDto: UpdateArticulosDtoImpl,
+  ) {
+    return this.articuloRepository.updateArticulos(
+      usuarioId,
+      updateArticulosDto,
+    );
+  }
+
+  // ─── Articulo (entidad hijo) ──────────────────────────────────────────────
+
+  async createArticulo(
+    usuarioId: string,
+    createArticuloDto: CreateArticuloDtoImpl,
+    files?: {
+      imageFile?: Express.Multer.File[];
+      secImages?: Express.Multer.File[];
+    },
+  ) {
+    // Procesar imagen principal del artículo si existe
+    if (files?.imageFile?.[0]) {
+      const imageUrl = await this.imageStorage.saveImage(files.imageFile[0]);
+      createArticuloDto.imageUrl = imageUrl;
     }
 
-    findArticulos(id_usuario: string) {
-        return this.articuloRepository.getArticulos(id_usuario);
-    }
+    // Procesar imágenes de las secciones si existen
+    if (files?.secImages && createArticuloDto.secArticulo) {
+      for (const [index, file] of files.secImages.entries()) {
+        if (!createArticuloDto.secArticulo[index]) continue;
 
-    updateArticulos(id_usuario: string, updateArticulosDto: UpdateArticulosDtoImpl) {
-        return this.articuloRepository.updateArticulos(id_usuario, updateArticulosDto);
-    }
-
-    // ─── Articulo (entidad hijo) ──────────────────────────────────────────────
-
-    async createArticulo(
-        id_usuario: string,
-        createArticuloDto: CreateArticuloDtoImpl,
-        files?: {
-            image_file?: Express.Multer.File[];
-            sec_images?: Express.Multer.File[];
-        },
-    ) {
-        // Procesar imagen principal del artículo si existe
-        if (files?.image_file?.[0]) {
-            const imageUrl = await this.imageStorage.saveImage(files.image_file[0]);
-            createArticuloDto.image_url = imageUrl;
+        if (typeof file.size === 'number') {
+          if (file.size === 0) continue;
+        } else if (file.buffer) {
+          if (file.buffer.length === 0) continue;
+        } else {
+          continue;
         }
 
-        // Procesar imágenes de las secciones si existen
-        if (files?.sec_images && createArticuloDto.sec_articulo) {
-            for (const [index, file] of files.sec_images.entries()) {
-                if (!createArticuloDto.sec_articulo[index]) continue;
+        const imageUrl = await this.imageStorage.saveImage(file);
+        createArticuloDto.secArticulo[index].imageUrl = imageUrl;
+      }
+    }
 
-                if (typeof file.size === 'number') {
-                    if (file.size === 0) continue;
-                } else if (file.buffer) {
-                    if ((file.buffer as Buffer).length === 0) continue;
-                } else {
-                    continue;
-                }
+    return new CreateArticuloUseCase(
+      this.articuloRepository,
+      this.actividadRepository,
+    ).execute(usuarioId, createArticuloDto);
+  }
 
-                const imageUrl = await this.imageStorage.saveImage(file);
-                createArticuloDto.sec_articulo[index].image_url = imageUrl;
-            }
+  findArticuloById(usuarioId: string, articuloId: string) {
+    return this.articuloRepository.getArticuloById(usuarioId, articuloId);
+  }
+
+  async updateArticulo(
+    usuarioId: string,
+    articuloId: string,
+    updateArticuloDto: UpdateArticuloDtoImpl,
+    files?: {
+      imageFile?: Express.Multer.File[];
+      secImages?: Express.Multer.File[];
+    },
+  ) {
+    const currentArticulo = (await this.articuloRepository.getArticuloById(
+      usuarioId,
+      articuloId,
+    )) as any;
+
+    // Procesar imagen principal del artículo si existe
+    if (files?.imageFile?.[0]) {
+      if (currentArticulo?.imageUrl) {
+        await this.imageStorage.deleteImageByUrl(currentArticulo.imageUrl);
+      }
+      const imageUrl = await this.imageStorage.saveImage(files.imageFile[0]);
+      updateArticuloDto.imageUrl = imageUrl;
+    }
+
+    // Eliminar imágenes de secciones que ya no están en la nueva data
+    if (currentArticulo?.secArticulo?.length) {
+      const nuevosIds = new Set(
+        (updateArticuloDto.secArticulo ?? []).map((s) => s.id),
+      );
+      const seccionesEliminadas = currentArticulo.secArticulo.filter(
+        (s: any) => !nuevosIds.has(s.id),
+      );
+      await Promise.all(
+        seccionesEliminadas
+          .filter((s: any) => s.imageUrl)
+          .map((s: any) => this.imageStorage.deleteImageByUrl(s.imageUrl)),
+      );
+    }
+
+    // Procesar imágenes de las secciones si existen
+    if (files?.secImages && updateArticuloDto.secArticulo) {
+      for (const [index, file] of files.secImages.entries()) {
+        if (!updateArticuloDto.secArticulo[index]) continue;
+
+        if (typeof file.size === 'number') {
+          if (file.size === 0) continue;
+        } else if (file.buffer) {
+          if (file.buffer.length === 0) continue;
+        } else {
+          continue;
         }
 
-        return new CreateArticuloUseCase(this.articuloRepository, this.actividadRepository).execute(id_usuario, createArticuloDto);
-    }
-
-    findArticuloById(id_usuario: string, id_articulo: string) {
-        return this.articuloRepository.getArticuloById(id_usuario, id_articulo);
-    }
-
-    async updateArticulo(
-        id_usuario: string,
-        id_articulo: string,
-        updateArticuloDto: UpdateArticuloDtoImpl,
-        files?: {
-            image_file?: Express.Multer.File[];
-            sec_images?: Express.Multer.File[];
-        },
-    ) {
-        const currentArticulo = await this.articuloRepository.getArticuloById(id_usuario, id_articulo) as any;
-
-        // Procesar imagen principal del artículo si existe
-        if (files?.image_file?.[0]) {
-            if (currentArticulo?.image_url) {
-                await this.imageStorage.deleteImageByUrl(currentArticulo.image_url);
-            }
-            const imageUrl = await this.imageStorage.saveImage(files.image_file[0]);
-            updateArticuloDto.image_url = imageUrl;
+        const seccionId = updateArticuloDto.secArticulo[index].id;
+        const oldSeccion = currentArticulo?.secArticulo?.find(
+          (s: any) => s.id === seccionId,
+        );
+        if (oldSeccion?.imageUrl) {
+          await this.imageStorage.deleteImageByUrl(oldSeccion.imageUrl);
         }
 
-        // Eliminar imágenes de secciones que ya no están en la nueva data
-        if (currentArticulo?.sec_articulo?.length) {
-            const nuevosIds = new Set((updateArticuloDto.sec_articulo ?? []).map((s) => s.id));
-            const seccionesEliminadas = currentArticulo.sec_articulo.filter((s: any) => !nuevosIds.has(s.id));
-            await Promise.all(
-                seccionesEliminadas
-                    .filter((s: any) => s.image_url)
-                    .map((s: any) => this.imageStorage.deleteImageByUrl(s.image_url)),
-            );
-        }
-
-        // Procesar imágenes de las secciones si existen
-        if (files?.sec_images && updateArticuloDto.sec_articulo) {
-            for (const [index, file] of files.sec_images.entries()) {
-                if (!updateArticuloDto.sec_articulo[index]) continue;
-
-                if (typeof file.size === 'number') {
-                    if (file.size === 0) continue;
-                } else if (file.buffer) {
-                    if ((file.buffer as Buffer).length === 0) continue;
-                } else {
-                    continue;
-                }
-
-                const seccionId = updateArticuloDto.sec_articulo[index].id;
-                const oldSeccion = currentArticulo?.sec_articulo?.find((s: any) => s.id === seccionId);
-                if (oldSeccion?.image_url) {
-                    await this.imageStorage.deleteImageByUrl(oldSeccion.image_url);
-                }
-
-                const imageUrl = await this.imageStorage.saveImage(file);
-                updateArticuloDto.sec_articulo[index].image_url = imageUrl;
-            }
-        }
-
-        return new UpdateArticuloUseCase(this.articuloRepository, this.actividadRepository)
-        .execute(id_usuario, id_articulo, updateArticuloDto);
+        const imageUrl = await this.imageStorage.saveImage(file);
+        updateArticuloDto.secArticulo[index].imageUrl = imageUrl;
+      }
     }
 
-    updateArticuloStatus(id_usuario: string, id_articulo: string, data: { status: string }) {
-        return this.articuloRepository.updateArticuloStatus(id_usuario, id_articulo, data)
-    }
+    return new UpdateArticuloUseCase(
+      this.articuloRepository,
+      this.actividadRepository,
+    ).execute(usuarioId, articuloId, updateArticuloDto);
+  }
 
-    deleteArticulo(id_usuario: string, id_articulo: string) {
-        return new DeleteArticuloUseCase(this.articuloRepository, this.actividadRepository, this.imageStorage, this.usuarioRepository).execute(id_usuario, id_articulo);
-    }
+  updateArticuloStatus(
+    usuarioId: string,
+    articuloId: string,
+    data: { status: string },
+  ) {
+    return this.articuloRepository.updateArticuloStatus(
+      usuarioId,
+      articuloId,
+      data,
+    );
+  }
 
+  deleteArticulo(usuarioId: string, articuloId: string) {
+    return new DeleteArticuloUseCase(
+      this.articuloRepository,
+      this.actividadRepository,
+      this.imageStorage,
+      this.usuarioRepository,
+    ).execute(usuarioId, articuloId);
+  }
 
-    //PUBLIC 
+  //PUBLIC
 
-    findArticulosPublic(id_proyecto: string) {
-        return this.articuloRepository.getArticulosPublic(id_proyecto);
-    }
+  findArticulosPublic(proyectoId: string) {
+    return this.articuloRepository.getArticulosPublic(proyectoId);
+  }
 
-    findArticuloByIdPublic(id_proyecto: string, id_articulo: string) {
-        return this.articuloRepository.getArticuloByIdPublic(id_proyecto, id_articulo);
-    }
-
+  findArticuloByIdPublic(proyectoId: string, articuloId: string) {
+    return this.articuloRepository.getArticuloByIdPublic(
+      proyectoId,
+      articuloId,
+    );
+  }
 }
