@@ -120,16 +120,16 @@ Controller handler
 ## Flujo de una solicitud típica
 
 ```
-HTTP POST /articulos/articulo/crear
+HTTP POST /articulos/articulo/create
     │
     ├─ CsrfGuard         → valida x-csrf-token header
     ├─ JwtAuthGuard      → extrae usuario del access_token cookie
     ├─ RolesGuard        → verifica que el usuario sea ADMIN o SUPERADMIN
     │
-    ├─ ArticuloController.crearArticulo()
-    │       └─ ArticuloService.crearArticulo(dto, file, user)
+    ├─ ArticuloController.createArticulo()
+    │       └─ ArticuloService.createArticulo(dto, file, user)
     │               ├─ AwsStorageDatasource.upload(file)   → URL de imagen
-    │               └─ ArticuloRepository.crear(dto)        → Prisma INSERT
+    │               └─ ArticuloRepository.createArticulo(dto)        → Prisma INSERT
     │
     └─ Respuesta JSON { id, titulo, ... }
 ```
@@ -158,7 +158,7 @@ Todos los datos de texto que llegan a la API son sanitizados en los DTOs antes d
 |---------|-------------|-----------------|
 | `stripHtml(value)` | Elimina todas las etiquetas HTML; devuelve texto plano | Nombres, títulos, descripciones |
 | `sanitizeRichHtml(value)` | Permite un subconjunto seguro de etiquetas HTML; bloquea scripts, event handlers y protocolos peligrosos | Contenido de secciones con editor rich-text |
-| `sanitizeUrl(value)` | Elimina URLs con protocolos peligrosos (`javascript:`, `data:`, `vbscript:`); devuelve cadena vacía si el protocolo es peligroso | Campos `img_url`, `image_url` |
+| `sanitizeUrl(value)` | Elimina URLs con protocolos peligrosos (`javascript:`, `data:`, `vbscript:`); devuelve cadena vacía si el protocolo es peligroso | Campos `imgUrl`, `imageUrl` |
 
 **Etiquetas permitidas por `sanitizeRichHtml`:** `p`, `h1`–`h6`, `strong`, `em`, `b`, `i`, `u`, `s`, `mark`, `code`, `pre`, `blockquote`, `ul`, `ol`, `li`, `a`, `br`, `hr`, `span`, `div`, `img`, `table`, `thead`, `tbody`, `tr`, `th`, `td`.
 
@@ -182,10 +182,10 @@ export class CreateArticuloDto {
   titulo: string;
 
   @SanitizeRich()
-  contenido_sec: string;
+  contenidoSec: string;
 
   @SanitizeUrl()
-  img_url: string;
+  imgUrl: string;
 }
 ```
 
@@ -193,6 +193,8 @@ export class CreateArticuloDto {
 
 ## Convenciones de código
 
+- Clases, métodos y funciones en inglés, salvo el vocabulario que deriva de las entidades Prisma (`Proyecto`, `Articulo`, `Empleado`, `Servicio`, `Testimonio`, etc.), que se mantiene en español (ej. `ArticuloController.createArticulo`).
+- Propiedades de objetos (DTOs, entities, params/query) en camelCase, conservando el vocabulario español de dominio cuando aplica (ej. `proyectoId`, `nombreProyecto`). Los campos del schema de Prisma usan `@map` para exponer camelCase en el código sin alterar las columnas físicas de la base de datos.
 - Los DTOs usan `class-validator` con `whitelist: true` (propiedades no declaradas son ignoradas).
 - Los IDs son UUIDs v4 generados con `UuidAdapter`.
 - Las contraseñas nunca se retornan en las respuestas (excluidas manualmente en el servicio).

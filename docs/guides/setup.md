@@ -114,7 +114,7 @@ npx prisma studio
 1. Crear un registro en `Proyecto`.
 2. Crear un registro en `Usuario` con:
    - `rol`: `SUPERADMIN`
-   - `proyecto_id`: ID del proyecto recién creado
+   - `proyectoId`: ID del proyecto recién creado
    - `password`: hash bcrypt de la contraseña (generarlo postman)
 
 ---

@@ -5,6 +5,11 @@
 
 ---
 
+## Bucket Publico
+
+Actualmente el bucker de AWS S3 es público. Se debe cambiar a privado, y su contenido debería servirse mediante CloudFront.
+No es dificil, así que aplicar cuando pueda.
+
 ## Contexto
 
 El proyecto define una capa de **casos de uso** (`src/domain/use-cases/`) pensada para orquestar reglas de negocio que involucran múltiples repositorios o pasos (ej: crear un artículo y registrar la actividad en el mismo flujo, o eliminar un empleado limpiando también sus imágenes).
@@ -44,9 +49,9 @@ Sin embargo, en la práctica, los `*.service.ts` de `src/presentation/` **no sig
 En `src/presentation/servicios/servicios.service.ts`, el método `removeServicio` tiene una línea de código **inalcanzable**:
 
 ```typescript
-removeServicio(id_usuario: string, id_servicio: string) {
-    return new DeleteServicioUseCase(this.serviciosRepository, this.imageStorage, this.usuarioRepository).execute(id_usuario, id_servicio)
-    return this.serviciosRepository.deleteServicio(id_usuario, id_servicio); // nunca se ejecuta
+removeServicio(usuarioId: string, servicioId: string) {
+    return new DeleteServicioUseCase(this.serviciosRepository, this.imageStorage, this.usuarioRepository).execute(usuarioId, servicioId)
+    return this.serviciosRepository.deleteServicio(usuarioId, servicioId); // nunca se ejecuta
 }
 ```
 
