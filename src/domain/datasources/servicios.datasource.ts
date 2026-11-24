@@ -1,16 +1,46 @@
-import { ServiciosEntity, ServicioEntity, CreateServiciosDto, UpdateServiciosDto, CreateServicioDto, UpdateServicioDto, UpdateServicioOrdenDto } from 'src/domain';
+import {
+  ServiciosEntity,
+  ServicioEntity,
+  CreateServiciosDto,
+  UpdateServiciosDto,
+  CreateServicioDto,
+  UpdateServicioDto,
+  UpdateServicioOrdenDto,
+} from 'src/domain';
 
 export abstract class ServiciosDatasource {
-    abstract createServicios(id_usuario: string, createServiciosDto: CreateServiciosDto): Promise<ServiciosEntity>;
-    abstract getServicios(id_usuario: string): Promise<ServiciosEntity | null>;
-    abstract updateServicios(id_usuario: string, updateServiciosDto: UpdateServiciosDto): Promise<ServiciosEntity>;
+  abstract createServicios(
+    usuarioId: string,
+    createServiciosDto: CreateServiciosDto,
+  ): Promise<ServiciosEntity>;
+  abstract getServicios(usuarioId: string): Promise<ServiciosEntity | null>;
+  abstract updateServicios(
+    usuarioId: string,
+    updateServiciosDto: UpdateServiciosDto,
+  ): Promise<ServiciosEntity>;
 
-    abstract createServicio(id_usuario: string, createServicioDto: CreateServicioDto): Promise<ServicioEntity>;
-    abstract getServicio(id_usuario: string, id_servicio: string): Promise<ServicioEntity>;
-    abstract updateServicio(id_usuario: string, id_servicio: string, updateServicioDto: UpdateServicioDto): Promise<ServicioEntity>;
-    abstract updateServicioOrden(id_usuario: string, id_servicio: string, updateServicioOrdenDto: UpdateServicioOrdenDto): Promise<ServicioEntity>;
-    abstract deleteServicio(id_usuario: string, id_servicio: string): Promise<void>;
+  abstract createServicio(
+    usuarioId: string,
+    createServicioDto: CreateServicioDto,
+  ): Promise<ServicioEntity>;
+  abstract getServicio(
+    usuarioId: string,
+    servicioId: string,
+  ): Promise<ServicioEntity>;
+  abstract updateServicio(
+    usuarioId: string,
+    servicioId: string,
+    updateServicioDto: UpdateServicioDto,
+  ): Promise<ServicioEntity>;
+  abstract updateServicioOrden(
+    usuarioId: string,
+    servicioId: string,
+    updateServicioOrdenDto: UpdateServicioOrdenDto,
+  ): Promise<ServicioEntity>;
+  abstract deleteServicio(usuarioId: string, servicioId: string): Promise<void>;
 
-    //public 
-    abstract getServiciosPublic(id_proyecto: string): Promise<ServiciosEntity | null>;
+  //public
+  abstract getServiciosPublic(
+    proyectoId: string,
+  ): Promise<ServiciosEntity | null>;
 }

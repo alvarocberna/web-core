@@ -3,6 +3,6 @@ import { PassHasherService } from './pass-hasher.service';
 
 @Module({
   providers: [PassHasherService],
-  exports: [PassHasherService]
+  exports: [PassHasherService],
 })
 export class PassHasherModule {}

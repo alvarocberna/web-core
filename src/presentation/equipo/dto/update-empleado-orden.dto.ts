@@ -4,13 +4,13 @@ import { ApiProperty } from '@nestjs/swagger';
 import { UpdateEmpleadoOrdenDto } from 'src/domain';
 
 export class UpdateEmpleadoOrdenDtoImpl implements UpdateEmpleadoOrdenDto {
-    @ApiProperty({ example: 'uuid-empleado' })
-    @IsString()
-    id!: string;
+  @ApiProperty({ example: 'uuid-empleado' })
+  @IsString()
+  id!: string;
 
-    @ApiProperty({ example: 1000 })
-    @Type(() => Number)
-    @IsInt()
-    @Min(0)
-    orden!: number;
+  @ApiProperty({ example: 1000 })
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  orden!: number;
 }

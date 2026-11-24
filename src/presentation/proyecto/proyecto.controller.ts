@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { ProyectoService } from './proyecto.service';
 import { CreateProyectoDtoImpl } from './dto/create-proyecto.dto';
@@ -18,7 +27,7 @@ export class ProyectoController {
   @ApiResponse({ status: 201, description: 'Proyecto creado exitosamente' })
   @Roles(Rol.SUPERADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Post('/crear')
+  @Post('/create')
   create(@Body() createProyectoDto: CreateProyectoDtoImpl) {
     return this.proyectoService.create(createProyectoDto);
   }
@@ -27,39 +36,42 @@ export class ProyectoController {
   @ApiResponse({ status: 200, description: 'Lista de proyectos' })
   @Roles(Rol.SUPERADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get('/ver-todo')
+  @Get('/all')
   findAll() {
     return this.proyectoService.findAll();
   }
 
   @ApiOperation({ summary: 'Obtener un proyecto por ID' })
-  @ApiParam({ name: 'proyecto_id', type: Number })
+  @ApiParam({ name: 'proyectoId', type: Number })
   @ApiResponse({ status: 200, description: 'Proyecto encontrado' })
   @ApiResponse({ status: 404, description: 'Proyecto no encontrado' })
   @Roles(Rol.ADMIN, Rol.SUPERADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get('/ver/:proyecto_id')
-  findOne(@Param('proyecto_id') proyecto_id: string) {
-    return this.proyectoService.findOne(proyecto_id);
+  @Get('/view/:proyectoId')
+  findOne(@Param('proyectoId') proyectoId: string) {
+    return this.proyectoService.findOne(proyectoId);
   }
 
   @ApiOperation({ summary: 'Actualizar un proyecto' })
-  @ApiParam({ name: 'proyecto_id', type: Number })
+  @ApiParam({ name: 'proyectoId', type: Number })
   @ApiResponse({ status: 200, description: 'Proyecto actualizado' })
   @Roles(Rol.SUPERADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Patch('/editar/:proyecto_id')
-  update(@Param('proyecto_id') proyecto_id: string, @Body() updateProyectoDto: UpdateProyectoDtoImpl) {
-    return this.proyectoService.update(proyecto_id, updateProyectoDto);
+  @Patch('/update/:proyectoId')
+  update(
+    @Param('proyectoId') proyectoId: string,
+    @Body() updateProyectoDto: UpdateProyectoDtoImpl,
+  ) {
+    return this.proyectoService.update(proyectoId, updateProyectoDto);
   }
 
   @ApiOperation({ summary: 'Eliminar un proyecto' })
-  @ApiParam({ name: 'proyecto_id', type: Number })
+  @ApiParam({ name: 'proyectoId', type: Number })
   @ApiResponse({ status: 200, description: 'Proyecto eliminado' })
   @Roles(Rol.SUPERADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Delete('/eliminar/:proyecto_id')
-  remove(@Param('proyecto_id') proyecto_id: string) {
-    return this.proyectoService.remove(proyecto_id);
+  @Delete('/delete/:proyectoId')
+  remove(@Param('proyectoId') proyectoId: string) {
+    return this.proyectoService.remove(proyectoId);
   }
 }

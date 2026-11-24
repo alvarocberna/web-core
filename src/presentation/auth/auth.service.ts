@@ -10,11 +10,11 @@ import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
-    constructor(
-      private usuarioService: UsuarioRepositoryService,
-      private jwtService: JwtService,
-      private configService: ConfigService,
-  ){}
+  constructor(
+    private usuarioService: UsuarioRepositoryService,
+    private jwtService: JwtService,
+    private configService: ConfigService,
+  ) {}
 
   async validateUserByPassword(email: string, pass: string) {
     const user = await this.usuarioService.getUsuarioByEmail(email);
@@ -53,15 +53,18 @@ export class AuthService {
 
   verifyRefreshToken(rt: string): { sub: string; email: string } {
     const secret = this.configService.get<string>('JWT_REFRESH_SECRET');
-    if (!secret) throw new UnauthorizedException('JWT_REFRESH_SECRET no configurado');
-    return this.jwtService.verify<{ sub: string; email: string }>(rt, { secret });
+    if (!secret)
+      throw new UnauthorizedException('JWT_REFRESH_SECRET no configurado');
+    return this.jwtService.verify<{ sub: string; email: string }>(rt, {
+      secret,
+    });
   }
 
   async refresh(userId: string, rt: string) {
     const user = await this.usuarioService.getUsuarioById(userId);
-    if (!user || !user.hashedRt){ 
-        throw new UnauthorizedException();
-    } 
+    if (!user || !user.hashedRt) {
+      throw new UnauthorizedException();
+    }
     const isMatch = await bcrypt.compare(rt, user.hashedRt);
     if (!isMatch) throw new UnauthorizedException();
     // create new tokens
@@ -79,5 +82,4 @@ export class AuthService {
     await this.usuarioService.setRefreshToken(user.id, newHashedRt);
     return { accessToken, refreshToken };
   }
-
 }

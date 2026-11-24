@@ -19,7 +19,7 @@ describe('ArticuloService', () => {
 
   const mockUsuario = {
     id: 'usuario-123',
-    proyecto_id: 'proyecto-123',
+    proyectoId: 'proyecto-123',
   };
 
   beforeEach(() => {
@@ -67,7 +67,9 @@ describe('ArticuloService', () => {
     );
 
     mockUsuarioRepository.getUsuarioById.mockResolvedValue(mockUsuario as any);
-    mockActividadRepository.createActividad.mockResolvedValue({} as ActividadEntity);
+    mockActividadRepository.createActividad.mockResolvedValue(
+      {} as ActividadEntity,
+    );
   });
 
   afterEach(() => {
@@ -79,78 +81,104 @@ describe('ArticuloService', () => {
   it('createArticulos should delegate to the repository', () => {
     const dto = {} as any;
     service.createArticulos('usuario-123', dto);
-    expect(mockArticuloRepository.createArticulos).toHaveBeenCalledWith('usuario-123', dto);
+    expect(mockArticuloRepository.createArticulos).toHaveBeenCalledWith(
+      'usuario-123',
+      dto,
+    );
   });
 
   it('findArticulos should delegate to the repository', () => {
     service.findArticulos('usuario-123');
-    expect(mockArticuloRepository.getArticulos).toHaveBeenCalledWith('usuario-123');
+    expect(mockArticuloRepository.getArticulos).toHaveBeenCalledWith(
+      'usuario-123',
+    );
   });
 
   it('updateArticulos should delegate to the repository', () => {
     const dto = {} as any;
     service.updateArticulos('usuario-123', dto);
-    expect(mockArticuloRepository.updateArticulos).toHaveBeenCalledWith('usuario-123', dto);
+    expect(mockArticuloRepository.updateArticulos).toHaveBeenCalledWith(
+      'usuario-123',
+      dto,
+    );
   });
 
   // ─── createArticulo ─────────────────────────────────────────────────────
 
   describe('createArticulo', () => {
-
     it('should create the articulo without touching image storage when no files are provided', async () => {
-      const dto = { titulo: 'Test', sec_articulo: [] } as any;
+      const dto = { titulo: 'Test', secArticulo: [] } as any;
       const mockArticulo = { id: 'articulo-1' } as ArticuloEntity;
       mockArticuloRepository.createArticulo.mockResolvedValue(mockArticulo);
 
       const result = await service.createArticulo('usuario-123', dto);
 
       expect(mockImageStorage.saveImage).not.toHaveBeenCalled();
-      expect(mockArticuloRepository.createArticulo).toHaveBeenCalledWith('usuario-123', dto);
+      expect(mockArticuloRepository.createArticulo).toHaveBeenCalledWith(
+        'usuario-123',
+        dto,
+      );
       expect(result).toBe(mockArticulo);
     });
 
-    it('should upload the main image and set image_url on the dto before creating', async () => {
-      const dto = { titulo: 'Test', sec_articulo: [] } as any;
+    it('should upload the main image and set imageUrl on the dto before creating', async () => {
+      const dto = { titulo: 'Test', secArticulo: [] } as any;
       const file = buildFile();
       mockImageStorage.saveImage.mockResolvedValue('https://cdn.test/main.jpg');
-      mockArticuloRepository.createArticulo.mockResolvedValue({ id: 'articulo-1' } as ArticuloEntity);
+      mockArticuloRepository.createArticulo.mockResolvedValue({
+        id: 'articulo-1',
+      } as ArticuloEntity);
 
-      await service.createArticulo('usuario-123', dto, { image_file: [file] });
+      await service.createArticulo('usuario-123', dto, { imageFile: [file] });
 
       expect(mockImageStorage.saveImage).toHaveBeenCalledWith(file);
-      expect(dto.image_url).toBe('https://cdn.test/main.jpg');
-      expect(mockArticuloRepository.createArticulo).toHaveBeenCalledWith('usuario-123', dto);
+      expect(dto.imageUrl).toBe('https://cdn.test/main.jpg');
+      expect(mockArticuloRepository.createArticulo).toHaveBeenCalledWith(
+        'usuario-123',
+        dto,
+      );
     });
 
-    it('should upload section images matched by index and set their image_url', async () => {
+    it('should upload section images matched by index and set their imageUrl', async () => {
       const dto = {
         titulo: 'Test',
-        sec_articulo: [{ titulo_sec: 'Sec 1' }, { titulo_sec: 'Sec 2' }],
+        secArticulo: [{ tituloSec: 'Sec 1' }, { tituloSec: 'Sec 2' }],
       } as any;
       const secFile = buildFile();
       mockImageStorage.saveImage.mockResolvedValue('https://cdn.test/sec0.jpg');
-      mockArticuloRepository.createArticulo.mockResolvedValue({ id: 'articulo-1' } as ArticuloEntity);
+      mockArticuloRepository.createArticulo.mockResolvedValue({
+        id: 'articulo-1',
+      } as ArticuloEntity);
 
-      await service.createArticulo('usuario-123', dto, { sec_images: [secFile] });
+      await service.createArticulo('usuario-123', dto, {
+        secImages: [secFile],
+      });
 
       expect(mockImageStorage.saveImage).toHaveBeenCalledWith(secFile);
-      expect(dto.sec_articulo[0].image_url).toBe('https://cdn.test/sec0.jpg');
-      expect(dto.sec_articulo[1].image_url).toBeUndefined();
+      expect(dto.secArticulo[0].imageUrl).toBe('https://cdn.test/sec0.jpg');
+      expect(dto.secArticulo[1].imageUrl).toBeUndefined();
     });
 
     it('should skip empty files (size 0) without calling image storage', async () => {
-      const dto = { titulo: 'Test', sec_articulo: [{ titulo_sec: 'Sec 1' }] } as any;
+      const dto = {
+        titulo: 'Test',
+        secArticulo: [{ tituloSec: 'Sec 1' }],
+      } as any;
       const emptyFile = buildFile({ size: 0 });
-      mockArticuloRepository.createArticulo.mockResolvedValue({ id: 'articulo-1' } as ArticuloEntity);
+      mockArticuloRepository.createArticulo.mockResolvedValue({
+        id: 'articulo-1',
+      } as ArticuloEntity);
 
-      await service.createArticulo('usuario-123', dto, { sec_images: [emptyFile] });
+      await service.createArticulo('usuario-123', dto, {
+        secImages: [emptyFile],
+      });
 
       expect(mockImageStorage.saveImage).not.toHaveBeenCalled();
-      expect(dto.sec_articulo[0].image_url).toBeUndefined();
+      expect(dto.secArticulo[0].imageUrl).toBeUndefined();
     });
 
     it('should register the activity through the use case after creating the articulo', async () => {
-      const dto = { titulo: 'Test', sec_articulo: [] } as any;
+      const dto = { titulo: 'Test', secArticulo: [] } as any;
       const mockArticulo = { id: 'articulo-1' } as ArticuloEntity;
       mockArticuloRepository.createArticulo.mockResolvedValue(mockArticulo);
 
@@ -166,55 +194,85 @@ describe('ArticuloService', () => {
 
   it('findArticuloById should delegate to the repository', () => {
     service.findArticuloById('usuario-123', 'articulo-1');
-    expect(mockArticuloRepository.getArticuloById).toHaveBeenCalledWith('usuario-123', 'articulo-1');
+    expect(mockArticuloRepository.getArticuloById).toHaveBeenCalledWith(
+      'usuario-123',
+      'articulo-1',
+    );
   });
 
   // ─── updateArticulo ─────────────────────────────────────────────────────
 
   describe('updateArticulo', () => {
-
     it('should replace the main image: delete the old one and upload the new one', async () => {
-      const currentArticulo = { id: 'articulo-1', image_url: 'https://cdn.test/old-main.jpg', sec_articulo: [] };
-      mockArticuloRepository.getArticuloById.mockResolvedValue(currentArticulo as any);
-      mockImageStorage.saveImage.mockResolvedValue('https://cdn.test/new-main.jpg');
-      mockArticuloRepository.updateArticulo.mockResolvedValue({ id: 'articulo-1' } as ArticuloEntity);
+      const currentArticulo = {
+        id: 'articulo-1',
+        imageUrl: 'https://cdn.test/old-main.jpg',
+        secArticulo: [],
+      };
+      mockArticuloRepository.getArticuloById.mockResolvedValue(
+        currentArticulo as any,
+      );
+      mockImageStorage.saveImage.mockResolvedValue(
+        'https://cdn.test/new-main.jpg',
+      );
+      mockArticuloRepository.updateArticulo.mockResolvedValue({
+        id: 'articulo-1',
+      } as ArticuloEntity);
 
-      const dto = { sec_articulo: [] } as any;
+      const dto = { secArticulo: [] } as any;
       const file = buildFile();
 
-      await service.updateArticulo('usuario-123', 'articulo-1', dto, { image_file: [file] });
+      await service.updateArticulo('usuario-123', 'articulo-1', dto, {
+        imageFile: [file],
+      });
 
-      expect(mockImageStorage.deleteImageByUrl).toHaveBeenCalledWith('https://cdn.test/old-main.jpg');
+      expect(mockImageStorage.deleteImageByUrl).toHaveBeenCalledWith(
+        'https://cdn.test/old-main.jpg',
+      );
       expect(mockImageStorage.saveImage).toHaveBeenCalledWith(file);
-      expect(dto.image_url).toBe('https://cdn.test/new-main.jpg');
+      expect(dto.imageUrl).toBe('https://cdn.test/new-main.jpg');
     });
 
     it('should delete images of sections that were removed from the dto', async () => {
       const currentArticulo = {
         id: 'articulo-1',
-        image_url: null,
-        sec_articulo: [
-          { id: 'sec-1', image_url: 'https://cdn.test/sec-1.jpg' },
-          { id: 'sec-2', image_url: 'https://cdn.test/sec-2.jpg' },
+        imageUrl: null,
+        secArticulo: [
+          { id: 'sec-1', imageUrl: 'https://cdn.test/sec-1.jpg' },
+          { id: 'sec-2', imageUrl: 'https://cdn.test/sec-2.jpg' },
         ],
       };
-      mockArticuloRepository.getArticuloById.mockResolvedValue(currentArticulo as any);
-      mockArticuloRepository.updateArticulo.mockResolvedValue({ id: 'articulo-1' } as ArticuloEntity);
+      mockArticuloRepository.getArticuloById.mockResolvedValue(
+        currentArticulo as any,
+      );
+      mockArticuloRepository.updateArticulo.mockResolvedValue({
+        id: 'articulo-1',
+      } as ArticuloEntity);
 
-      const dto = { sec_articulo: [{ id: 'sec-1' }] } as any;
+      const dto = { secArticulo: [{ id: 'sec-1' }] } as any;
 
       await service.updateArticulo('usuario-123', 'articulo-1', dto);
 
       expect(mockImageStorage.deleteImageByUrl).toHaveBeenCalledTimes(1);
-      expect(mockImageStorage.deleteImageByUrl).toHaveBeenCalledWith('https://cdn.test/sec-2.jpg');
+      expect(mockImageStorage.deleteImageByUrl).toHaveBeenCalledWith(
+        'https://cdn.test/sec-2.jpg',
+      );
     });
 
     it('should not attempt to delete anything when no sections were removed and no files are sent', async () => {
-      const currentArticulo = { id: 'articulo-1', image_url: null, sec_articulo: [] };
-      mockArticuloRepository.getArticuloById.mockResolvedValue(currentArticulo as any);
-      mockArticuloRepository.updateArticulo.mockResolvedValue({ id: 'articulo-1' } as ArticuloEntity);
+      const currentArticulo = {
+        id: 'articulo-1',
+        imageUrl: null,
+        secArticulo: [],
+      };
+      mockArticuloRepository.getArticuloById.mockResolvedValue(
+        currentArticulo as any,
+      );
+      mockArticuloRepository.updateArticulo.mockResolvedValue({
+        id: 'articulo-1',
+      } as ArticuloEntity);
 
-      const dto = { sec_articulo: [] } as any;
+      const dto = { secArticulo: [] } as any;
 
       await service.updateArticulo('usuario-123', 'articulo-1', dto);
 
@@ -223,11 +281,19 @@ describe('ArticuloService', () => {
     });
 
     it('should register the activity through the use case after updating the articulo', async () => {
-      const currentArticulo = { id: 'articulo-1', image_url: null, sec_articulo: [] };
-      mockArticuloRepository.getArticuloById.mockResolvedValue(currentArticulo as any);
-      mockArticuloRepository.updateArticulo.mockResolvedValue({ id: 'articulo-1' } as ArticuloEntity);
+      const currentArticulo = {
+        id: 'articulo-1',
+        imageUrl: null,
+        secArticulo: [],
+      };
+      mockArticuloRepository.getArticuloById.mockResolvedValue(
+        currentArticulo as any,
+      );
+      mockArticuloRepository.updateArticulo.mockResolvedValue({
+        id: 'articulo-1',
+      } as ArticuloEntity);
 
-      const dto = { sec_articulo: [] } as any;
+      const dto = { secArticulo: [] } as any;
       await service.updateArticulo('usuario-123', 'articulo-1', dto);
 
       expect(mockActividadRepository.createActividad).toHaveBeenCalledWith(
@@ -241,22 +307,38 @@ describe('ArticuloService', () => {
   it('updateArticuloStatus should delegate to the repository', () => {
     const data = { status: 'PUBLISHED' };
     service.updateArticuloStatus('usuario-123', 'articulo-1', data);
-    expect(mockArticuloRepository.updateArticuloStatus).toHaveBeenCalledWith('usuario-123', 'articulo-1', data);
+    expect(mockArticuloRepository.updateArticuloStatus).toHaveBeenCalledWith(
+      'usuario-123',
+      'articulo-1',
+      data,
+    );
   });
 
   // ─── deleteArticulo ─────────────────────────────────────────────────────
 
   describe('deleteArticulo', () => {
-
     it('should register the activity, delete the image and delete the articulo via the use case', async () => {
       mockArticuloRepository.deleteArticulo.mockResolvedValue(undefined);
 
       await service.deleteArticulo('usuario-123', 'articulo-1');
 
-      expect(mockUsuarioRepository.getUsuarioById).toHaveBeenCalledWith('usuario-123');
-      expect(mockActividadRepository.createActividad).toHaveBeenCalledWith('usuario-123', 'articulo-1', 'eliminado');
-      expect(mockImageStorage.deleteImage).toHaveBeenCalledWith(mockUsuario.proyecto_id, 'articulo-1', 'articulo');
-      expect(mockArticuloRepository.deleteArticulo).toHaveBeenCalledWith('usuario-123', 'articulo-1');
+      expect(mockUsuarioRepository.getUsuarioById).toHaveBeenCalledWith(
+        'usuario-123',
+      );
+      expect(mockActividadRepository.createActividad).toHaveBeenCalledWith(
+        'usuario-123',
+        'articulo-1',
+        'eliminado',
+      );
+      expect(mockImageStorage.deleteImage).toHaveBeenCalledWith(
+        mockUsuario.proyectoId,
+        'articulo-1',
+        'articulo',
+      );
+      expect(mockArticuloRepository.deleteArticulo).toHaveBeenCalledWith(
+        'usuario-123',
+        'articulo-1',
+      );
     });
   });
 
@@ -264,11 +346,16 @@ describe('ArticuloService', () => {
 
   it('findArticulosPublic should delegate to the repository', () => {
     service.findArticulosPublic('proyecto-123');
-    expect(mockArticuloRepository.getArticulosPublic).toHaveBeenCalledWith('proyecto-123');
+    expect(mockArticuloRepository.getArticulosPublic).toHaveBeenCalledWith(
+      'proyecto-123',
+    );
   });
 
   it('findArticuloByIdPublic should delegate to the repository', () => {
     service.findArticuloByIdPublic('proyecto-123', 'articulo-1');
-    expect(mockArticuloRepository.getArticuloByIdPublic).toHaveBeenCalledWith('proyecto-123', 'articulo-1');
+    expect(mockArticuloRepository.getArticuloByIdPublic).toHaveBeenCalledWith(
+      'proyecto-123',
+      'articulo-1',
+    );
   });
 });

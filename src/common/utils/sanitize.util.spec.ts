@@ -1,15 +1,15 @@
 import { stripHtml, sanitizeRichHtml, sanitizeUrl } from './sanitize.util';
 
 describe('sanitize.util', () => {
-
   describe('stripHtml', () => {
-
     it('should return plain text unchanged', () => {
       expect(stripHtml('Hola mundo')).toBe('Hola mundo');
     });
 
     it('should strip all HTML tags leaving only the text content', () => {
-      expect(stripHtml('<p>Hola <strong>mundo</strong></p>')).toBe('Hola mundo');
+      expect(stripHtml('<p>Hola <strong>mundo</strong></p>')).toBe(
+        'Hola mundo',
+      );
     });
 
     it('should strip script tags and their content', () => {
@@ -27,7 +27,6 @@ describe('sanitize.util', () => {
   });
 
   describe('sanitizeRichHtml', () => {
-
     it('should keep the allowed subset of tags', () => {
       const input = '<p>Hola <strong>mundo</strong></p><ul><li>item</li></ul>';
       expect(sanitizeRichHtml(input)).toBe(input);
@@ -72,10 +71,13 @@ describe('sanitize.util', () => {
   });
 
   describe('sanitizeUrl', () => {
-
     it('should return safe http/https URLs unchanged (trimmed)', () => {
-      expect(sanitizeUrl('https://example.com/image.jpg')).toBe('https://example.com/image.jpg');
-      expect(sanitizeUrl('  http://example.com/image.jpg  ')).toBe('http://example.com/image.jpg');
+      expect(sanitizeUrl('https://example.com/image.jpg')).toBe(
+        'https://example.com/image.jpg',
+      );
+      expect(sanitizeUrl('  http://example.com/image.jpg  ')).toBe(
+        'http://example.com/image.jpg',
+      );
     });
 
     it('should return an empty string for javascript: URLs', () => {

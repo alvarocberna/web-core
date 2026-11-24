@@ -7,25 +7,47 @@ import { ActividadDatasourceService } from 'src/infrastructure';
 
 @Injectable()
 export class ActividadRepositoryService implements ActividadRepository {
-    constructor(private readonly actividadDatasource: ActividadDatasourceService) {}
+  constructor(
+    private readonly actividadDatasource: ActividadDatasourceService,
+  ) {}
 
-    async createActividad(id_usuario: string, id_articulo: string, accion: string): Promise<ActividadEntity> {
-        return this.actividadDatasource.createActividad(id_usuario, id_articulo, accion);
-    }
+  async createActividad(
+    usuarioId: string,
+    articuloId: string,
+    accion: string,
+  ): Promise<ActividadEntity> {
+    return this.actividadDatasource.createActividad(
+      usuarioId,
+      articuloId,
+      accion,
+    );
+  }
 
-    async getActividadById(id_usuario: string, id_actividad: string): Promise<ActividadEntity | null> {
-        return this.actividadDatasource.getActividadById(id_usuario, id_actividad);
-    }
+  async getActividadById(
+    usuarioId: string,
+    actividadId: string,
+  ): Promise<ActividadEntity | null> {
+    return this.actividadDatasource.getActividadById(usuarioId, actividadId);
+  }
 
-    async getActividadByArticulo(id_usuario: string, id_articulo: string): Promise<ActividadEntity[]> {
-        return this.actividadDatasource.getActividadByArticulo(id_usuario, id_articulo);
-    }
+  async getActividadByArticulo(
+    usuarioId: string,
+    articuloId: string,
+  ): Promise<ActividadEntity[]> {
+    return this.actividadDatasource.getActividadByArticulo(
+      usuarioId,
+      articuloId,
+    );
+  }
 
-    async getActividadAll(id_usuario: string): Promise<ActividadEntity[]> {
-        return this.actividadDatasource.getActividadAll(id_usuario);
-    }
+  async getActividadAll(usuarioId: string): Promise<ActividadEntity[]> {
+    return this.actividadDatasource.getActividadAll(usuarioId);
+  }
 
-    async deleteActividad(id_usuario: string, id_actividad: string): Promise<void> {
-        await this.actividadDatasource.deleteActividad(id_usuario, id_actividad);
-    }
+  async deleteActividad(
+    usuarioId: string,
+    actividadId: string,
+  ): Promise<void> {
+    await this.actividadDatasource.deleteActividad(usuarioId, actividadId);
+  }
 }

@@ -22,10 +22,10 @@ describe('CreateProyectoUseCase', () => {
 
   const mockProyecto: ProyectoEntity = {
     id: 'proyecto-123',
-    nombre_proyecto: 'Proyecto Test',
+    nombreProyecto: 'Proyecto Test',
     descripcion: 'Descripcion test',
     cliente: 'Cliente Test',
-    fecha_inicio: new Date(),
+    fechaInicio: new Date(),
     activo: true,
   };
 
@@ -38,20 +38,20 @@ describe('CreateProyectoUseCase', () => {
     password: 'hashed-password',
     hashedRt: null,
     rol: 'ADMIN',
-    img_url: null,
-    img_alt: null,
-    proyecto_id: 'proyecto-123',
+    imgUrl: null,
+    imgAlt: null,
+    proyectoId: 'proyecto-123',
   };
 
   const baseDto: CreateProyectoDto = {
-    nombre_proyecto: 'Proyecto Test',
+    nombreProyecto: 'Proyecto Test',
     descripcion: 'Descripcion test',
     cliente: 'Cliente Test',
     activo: true,
-    equipo_habilitado: true,
-    servicios_habilitado: true,
-    articulos_habilitado: true,
-    testimonios_habilitado: true,
+    equipoHabilitado: true,
+    serviciosHabilitado: true,
+    articulosHabilitado: true,
+    testimoniosHabilitado: true,
     nombre: 'Admin',
     apellido: 'Test',
     email: 'admin@test.com',
@@ -140,7 +140,6 @@ describe('CreateProyectoUseCase', () => {
   });
 
   describe('execute', () => {
-
     //1: caso feliz, todas las secciones habilitadas
     it('should create proyecto, usuario and every section when all flags are enabled', async () => {
       // Act
@@ -148,7 +147,9 @@ describe('CreateProyectoUseCase', () => {
 
       // Assert
       expect(mockProyectoRepository.createProyecto).toHaveBeenCalledTimes(1);
-      expect(mockProyectoRepository.createProyecto).toHaveBeenCalledWith(baseDto);
+      expect(mockProyectoRepository.createProyecto).toHaveBeenCalledWith(
+        baseDto,
+      );
 
       expect(mockUsuarioRepository.createUsuario).toHaveBeenCalledTimes(1);
       expect(mockUsuarioRepository.createUsuario).toHaveBeenCalledWith(
@@ -180,8 +181,12 @@ describe('CreateProyectoUseCase', () => {
         expect.objectContaining({ habilitado: true }),
       );
 
-      expect(mockTestimoniosRepository.createSecTestimonios).toHaveBeenCalledTimes(1);
-      expect(mockTestimoniosRepository.createSecTestimonios).toHaveBeenCalledWith(
+      expect(
+        mockTestimoniosRepository.createSecTestimonios,
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        mockTestimoniosRepository.createSecTestimonios,
+      ).toHaveBeenCalledWith(
         mockUsuario.id,
         expect.objectContaining({ habilitado: true }),
       );
@@ -194,10 +199,10 @@ describe('CreateProyectoUseCase', () => {
       // Arrange
       const dto: CreateProyectoDto = {
         ...baseDto,
-        equipo_habilitado: false,
-        servicios_habilitado: false,
-        articulos_habilitado: false,
-        testimonios_habilitado: false,
+        equipoHabilitado: false,
+        serviciosHabilitado: false,
+        articulosHabilitado: false,
+        testimoniosHabilitado: false,
       } as CreateProyectoDto;
 
       // Act
@@ -210,7 +215,9 @@ describe('CreateProyectoUseCase', () => {
       expect(mockEquipoRepository.createEquipo).not.toHaveBeenCalled();
       expect(mockServiciosRepository.createServicios).not.toHaveBeenCalled();
       expect(mockArticuloRepository.createArticulos).not.toHaveBeenCalled();
-      expect(mockTestimoniosRepository.createSecTestimonios).not.toHaveBeenCalled();
+      expect(
+        mockTestimoniosRepository.createSecTestimonios,
+      ).not.toHaveBeenCalled();
 
       expect(result).toBe(mockProyecto);
     });
@@ -220,10 +227,10 @@ describe('CreateProyectoUseCase', () => {
       // Arrange
       const dto: CreateProyectoDto = {
         ...baseDto,
-        equipo_habilitado: true,
-        servicios_habilitado: false,
-        articulos_habilitado: true,
-        testimonios_habilitado: false,
+        equipoHabilitado: true,
+        serviciosHabilitado: false,
+        articulosHabilitado: true,
+        testimoniosHabilitado: false,
       } as CreateProyectoDto;
 
       // Act
@@ -233,7 +240,9 @@ describe('CreateProyectoUseCase', () => {
       expect(mockEquipoRepository.createEquipo).toHaveBeenCalledTimes(1);
       expect(mockArticuloRepository.createArticulos).toHaveBeenCalledTimes(1);
       expect(mockServiciosRepository.createServicios).not.toHaveBeenCalled();
-      expect(mockTestimoniosRepository.createSecTestimonios).not.toHaveBeenCalled();
+      expect(
+        mockTestimoniosRepository.createSecTestimonios,
+      ).not.toHaveBeenCalled();
     });
 
     //4: propagacion de error si falla la creacion del usuario
@@ -248,7 +257,9 @@ describe('CreateProyectoUseCase', () => {
       expect(mockEquipoRepository.createEquipo).not.toHaveBeenCalled();
       expect(mockServiciosRepository.createServicios).not.toHaveBeenCalled();
       expect(mockArticuloRepository.createArticulos).not.toHaveBeenCalled();
-      expect(mockTestimoniosRepository.createSecTestimonios).not.toHaveBeenCalled();
+      expect(
+        mockTestimoniosRepository.createSecTestimonios,
+      ).not.toHaveBeenCalled();
     });
   });
 });

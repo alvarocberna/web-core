@@ -1,6 +1,5 @@
 
 
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,22 +13,22 @@ datasource db {
 
 model Proyecto {
   id                      String   @id @default(uuid())
-  nombre_proyecto         String   @db.VarChar(200)
+  nombreProyecto          String   @map("nombre_proyecto") @db.VarChar(200)
   descripcion             String   @db.VarChar(500)
-  cliente                 String 
-  fecha_inicio            DateTime
+  cliente                 String
+  fechaInicio             DateTime @map("fecha_inicio")
   activo                  Boolean    @default(true)
-  //REL N:M 
+  //REL N:M
   usuario                 Usuario[] @relation("fk_usu_pro")
   articulos               Articulos[] @relation("fk_arts_pro")
   articulo                Articulo[] @relation("fk_art_pro")
-  sec_articulo            SecArticulo[] @relation("fk_secart_pro")
+  secArticulo             SecArticulo[] @relation("fk_secart_pro")
   equipo                  Equipo[] @relation("fk_equ_pro")
   empleado                Empleado[] @relation("fk_emp_pro")
-  sec_empleado            SecEmpleado[] @relation("fk_secemp_pro")
+  secEmpleado             SecEmpleado[] @relation("fk_secemp_pro")
   servicios               Servicios[] @relation("fk_sers_pro")
   servicio                Servicio[] @relation("fk_ser_pro")
-  sec_servicio            SecServicio[] @relation("fk_secser_pro")
+  secServicio             SecServicio[] @relation("fk_secser_pro")
   testimonios             Testimonios[] @relation("fk_tess_pro")
   testimonio              Testimonio[] @relation("fk_tes_pro")
   actividad               Actividad[] @relation("fk_act_pro")
@@ -42,14 +41,14 @@ model Usuario {
   apellido               String   @db.VarChar(50)
   email                  String   @unique @db.VarChar(100)
   fechaCreacion          DateTime
-  password               String   
+  password               String
   hashedRt               String?
-  rol                    String    
-  img_url                String? @default("")
-  img_alt                String? @default("") @db.VarChar(100)
-  proyecto_id            String
+  rol                    String
+  imgUrl                 String? @map("img_url") @default("")
+  imgAlt                 String? @map("img_alt") @default("") @db.VarChar(100)
+  proyectoId             String @map("proyecto_id")
   //REL M:N
-  proyecto               Proyecto @relation(name: "fk_usu_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+  proyecto               Proyecto @relation(name: "fk_usu_pro", fields: [proyectoId], references: [id], onDelete: Cascade)
 }
 
 model Articulos {
@@ -57,53 +56,53 @@ model Articulos {
   titulo                String     @default("Articulos") @db.VarChar(200)
   descripcion           String?    @db.VarChar(500)
   activo                Boolean    @default(true)
-  aprobar               Boolean    @default(false)   
+  aprobar               Boolean    @default(false)
   habilitado            Boolean    @default(true)
   notificacion          Boolean    @default(false)
-  proyecto_id           String
+  proyectoId            String @map("proyecto_id")
   //REL M:N
-  proyecto              Proyecto @relation(name: "fk_arts_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+  proyecto              Proyecto @relation(name: "fk_arts_pro", fields: [proyectoId], references: [id], onDelete: Cascade)
   //REL N:M
-  articulo              Articulo[] @relation("fk_art_arts")   
+  articulo              Articulo[] @relation("fk_art_arts")
 }
 
 model Articulo {
     id                   String              @id @default(uuid())
-    nro_articulo         Int
+    nroArticulo          Int                 @map("nro_articulo")
     titulo               String              @db.VarChar(200)
     subtitulo            String?             @db.VarChar(500)
     autor                String
-    fecha_publicacion    DateTime
-    fecha_actualizacion  DateTime?
+    fechaPublicacion     DateTime            @map("fecha_publicacion")
+    fechaActualizacion   DateTime?           @map("fecha_actualizacion")
     status               String
     activo               Boolean
-    slug                 String    
-    image_url            String?
-    image_alt            String?
-    image_position       String?         
-    proyecto_id          String
-    articulos_id         String
+    slug                 String
+    imageUrl             String?             @map("image_url")
+    imageAlt             String?             @map("image_alt")
+    imagePosition        String?             @map("image_position")
+    proyectoId           String              @map("proyecto_id")
+    articulosId          String              @map("articulos_id")
     //REL M:N
-    proyecto             Proyecto @relation(name: "fk_art_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
-    articulos            Articulos @relation(name: "fk_art_arts", fields: [articulos_id], references: [id], onDelete: Cascade)
+    proyecto             Proyecto @relation(name: "fk_art_pro", fields: [proyectoId], references: [id], onDelete: Cascade)
+    articulos            Articulos @relation(name: "fk_art_arts", fields: [articulosId], references: [id], onDelete: Cascade)
     //REL N:M
-    sec_articulo         SecArticulo[]      @relation("fk_secart_art")
+    secArticulo          SecArticulo[]      @relation("fk_secart_art")
     actividad            Actividad[]        @relation("fk_act_art")
 }
 
 model SecArticulo {
     id                   String    @id @default(uuid())
-    nro_seccion          Int
-    titulo_sec           String?    @db.VarChar(200)
-    contenido_sec        String?    
-    image_url            String?
-    image_alt            String?   @db.VarChar(100)
-    image_position       String?
-    proyecto_id          String
-    articulo_id          String
+    nroSeccion           Int       @map("nro_seccion")
+    tituloSec            String?   @map("titulo_sec") @db.VarChar(200)
+    contenidoSec         String?   @map("contenido_sec")
+    imageUrl             String?   @map("image_url")
+    imageAlt             String?   @map("image_alt") @db.VarChar(100)
+    imagePosition        String?   @map("image_position")
+    proyectoId           String    @map("proyecto_id")
+    articuloId           String    @map("articulo_id")
     //REL M:N
-    proyecto             Proyecto @relation(name: "fk_secart_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
-    articulo             Articulo @relation(name: "fk_secart_art", fields: [articulo_id], references: [id], onDelete: Cascade)
+    proyecto             Proyecto @relation(name: "fk_secart_pro", fields: [proyectoId], references: [id], onDelete: Cascade)
+    articulo             Articulo @relation(name: "fk_secart_art", fields: [articuloId], references: [id], onDelete: Cascade)
 }
 
 model Equipo {
@@ -113,102 +112,102 @@ model Equipo {
   activo                 Boolean    @default(true)
   notificacion           Boolean    @default(false)
   habilitado             Boolean    @default(true)
-  proyecto_id            String
+  proyectoId             String @map("proyecto_id")
   //REL M:N
-  proyecto               Proyecto @relation(name: "fk_equ_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+  proyecto               Proyecto @relation(name: "fk_equ_pro", fields: [proyectoId], references: [id], onDelete: Cascade)
   //REL N:M
   empleado               Empleado[] @relation("fk_emp_equ")
 }
 
 model Empleado {
   id                     String   @id @default(uuid())
-  nombre_primero         String   @db.VarChar(50)
-  nombre_segundo         String?  @db.VarChar(50)
-  apellido_paterno       String   @db.VarChar(50)
-  apellido_materno       String?  @db.VarChar(50)
+  nombrePrimero          String   @map("nombre_primero") @db.VarChar(50)
+  nombreSegundo          String?  @map("nombre_segundo") @db.VarChar(50)
+  apellidoPaterno        String   @map("apellido_paterno") @db.VarChar(50)
+  apellidoMaterno        String?  @map("apellido_materno") @db.VarChar(50)
   profesion              String?   @db.VarChar(100)
   especialidad           String?  @db.VarChar(200)
   descripcion            String?  @db.VarChar(500)
   orden                  Float?
   activo                 Boolean
-  slug                   String   @default("")  
-  img_url                String?
-  img_alt                String?
-  proyecto_id            String
-  equipo_id              String
+  slug                   String   @default("")
+  imgUrl                 String?  @map("img_url")
+  imgAlt                 String?  @map("img_alt")
+  proyectoId             String   @map("proyecto_id")
+  equipoId               String   @map("equipo_id")
   //REL M:N
-  proyecto               Proyecto @relation(name: "fk_emp_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
-  equipo                 Equipo @relation(name: "fk_emp_equ", fields: [equipo_id], references: [id], onDelete: Cascade)
+  proyecto               Proyecto @relation(name: "fk_emp_pro", fields: [proyectoId], references: [id], onDelete: Cascade)
+  equipo                 Equipo @relation(name: "fk_emp_equ", fields: [equipoId], references: [id], onDelete: Cascade)
   //REL N:M
-  sec_empleado          SecEmpleado[]      @relation("fk_secemp_emp")
+  secEmpleado            SecEmpleado[]      @relation("fk_secemp_emp")
 }
 
 model SecEmpleado {
     id                   String    @id @default(uuid())
-    nro_seccion          Int
-    titulo_sec           String?    @db.VarChar(200)
-    contenido_sec        String?    
-    image_url            String?
-    image_alt            String?   @db.VarChar(100)
-    image_position       String?
-    proyecto_id          String
-    empleado_id          String
+    nroSeccion           Int       @map("nro_seccion")
+    tituloSec            String?   @map("titulo_sec") @db.VarChar(200)
+    contenidoSec         String?   @map("contenido_sec")
+    imageUrl             String?   @map("image_url")
+    imageAlt             String?   @map("image_alt") @db.VarChar(100)
+    imagePosition        String?   @map("image_position")
+    proyectoId           String    @map("proyecto_id")
+    empleadoId           String    @map("empleado_id")
     //REL M:N
-    proyecto             Proyecto @relation(name: "fk_secemp_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
-    empleado             Empleado @relation(name: "fk_secemp_emp", fields: [empleado_id], references: [id], onDelete: Cascade)
+    proyecto             Proyecto @relation(name: "fk_secemp_pro", fields: [proyectoId], references: [id], onDelete: Cascade)
+    empleado             Empleado @relation(name: "fk_secemp_emp", fields: [empleadoId], references: [id], onDelete: Cascade)
 }
 
 model Servicios {
   id                    String     @id @default(uuid())
   titulo                String     @default("Servicios") @db.VarChar(200)
   descripcion           String?    @db.VarChar(500)
-  icono                 String?    
+  icono                 String?
   activo                Boolean    @default(true)
   notificacion          Boolean    @default(false)
   habilitado            Boolean    @default(true)
-  proyecto_id           String
+  proyectoId            String @map("proyecto_id")
   //REL M:N
-  proyecto              Proyecto @relation(name: "fk_sers_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+  proyecto              Proyecto @relation(name: "fk_sers_pro", fields: [proyectoId], references: [id], onDelete: Cascade)
   //REL N:M
   servicio              Servicio[] @relation("fk_ser_sers")
 }
 
 model Servicio {
   id                    String   @id @default(uuid())
-  nombre_servicio       String   @db.VarChar(200)
+  nombreServicio        String   @map("nombre_servicio") @db.VarChar(200)
   descripcion           String?  @db.VarChar(500)
-  valor                 Int?  
-  nombre_promocion      String?  @db.VarChar(200)
-  porcentaje_descuento  Int?
+  valor                 Int?
+  nombrePromocion       String?  @map("nombre_promocion") @db.VarChar(200)
+  porcentajeDescuento   Int?     @map("porcentaje_descuento")
   destacado             Boolean
   icono                 String?
   orden                 Float?
   activo                Boolean
-  slug                  String  @default("-")  
-  img_url               String?
-  img_alt               String?
-  proyecto_id           String
-  servicios_id          String
+  slug                  String  @default("-")
+  imgUrl                String? @map("img_url")
+  imgAlt                String? @map("img_alt")
+  proyectoId            String @map("proyecto_id")
+  serviciosId           String @map("servicios_id")
   //REL M:N
-  proyecto              Proyecto @relation(name: "fk_ser_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
-  servicios             Servicios @relation(name: "fk_ser_sers", fields: [servicios_id], references: [id], onDelete: Cascade)
+  proyecto              Proyecto @relation(name: "fk_ser_pro", fields: [proyectoId], references: [id], onDelete: Cascade)
+  servicios             Servicios @relation(name: "fk_ser_sers", fields: [serviciosId], references: [id], onDelete: Cascade)
   //REL N:M
-  sec_servicio          SecServicio[]      @relation("fk_secser_ser")
+  secServicio           SecServicio[]      @relation("fk_secser_ser")
 }
 
 model SecServicio {
     id                   String    @id @default(uuid())
-    nro_seccion          Int
-    titulo_sec           String?    @db.VarChar(200)
-    contenido_sec        String?    
-    image_url            String?
-    image_alt            String?   @db.VarChar(100)
-    image_position       String?
-    proyecto_id          String
-    servicio_id          String
+    nroSeccion           Int       @map("nro_seccion")
+    tituloSec            String?   @map("titulo_sec") @db.VarChar(200)
+    contenidoSec         String?   @map("contenido_sec")
+    imageUrl             String?   @map("image_url")
+    imageAlt             String?   @map("image_alt") @db.VarChar(100)
+    imagePosition        String?   @map("image_position")
+    proyectoId           String    @map("proyecto_id")
+    servicioId           String    @map("servicio_id")
     //REL M:N
-    proyecto             Proyecto @relation(name: "fk_secser_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
-    servicio             Servicio @relation(name: "fk_secser_ser", fields: [servicio_id], references: [id], onDelete: Cascade)
+    proyecto             Proyecto @relation(name: "fk_secser_pro", fields: [proyectoId], references: [id], onDelete: Cascade)
+    servicio             Servicio @relation(name: "fk_secser_ser", fields: [servicioId], references: [id], onDelete: Cascade)
 }
 
 model Testimonios {
@@ -219,9 +218,9 @@ model Testimonios {
   aprobar               Boolean     @default(false)
   notificacion          Boolean     @default(false)
   habilitado            Boolean     @default(true)
-  proyecto_id           String
+  proyectoId            String @map("proyecto_id")
   //REL M:N
-  proyecto              Proyecto @relation(name: "fk_tess_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+  proyecto              Proyecto @relation(name: "fk_tess_pro", fields: [proyectoId], references: [id], onDelete: Cascade)
   //REL N:M
   testimonio            Testimonio[] @relation("fk_tes_tess")
 }
@@ -234,34 +233,34 @@ model Testimonio {
   descripcion           String     @db.VarChar(500)
   calificacion          Int?
   status                String
-  fecha_creacion        DateTime
-  proyecto_id           String
-  testimonios_id        String
+  fechaCreacion         DateTime @map("fecha_creacion")
+  proyectoId            String @map("proyecto_id")
+  testimoniosId         String @map("testimonios_id")
   //REL M:N
-  proyecto              Proyecto @relation(name: "fk_tes_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
-  testimonios           Testimonios @relation(name: "fk_tes_tess", fields: [testimonios_id], references: [id], onDelete: Cascade)
+  proyecto              Proyecto @relation(name: "fk_tes_pro", fields: [proyectoId], references: [id], onDelete: Cascade)
+  testimonios           Testimonios @relation(name: "fk_tes_tess", fields: [testimoniosId], references: [id], onDelete: Cascade)
 }
 
 model Actividad {
     id                    String   @id @default(uuid())
-    accion                String   
-    titulo_articulo       String
+    accion                String
+    tituloArticulo        String   @map("titulo_articulo")
     responsable           String
     fecha                 DateTime
-    proyecto_id           String
-    articulo_id           String?
+    proyectoId            String   @map("proyecto_id")
+    articuloId            String?  @map("articulo_id")
     //REL M:N
-    proyecto              Proyecto @relation(name: "fk_act_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
-    articulo              Articulo? @relation(name: "fk_act_art", fields: [articulo_id], references: [id], onDelete: SetNull)
+    proyecto              Proyecto @relation(name: "fk_act_pro", fields: [proyectoId], references: [id], onDelete: Cascade)
+    articulo              Articulo? @relation(name: "fk_act_art", fields: [articuloId], references: [id], onDelete: SetNull)
 }
 
 model Click {
     id                    String    @id @default(uuid())
     fecha                 DateTime
-    entidad_nombre        String
-    proyecto_id           String
-    entidad_id            String 
+    entidadNombre         String    @map("entidad_nombre")
+    proyectoId            String    @map("proyecto_id")
+    entidadId             String    @map("entidad_id")
     //REL M:N
-    proyecto               Proyecto @relation(name: "fk_cli_pro", fields: [proyecto_id], references: [id], onDelete: Cascade)
+    proyecto               Proyecto @relation(name: "fk_cli_pro", fields: [proyectoId], references: [id], onDelete: Cascade)
 
 }

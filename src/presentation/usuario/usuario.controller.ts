@@ -1,11 +1,31 @@
-import { Controller, Get, Req, Post, Body, Patch, Param, Delete, UseGuards, Query, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery, ApiParam } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Req,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiQuery,
+  ApiParam,
+} from '@nestjs/swagger';
 import { UsuarioService } from './usuario.service';
 import { CreateUsuarioDtoImpl } from './dto/create-user.dto';
 import { UpdateUsuarioDtoImpl } from './dto/update-user.dto';
 import { UpdateUsuarioInfoDtoImpl } from './dto/update-user-info.dto';
 import { UpdateUsuarioPasswordDtoImpl } from './dto/update-user-password.dto';
-import {JwtAuthGuard} from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Roles } from '../decorators/roles.decorator';
 import { RolesGuard } from '../guards/roles.guard';
 import { Rol } from 'src/domain/enums/rol.enum';
@@ -18,112 +38,122 @@ export class UsuarioController {
   //------------------------ USUARIO ROL ADMIN Y SUPERADMIN ---------------------------
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Crear usuario con rol ADMIN' })
-  @ApiQuery({ name: 'proyecto_id', required: false, description: 'ID del proyecto al que pertenece el usuario' })
+  @ApiQuery({
+    name: 'proyectoId',
+    required: false,
+    description: 'ID del proyecto al que pertenece el usuario',
+  })
   @ApiResponse({ status: 201, description: 'Usuario admin creado' })
   @ApiResponse({ status: 401, description: 'No autorizado' })
   @ApiResponse({ status: 403, description: 'Sin permisos' })
   @Roles(Rol.ADMIN, Rol.SUPERADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Post('admin/crear')
-    async createAdminUser(
-      @Body() createUsuarioDto: CreateUsuarioDtoImpl,
-      @Req() req: Request,
-      @Query('proyecto_id') proyecto_id: string
-    ) {
-      /*Obtenemos el proyecto_id del query si proviene de un proyecto externo (superamin panel)
-        Sino, obtenemos el proyecto_id del req si viene del propio proyecto (admin panel)*/
-      let id_proyecto = '';
-      if(proyecto_id){
-        id_proyecto = proyecto_id;
-      }else{
-        id_proyecto = (req as any).user?.proyecto_id;
-      }
-      return this.usuarioService.create(id_proyecto, createUsuarioDto);
+  @Post('admin/create')
+  async createAdminUser(
+    @Body() createUsuarioDto: CreateUsuarioDtoImpl,
+    @Req() req: Request,
+    @Query('proyectoId') proyectoId: string,
+  ) {
+    /*Obtenemos el proyectoId del query si proviene de un proyecto externo (superamin panel)
+        Sino, obtenemos el proyectoId del req si viene del propio proyecto (admin panel)*/
+    let resolvedProyectoId = '';
+    if (proyectoId) {
+      resolvedProyectoId = proyectoId;
+    } else {
+      resolvedProyectoId = (req as any).user?.proyectoId;
     }
-
+    return this.usuarioService.create(resolvedProyectoId, createUsuarioDto);
+  }
 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Obtener todos los usuarios' })
-  @ApiQuery({ name: 'proyecto_id', required: false, description: 'ID del proyecto al que pertenece el usuario' })
+  @ApiQuery({
+    name: 'proyectoId',
+    required: false,
+    description: 'ID del proyecto al que pertenece el usuario',
+  })
   @ApiResponse({ status: 200, description: 'Lista de usuarios' })
   @ApiResponse({ status: 401, description: 'No autorizado' })
   @ApiResponse({ status: 403, description: 'Sin permisos' })
   @Roles(Rol.ADMIN, Rol.SUPERADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get('admin/ver-todo')
-  findAll(
-    @Req() req: Request,
-    @Query('proyecto_id') proyecto_id: string
-  ) {
-      /*Obtenemos el proyecto_id del query si proviene de un proyecto externo (superamin panel)
-      Sino, obtenemos el proyecto_id del req si viene del propio proyecto (admin panel)*/
-      let id_proyecto = '';
-      if(proyecto_id){
-        id_proyecto = proyecto_id;
-      }else{
-        id_proyecto = (req as any).user?.proyecto_id;
-      }
-    return this.usuarioService.findAll(id_proyecto);
+  @Get('admin/all')
+  findAll(@Req() req: Request, @Query('proyectoId') proyectoId: string) {
+    /*Obtenemos el proyectoId del query si proviene de un proyecto externo (superamin panel)
+      Sino, obtenemos el proyectoId del req si viene del propio proyecto (admin panel)*/
+    let resolvedProyectoId = '';
+    if (proyectoId) {
+      resolvedProyectoId = proyectoId;
+    } else {
+      resolvedProyectoId = (req as any).user?.proyectoId;
+    }
+    return this.usuarioService.findAll(resolvedProyectoId);
   }
 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Obtener un usuario' })
-  @ApiParam({ name: 'usuario_id', type: Number })
+  @ApiParam({ name: 'usuarioId', type: Number })
   @ApiResponse({ status: 200, description: 'Lista de usuarios' })
   @ApiResponse({ status: 401, description: 'No autorizado' })
   @ApiResponse({ status: 403, description: 'Sin permisos' })
   @Roles(Rol.ADMIN, Rol.SUPERADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get('admin/ver/:usuario_id')
-  findOne(
-    @Param('usuario_id') usuario_id: string,
-  ) {
-    return this.usuarioService.findById(usuario_id);
+  @Get('admin/view/:usuarioId')
+  findOne(@Param('usuarioId') usuarioId: string) {
+    return this.usuarioService.findById(usuarioId);
   }
 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Actualizar usuario por ID' })
-  @ApiParam({ name: 'usuario_id', type: Number })
-  @ApiQuery({ name: 'proyecto_id', required: false, description: 'ID del proyecto al que pertenece el usuario' })
+  @ApiParam({ name: 'usuarioId', type: Number })
+  @ApiQuery({
+    name: 'proyectoId',
+    required: false,
+    description: 'ID del proyecto al que pertenece el usuario',
+  })
   @ApiResponse({ status: 200, description: 'Usuario actualizado' })
   @ApiResponse({ status: 401, description: 'No autorizado' })
   @ApiResponse({ status: 403, description: 'Sin permisos' })
   @Roles(Rol.ADMIN, Rol.SUPERADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Patch('admin/editar/:usuario_id')
+  @Patch('admin/update/:usuarioId')
   update(
-    @Param('usuario_id') usuario_id: string,
-    @Query('proyecto_id') proyecto_id: string,
+    @Param('usuarioId') usuarioId: string,
+    @Query('proyectoId') proyectoId: string,
     @Body() updateUsuarioDto: UpdateUsuarioDtoImpl,
     @Req() req: Request,
   ) {
-    return this.usuarioService.update(usuario_id, updateUsuarioDto);
+    return this.usuarioService.update(usuarioId, updateUsuarioDto);
   }
 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Eliminar usuario por ID' })
-  @ApiParam({ name: 'usuario_id', type: Number })
-  @ApiQuery({ name: 'proyecto_id', required: false, description: 'ID del proyecto al que pertenece el usuario' })
+  @ApiParam({ name: 'usuarioId', type: Number })
+  @ApiQuery({
+    name: 'proyectoId',
+    required: false,
+    description: 'ID del proyecto al que pertenece el usuario',
+  })
   @ApiResponse({ status: 200, description: 'Usuario eliminado' })
   @ApiResponse({ status: 401, description: 'No autorizado' })
   @ApiResponse({ status: 403, description: 'Sin permisos' })
   @Roles(Rol.SUPERADMIN, Rol.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Delete('admin/eliminar/:usuario_id')
+  @Delete('admin/delete/:usuarioId')
   remove(
-    @Param('usuario_id') usuario_id: string,
-    @Query('proyecto_id') proyecto_id: string,
+    @Param('usuarioId') usuarioId: string,
+    @Query('proyectoId') proyectoId: string,
     @Req() req: Request,
   ) {
-    /*Obtenemos el proyecto_id del query si proviene de un proyecto externo (superamin panel)
-    Sino, obtenemos el proyecto_id del req si viene del propio proyecto (admin panel)*/
-    let id_proyecto = '';
-    if(proyecto_id){
-      id_proyecto = proyecto_id;
-    }else{
-      id_proyecto = (req as any).user?.proyecto_id;
+    /*Obtenemos el proyectoId del query si proviene de un proyecto externo (superamin panel)
+    Sino, obtenemos el proyectoId del req si viene del propio proyecto (admin panel)*/
+    let resolvedProyectoId = '';
+    if (proyectoId) {
+      resolvedProyectoId = proyectoId;
+    } else {
+      resolvedProyectoId = (req as any).user?.proyectoId;
     }
-    return this.usuarioService.remove(id_proyecto, usuario_id);
+    return this.usuarioService.remove(resolvedProyectoId, usuarioId);
   }
 
   //---------------------- USUARIO ROL USER -----------------------------
@@ -135,34 +165,51 @@ export class UsuarioController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('user/authenticated')
   findOne2(@Req() req: Request) {
-    const id_usuario = (req as any).user?.id;
-    return this.usuarioService.findById(id_usuario);
+    const usuarioId = (req as any).user?.id;
+    return this.usuarioService.findById(usuarioId);
   }
 
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Actualizar información del usuario autenticado (nombre, apellido, correo)' })
-  @ApiResponse({ status: 200, description: 'Información del usuario actualizada' })
+  @ApiOperation({
+    summary:
+      'Actualizar información del usuario autenticado (nombre, apellido, correo)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Información del usuario actualizada',
+  })
   @ApiResponse({ status: 400, description: 'El correo ya está en uso' })
   @ApiResponse({ status: 401, description: 'No autorizado' })
   @Roles(Rol.USER, Rol.ADMIN, Rol.SUPERADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Patch('user/editar')
-  updateInfo(@Req() req: Request, @Body() updateUsuarioDto: UpdateUsuarioDtoImpl) {
-    const id_usuario = (req as any).user?.id;
-    return this.usuarioService.update(id_usuario, updateUsuarioDto);
+  @Patch('user/update')
+  updateInfo(
+    @Req() req: Request,
+    @Body() updateUsuarioDto: UpdateUsuarioDtoImpl,
+  ) {
+    const usuarioId = (req as any).user?.id;
+    return this.usuarioService.update(usuarioId, updateUsuarioDto);
   }
 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Cambiar contraseña del usuario autenticado' })
   @ApiResponse({ status: 204, description: 'Contraseña actualizada' })
-  @ApiResponse({ status: 401, description: 'Contraseña actual incorrecta o no autorizado' })
+  @ApiResponse({
+    status: 401,
+    description: 'Contraseña actual incorrecta o no autorizado',
+  })
   @Roles(Rol.USER, Rol.ADMIN, Rol.SUPERADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @Patch('user/password')
-  updatePassword(@Req() req: Request, @Body() updateUsuarioPasswordDto: UpdateUsuarioPasswordDtoImpl) {
-    const id_usuario = (req as any).user?.id;
-    return this.usuarioService.updatePassword(id_usuario, updateUsuarioPasswordDto);
+  updatePassword(
+    @Req() req: Request,
+    @Body() updateUsuarioPasswordDto: UpdateUsuarioPasswordDtoImpl,
+  ) {
+    const usuarioId = (req as any).user?.id;
+    return this.usuarioService.updatePassword(
+      usuarioId,
+      updateUsuarioPasswordDto,
+    );
   }
-
 }

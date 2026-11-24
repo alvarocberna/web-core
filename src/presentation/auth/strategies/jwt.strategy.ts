@@ -16,7 +16,7 @@ import { UsuarioRepositoryService } from '../../../infrastructure/repository/usu
 
 const cookieExtractor = (req: any) => {
   if (req && req.cookies) {
-    return req.cookies['access_token']; 
+    return req.cookies['access_token'];
   }
   return null;
 };
@@ -27,7 +27,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private usuarioService: UsuarioRepositoryService,
     private configService: ConfigService,
   ) {
-    super({ 
+    super({
       jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
       secretOrKey: configService.get<string>('JWT_ACCESS_SECRET'),
     });
@@ -38,9 +38,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!user) return null;
     const { password, hashedRt, ...rest } = user;
 
-    const proyecto_id = payload.proyecto_id ?? rest.proyecto_id;
+    const proyectoId = payload.proyectoId ?? rest.proyectoId;
     const rol = payload.rol ?? rest.rol;
 
-    return { ...rest, proyecto_id, rol };
+    return { ...rest, proyectoId, rol };
   }
 }

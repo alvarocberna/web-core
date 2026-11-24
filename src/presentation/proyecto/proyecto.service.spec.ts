@@ -20,10 +20,10 @@ describe('ProyectoService', () => {
 
   const mockProyecto: ProyectoEntity = {
     id: 'proyecto-123',
-    nombre_proyecto: 'Proyecto Test',
+    nombreProyecto: 'Proyecto Test',
     descripcion: 'Descripcion test',
     cliente: 'Cliente Test',
-    fecha_inicio: new Date(),
+    fechaInicio: new Date(),
     activo: true,
   };
 
@@ -36,9 +36,9 @@ describe('ProyectoService', () => {
     password: 'hashed-password',
     hashedRt: null,
     rol: 'ADMIN',
-    img_url: null,
-    img_alt: null,
-    proyecto_id: 'proyecto-123',
+    imgUrl: null,
+    imgAlt: null,
+    proyectoId: 'proyecto-123',
   };
 
   beforeEach(() => {
@@ -123,17 +123,16 @@ describe('ProyectoService', () => {
   });
 
   describe('create', () => {
-
     it('should create the proyecto and its admin usuario, and enable only the requested sections', async () => {
       const dto: CreateProyectoDto = {
-        nombre_proyecto: 'Proyecto Test',
+        nombreProyecto: 'Proyecto Test',
         descripcion: 'Descripcion test',
         cliente: 'Cliente Test',
         activo: true,
-        equipo_habilitado: true,
-        servicios_habilitado: false,
-        articulos_habilitado: true,
-        testimonios_habilitado: false,
+        equipoHabilitado: true,
+        serviciosHabilitado: false,
+        articulosHabilitado: true,
+        testimoniosHabilitado: false,
         nombre: 'Admin',
         apellido: 'Test',
         email: 'admin@test.com',
@@ -151,7 +150,9 @@ describe('ProyectoService', () => {
       expect(mockEquipoRepository.createEquipo).toHaveBeenCalledTimes(1);
       expect(mockArticuloRepository.createArticulos).toHaveBeenCalledTimes(1);
       expect(mockServiciosRepository.createServicios).not.toHaveBeenCalled();
-      expect(mockTestimoniosRepository.createSecTestimonios).not.toHaveBeenCalled();
+      expect(
+        mockTestimoniosRepository.createSecTestimonios,
+      ).not.toHaveBeenCalled();
       expect(result).toBe(mockProyecto);
     });
   });
@@ -163,17 +164,24 @@ describe('ProyectoService', () => {
 
   it('findOne should delegate to the repository', () => {
     service.findOne('proyecto-123');
-    expect(mockProyectoRepository.getProyectoById).toHaveBeenCalledWith('proyecto-123');
+    expect(mockProyectoRepository.getProyectoById).toHaveBeenCalledWith(
+      'proyecto-123',
+    );
   });
 
   it('update should delegate to the repository', () => {
     const dto = {} as any;
     service.update('proyecto-123', dto);
-    expect(mockProyectoRepository.updateProyecto).toHaveBeenCalledWith('proyecto-123', dto);
+    expect(mockProyectoRepository.updateProyecto).toHaveBeenCalledWith(
+      'proyecto-123',
+      dto,
+    );
   });
 
   it('remove should delegate to the repository', () => {
     service.remove('proyecto-123');
-    expect(mockProyectoRepository.deleteProyecto).toHaveBeenCalledWith('proyecto-123');
+    expect(mockProyectoRepository.deleteProyecto).toHaveBeenCalledWith(
+      'proyecto-123',
+    );
   });
 });

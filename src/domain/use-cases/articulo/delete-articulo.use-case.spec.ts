@@ -25,9 +25,9 @@ describe('DeleteArticuloUseCase', () => {
     password: 'hashed-password',
     hashedRt: null,
     rol: 'ADMIN',
-    img_url: null,
-    img_alt: null,
-    proyecto_id: '12345proyecto678910',
+    imgUrl: null,
+    imgAlt: null,
+    proyectoId: '12345proyecto678910',
   };
 
   beforeEach(() => {
@@ -80,22 +80,21 @@ describe('DeleteArticuloUseCase', () => {
   });
 
   describe('execute', () => {
-
     //1: caso feliz
     it('should register activity, delete the image and delete articulo successfully', async () => {
       // Arrange
-      const id_usuario = '12345test678910';
-      const id_articulo = '12345articulo678910';
+      const usuarioId = '12345test678910';
+      const articuloId = '12345articulo678910';
 
       const mockActividad: ActividadEntity = {
         id: '12345actividad',
         accion: 'eliminado',
-        titulo_articulo: 'Articulo Test',
+        tituloArticulo: 'Articulo Test',
         responsable: 'Usuario Test',
         fecha: new Date(),
-        proyecto_id: '12345proyecto678910',
-        usuario_id: '12345test678910',
-        articulo_id: '12345articulo678910',
+        proyectoId: '12345proyecto678910',
+        usuarioId: '12345test678910',
+        articuloId: '12345articulo678910',
       } as ActividadEntity;
 
       mockUsuarioRepository.getUsuarioById.mockResolvedValue(mockUsuario);
@@ -104,27 +103,32 @@ describe('DeleteArticuloUseCase', () => {
       mockArticuloRepository.deleteArticulo.mockResolvedValue(undefined);
 
       // Act
-      const result = await useCase.execute(id_usuario, id_articulo);
+      const result = await useCase.execute(usuarioId, articuloId);
 
       // Assert
-      expect(mockUsuarioRepository.getUsuarioById).toHaveBeenCalledWith(id_usuario);
+      expect(mockUsuarioRepository.getUsuarioById).toHaveBeenCalledWith(
+        usuarioId,
+      );
 
       expect(mockActividadRepository.createActividad).toHaveBeenCalledTimes(1);
       expect(mockActividadRepository.createActividad).toHaveBeenCalledWith(
-        id_usuario,
-        id_articulo,
-        'eliminado'
+        usuarioId,
+        articuloId,
+        'eliminado',
       );
 
       expect(mockImageStorageRepository.deleteImage).toHaveBeenCalledTimes(1);
       expect(mockImageStorageRepository.deleteImage).toHaveBeenCalledWith(
-        mockUsuario.proyecto_id,
-        id_articulo,
+        mockUsuario.proyectoId,
+        articuloId,
         'articulo',
       );
 
       expect(mockArticuloRepository.deleteArticulo).toHaveBeenCalledTimes(1);
-      expect(mockArticuloRepository.deleteArticulo).toHaveBeenCalledWith(id_usuario, id_articulo);
+      expect(mockArticuloRepository.deleteArticulo).toHaveBeenCalledWith(
+        usuarioId,
+        articuloId,
+      );
 
       expect(result).toBeUndefined();
     });
@@ -132,13 +136,15 @@ describe('DeleteArticuloUseCase', () => {
     //2: usuario no encontrado
     it('should throw NotFoundException and not touch other repositories if usuario does not exist', async () => {
       // Arrange
-      const id_usuario = 'usuario-inexistente';
-      const id_articulo = '12345articulo678910';
+      const usuarioId = 'usuario-inexistente';
+      const articuloId = '12345articulo678910';
 
       mockUsuarioRepository.getUsuarioById.mockResolvedValue(null);
 
       // Act & Assert
-      await expect(useCase.execute(id_usuario, id_articulo)).rejects.toThrow(NotFoundException);
+      await expect(useCase.execute(usuarioId, articuloId)).rejects.toThrow(
+        NotFoundException,
+      );
 
       expect(mockActividadRepository.createActividad).not.toHaveBeenCalled();
       expect(mockImageStorageRepository.deleteImage).not.toHaveBeenCalled();
@@ -148,19 +154,22 @@ describe('DeleteArticuloUseCase', () => {
     //3: fallo al borrar la imagen no debe borrar el articulo
     it('should propagate the error and not delete the articulo if image deletion fails', async () => {
       // Arrange
-      const id_usuario = '12345test678910';
-      const id_articulo = '12345articulo678910';
+      const usuarioId = '12345test678910';
+      const articuloId = '12345articulo678910';
       const expectedError = new Error('Storage error');
 
       mockUsuarioRepository.getUsuarioById.mockResolvedValue(mockUsuario);
-      mockActividadRepository.createActividad.mockResolvedValue({} as ActividadEntity);
+      mockActividadRepository.createActividad.mockResolvedValue(
+        {} as ActividadEntity,
+      );
       mockImageStorageRepository.deleteImage.mockRejectedValue(expectedError);
 
       // Act & Assert
-      await expect(useCase.execute(id_usuario, id_articulo)).rejects.toThrow('Storage error');
+      await expect(useCase.execute(usuarioId, articuloId)).rejects.toThrow(
+        'Storage error',
+      );
 
       expect(mockArticuloRepository.deleteArticulo).not.toHaveBeenCalled();
     });
-
   });
 });

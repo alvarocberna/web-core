@@ -50,9 +50,9 @@ Cada entidad con imagen almacena tres campos:
 
 | Campo | Descripción |
 |-------|-------------|
-| `img_url` / `image_url` | URL completa (S3) o ruta relativa (`/uploads/...`) |
-| `img_alt` / `image_alt` | Texto alternativo para accesibilidad |
-| `image_position` | Posición CSS (ej: `center`, `top`) para control visual. Solo aplicado en la entidad SecArticulo |
+| `imgUrl` / `imageUrl` | URL completa (S3) o ruta relativa (`/uploads/...`) |
+| `imgAlt` / `imageAlt` | Texto alternativo para accesibilidad |
+| `imagePosition` | Posición CSS (ej: `center`, `top`) para control visual. Solo aplicado en la entidad SecArticulo |
 
 ---
 

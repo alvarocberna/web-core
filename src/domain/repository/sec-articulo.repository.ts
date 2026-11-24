@@ -1,9 +1,33 @@
-import { SecArticuloEntity, CreateSecArticuloDto, UpdateSecArticuloDto } from "src/domain";
+import {
+  SecArticuloEntity,
+  CreateSecArticuloDto,
+  UpdateSecArticuloDto,
+} from 'src/domain';
 
-export abstract class SecArticuloRepository{
-    abstract createSecArticulo(id_usuario: string, id_articulo: string, createSecArticuloDto: CreateSecArticuloDto[]): Promise<SecArticuloEntity[]>;
-    abstract getSecArticuloById(id_proyecto: string, id_articulo: string, id_sec_articulo: string): Promise<SecArticuloEntity | null>;
-    abstract getAllSecArticulos(id_proyecto: string, id_articulo: string): Promise<SecArticuloEntity[]>;
-    abstract updateSecArticulo(id_proyecto: string, id_articulo: string, id_sec_articulo: string, updateSecArticuloDto: UpdateSecArticuloDto): Promise<SecArticuloEntity>;
-    abstract deleteSecArticulo(id_proyecto: string, id_articulo: string, id_sec_articulo: string): Promise<void>;
+export abstract class SecArticuloRepository {
+  abstract createSecArticulo(
+    usuarioId: string,
+    articuloId: string,
+    createSecArticuloDto: CreateSecArticuloDto[],
+  ): Promise<SecArticuloEntity[]>;
+  abstract getSecArticuloById(
+    proyectoId: string,
+    articuloId: string,
+    secArticuloId: string,
+  ): Promise<SecArticuloEntity | null>;
+  abstract getAllSecArticulos(
+    proyectoId: string,
+    articuloId: string,
+  ): Promise<SecArticuloEntity[]>;
+  abstract updateSecArticulo(
+    proyectoId: string,
+    articuloId: string,
+    secArticuloId: string,
+    updateSecArticuloDto: UpdateSecArticuloDto,
+  ): Promise<SecArticuloEntity>;
+  abstract deleteSecArticulo(
+    proyectoId: string,
+    articuloId: string,
+    secArticuloId: string,
+  ): Promise<void>;
 }

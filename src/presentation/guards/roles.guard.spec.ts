@@ -7,7 +7,9 @@ describe('RolesGuard', () => {
   let guard: RolesGuard;
   let mockReflector: jest.Mocked<Reflector>;
 
-  const buildContext = (user: { rol: string } | undefined): ExecutionContext => {
+  const buildContext = (
+    user: { rol: string } | undefined,
+  ): ExecutionContext => {
     return {
       getHandler: () => jest.fn(),
       getClass: () => jest.fn(),
@@ -30,7 +32,6 @@ describe('RolesGuard', () => {
   });
 
   describe('canActivate', () => {
-
     it('should allow the request when no @Roles() metadata is defined', () => {
       mockReflector.getAllAndOverride.mockReturnValue(undefined);
       const context = buildContext({ rol: Rol.USER });
@@ -46,14 +47,20 @@ describe('RolesGuard', () => {
     });
 
     it('should allow the request when the user has one of the required roles', () => {
-      mockReflector.getAllAndOverride.mockReturnValue([Rol.ADMIN, Rol.SUPERADMIN]);
+      mockReflector.getAllAndOverride.mockReturnValue([
+        Rol.ADMIN,
+        Rol.SUPERADMIN,
+      ]);
       const context = buildContext({ rol: Rol.ADMIN });
 
       expect(guard.canActivate(context)).toBe(true);
     });
 
     it('should throw ForbiddenException when the user does not have any of the required roles', () => {
-      mockReflector.getAllAndOverride.mockReturnValue([Rol.ADMIN, Rol.SUPERADMIN]);
+      mockReflector.getAllAndOverride.mockReturnValue([
+        Rol.ADMIN,
+        Rol.SUPERADMIN,
+      ]);
       const context = buildContext({ rol: Rol.USER });
 
       expect(() => guard.canActivate(context)).toThrow(ForbiddenException);

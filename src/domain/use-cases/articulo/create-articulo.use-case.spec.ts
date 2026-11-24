@@ -1,6 +1,13 @@
 import { Actividad } from 'generated/prisma';
 import { CreateArticuloUseCase } from './create-articulo.use-case';
-import { ArticuloRepository, ActividadRepository, CreateArticuloDto, ArticuloEntity, CreateSecArticuloDto, ActividadEntity } from 'src/domain';
+import {
+  ArticuloRepository,
+  ActividadRepository,
+  CreateArticuloDto,
+  ArticuloEntity,
+  CreateSecArticuloDto,
+  ActividadEntity,
+} from 'src/domain';
 
 describe('CreateArticuloUseCase', () => {
   let useCase: CreateArticuloUseCase;
@@ -35,83 +42,83 @@ describe('CreateArticuloUseCase', () => {
   });
 
   describe('execute', () => {
-
     //1: caso feliz
     it('should create articulo and register activity successfully', async () => {
       // Arrange
       // argumentos para excecute
-      const id_usuario = '12345test678910';
+      const usuarioId = '12345test678910';
       const createSecArtDto: CreateSecArticuloDto = {
-        nro_seccion: 1,
-        titulo_sec: 'Sección Test',
-        contenido_sec: 'Contenido sección test',
-        image_url: '/',
-        image_alt: 'alt',
-        image_position: 'left',
+        nroSeccion: 1,
+        tituloSec: 'Sección Test',
+        contenidoSec: 'Contenido sección test',
+        imageUrl: '/',
+        imageAlt: 'alt',
+        imagePosition: 'left',
       } as CreateSecArticuloDto;
       const createDto: CreateArticuloDto = {
         titulo: 'Título Articulo Test',
         subtitulo: 'Subtitulo artículo test',
         autor: 'Usuario Test',
-        fecha_publicacion: new Date(),
-        fecha_actualizacion: new Date(),
+        fechaPublicacion: new Date(),
+        fechaActualizacion: new Date(),
         status: 'null',
         slug: 'null',
-        image_url: '/',
-        image_alt: 'alt',
-        image_position: 'left',
-        usuario_id: '12345test678910',
-        sec_articulo: [createSecArtDto],
+        imageUrl: '/',
+        imageAlt: 'alt',
+        imagePosition: 'left',
+        usuarioId: '12345test678910',
+        secArticulo: [createSecArtDto],
       } as CreateArticuloDto;
 
       const mockArticulo: ArticuloEntity = {
         id: '12345articulo678910',
-        nro_articulo: 1,
+        nroArticulo: 1,
         titulo: 'Articulo Test',
         subtitulo: 'Subtitulo articulo test',
         autor: 'Usuario Test',
-        fecha_publicacion: new Date(),
-        fecha_actualizacion: new Date(),
+        fechaPublicacion: new Date(),
+        fechaActualizacion: new Date(),
         status: '-',
         slug: '-',
-        image_url: '/',
-        image_alt: 'alt' ,
-        image_position: 'left' ,
-        usuario_id: '12345test678910',
-        proyecto_id: '12345proyecto678910',
+        imageUrl: '/',
+        imageAlt: 'alt',
+        imagePosition: 'left',
+        usuarioId: '12345test678910',
+        proyectoId: '12345proyecto678910',
       } as ArticuloEntity;
 
       const mockActividad: ActividadEntity = {
-          id : '12345actividad',
-          accion: 'creado',
-          titulo_articulo: 'Articulo Test',
-          responsable: 'Usuario Test',
-          fecha: new Date(),
-          proyecto_id: '12345proyecto678910',
-          usuario_id: '12345test678910',
-          articulo_id: '12345articulo678910',
-
+        id: '12345actividad',
+        accion: 'creado',
+        tituloArticulo: 'Articulo Test',
+        responsable: 'Usuario Test',
+        fecha: new Date(),
+        proyectoId: '12345proyecto678910',
+        usuarioId: '12345test678910',
+        articuloId: '12345articulo678910',
       } as ActividadEntity;
 
       mockArticuloRepository.createArticulo.mockResolvedValue(mockArticulo);
       mockActividadRepository.createActividad.mockResolvedValue(mockActividad);
 
       // Act
-      const result = await useCase.execute(id_usuario, createDto);
+      const result = await useCase.execute(usuarioId, createDto);
 
       // Assert
       expect(mockArticuloRepository.createArticulo).toHaveBeenCalledTimes(1);
-      expect(mockArticuloRepository.createArticulo).toHaveBeenCalledWith(id_usuario, createDto);
-      
+      expect(mockArticuloRepository.createArticulo).toHaveBeenCalledWith(
+        usuarioId,
+        createDto,
+      );
+
       expect(mockActividadRepository.createActividad).toHaveBeenCalledTimes(1);
       expect(mockActividadRepository.createActividad).toHaveBeenCalledWith(
-        id_usuario,
+        usuarioId,
         '12345articulo678910',
-        'creado'
+        'creado',
       );
-      
+
       expect(result).toBe(mockArticulo);
     });
-
   });
 });

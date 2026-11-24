@@ -1,50 +1,66 @@
 //nest
 import { Injectable } from '@nestjs/common';
 //domain
-import {UsuarioRepository, UsuarioEntity, CreateUsuarioDto, UpdateUsuarioDto, UpdateUsuarioInfoDto, UpdateUsuarioPasswordDto} from 'src/domain';
+import {
+  UsuarioRepository,
+  UsuarioEntity,
+  CreateUsuarioDto,
+  UpdateUsuarioDto,
+  UpdateUsuarioInfoDto,
+  UpdateUsuarioPasswordDto,
+} from 'src/domain';
 //infrastructure
 import { UsuarioDatasourceService } from 'src/infrastructure/datasources/usuario.datasource/usuario.datasource.service';
 
 @Injectable()
-export class UsuarioRepositoryService implements UsuarioRepository{
-    constructor(
-        private readonly usuarioDatasource: UsuarioDatasourceService
-    ){}
+export class UsuarioRepositoryService implements UsuarioRepository {
+  constructor(private readonly usuarioDatasource: UsuarioDatasourceService) {}
 
-    async createUsuario(id_proyecto: string, createUsuarioDto: CreateUsuarioDto): Promise<UsuarioEntity> {
-        return this.usuarioDatasource.createUsuario(id_proyecto, createUsuarioDto)
-    }
+  async createUsuario(
+    proyectoId: string,
+    createUsuarioDto: CreateUsuarioDto,
+  ): Promise<UsuarioEntity> {
+    return this.usuarioDatasource.createUsuario(proyectoId, createUsuarioDto);
+  }
 
-    async getAllUsuarios(id_proyecto: string): Promise<UsuarioEntity[]> {
-        return this.usuarioDatasource.getAllUsuarios(id_proyecto)
-    }
+  async getAllUsuarios(proyectoId: string): Promise<UsuarioEntity[]> {
+    return this.usuarioDatasource.getAllUsuarios(proyectoId);
+  }
 
-    async getUsuarioById(id_usuario: string): Promise<UsuarioEntity | null> {
-        return this.usuarioDatasource.getUsuarioById(id_usuario)
-    }
+  async getUsuarioById(usuarioId: string): Promise<UsuarioEntity | null> {
+    return this.usuarioDatasource.getUsuarioById(usuarioId);
+  }
 
-    async getUsuarioByEmail(email: string): Promise<UsuarioEntity | null> {
-        return this.usuarioDatasource.getUsuarioByEmail(email)
-    }
+  async getUsuarioByEmail(email: string): Promise<UsuarioEntity | null> {
+    return this.usuarioDatasource.getUsuarioByEmail(email);
+  }
 
-    async updateUsuario(id_usuario: string, updateUsuarioDto: UpdateUsuarioDto): Promise<UsuarioEntity> {
-        return this.usuarioDatasource.updateUsuario(id_usuario, updateUsuarioDto)
-    }
+  async updateUsuario(
+    usuarioId: string,
+    updateUsuarioDto: UpdateUsuarioDto,
+  ): Promise<UsuarioEntity> {
+    return this.usuarioDatasource.updateUsuario(usuarioId, updateUsuarioDto);
+  }
 
-    async updateUsuarioPassword(id_usuario: string, updateUsuarioPasswordDto: UpdateUsuarioPasswordDto): Promise<void> {
-        return this.usuarioDatasource.updateUsuarioPassword(id_usuario, updateUsuarioPasswordDto);
-    }
+  async updateUsuarioPassword(
+    usuarioId: string,
+    updateUsuarioPasswordDto: UpdateUsuarioPasswordDto,
+  ): Promise<void> {
+    return this.usuarioDatasource.updateUsuarioPassword(
+      usuarioId,
+      updateUsuarioPasswordDto,
+    );
+  }
 
-    async deleteUsuario(id_proyecto: string, id_usuario: string): Promise<void> {
-        return this.usuarioDatasource.deleteUsuario(id_proyecto, id_usuario)
-    }
+  async deleteUsuario(proyectoId: string, usuarioId: string): Promise<void> {
+    return this.usuarioDatasource.deleteUsuario(proyectoId, usuarioId);
+  }
 
-    async setRefreshToken(id_usuario: string, hashedRt: string) {
-        await this.usuarioDatasource.setRefreshToken(id_usuario, hashedRt);
-    }
+  async setRefreshToken(usuarioId: string, hashedRt: string) {
+    await this.usuarioDatasource.setRefreshToken(usuarioId, hashedRt);
+  }
 
-    async removeRefreshToken(id_usuario: string) {
-        await this.usuarioDatasource.removeRefreshToken(id_usuario);
-    }
-
+  async removeRefreshToken(usuarioId: string) {
+    await this.usuarioDatasource.removeRefreshToken(usuarioId);
+  }
 }

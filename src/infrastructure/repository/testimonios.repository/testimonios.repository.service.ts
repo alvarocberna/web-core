@@ -1,50 +1,84 @@
 import { Injectable } from '@nestjs/common';
 import {
-    TestimoniosRepository,
-    TestimoniosEntity,
-    TestimonioEntity,
-    CreateTestimoniosDto,
-    UpdateTestimoniosDto,
-    CreateTestimonioDto,
-    UpdateTestimonioDto,
+  TestimoniosRepository,
+  TestimoniosEntity,
+  TestimonioEntity,
+  CreateTestimoniosDto,
+  UpdateTestimoniosDto,
+  CreateTestimonioDto,
+  UpdateTestimonioDto,
 } from 'src/domain';
 import { TestimoniosDatasourceService } from 'src/infrastructure';
 
 @Injectable()
 export class TestimoniosRepositoryService implements TestimoniosRepository {
-    constructor(private readonly testimoniosDatasource: TestimoniosDatasourceService) {}
+  constructor(
+    private readonly testimoniosDatasource: TestimoniosDatasourceService,
+  ) {}
 
-    createSecTestimonios(id_usuario: string, createTestimoniosDto: CreateTestimoniosDto): Promise<TestimoniosEntity> {
-        return this.testimoniosDatasource.createSecTestimonios(id_usuario, createTestimoniosDto);
-    }
+  createSecTestimonios(
+    usuarioId: string,
+    createTestimoniosDto: CreateTestimoniosDto,
+  ): Promise<TestimoniosEntity> {
+    return this.testimoniosDatasource.createSecTestimonios(
+      usuarioId,
+      createTestimoniosDto,
+    );
+  }
 
-    getSecTestimonios(id_usuario: string): Promise<TestimoniosEntity | null> {
-        return this.testimoniosDatasource.getSecTestimonios(id_usuario);
-    }
+  getSecTestimonios(usuarioId: string): Promise<TestimoniosEntity | null> {
+    return this.testimoniosDatasource.getSecTestimonios(usuarioId);
+  }
 
-    updateSecTestimonios(id_usuario: string, updateTestimoniosDto: UpdateTestimoniosDto): Promise<TestimoniosEntity> {
-        return this.testimoniosDatasource.updateSecTestimonios(id_usuario, updateTestimoniosDto);
-    }
+  updateSecTestimonios(
+    usuarioId: string,
+    updateTestimoniosDto: UpdateTestimoniosDto,
+  ): Promise<TestimoniosEntity> {
+    return this.testimoniosDatasource.updateSecTestimonios(
+      usuarioId,
+      updateTestimoniosDto,
+    );
+  }
 
-    createTestimonio(id_usuario: string, createTestimonioDto: CreateTestimonioDto): Promise<TestimonioEntity> {
-        return this.testimoniosDatasource.createTestimonio(id_usuario, createTestimonioDto);
-    }
+  createTestimonio(
+    usuarioId: string,
+    createTestimonioDto: CreateTestimonioDto,
+  ): Promise<TestimonioEntity> {
+    return this.testimoniosDatasource.createTestimonio(
+      usuarioId,
+      createTestimonioDto,
+    );
+  }
 
-    updateTestimonio(id_testimonio: string, updateTestimonioDto: UpdateTestimonioDto): Promise<TestimonioEntity> {
-        return this.testimoniosDatasource.updateTestimonio(id_testimonio, updateTestimonioDto);
-    }
+  updateTestimonio(
+    testimonioId: string,
+    updateTestimonioDto: UpdateTestimonioDto,
+  ): Promise<TestimonioEntity> {
+    return this.testimoniosDatasource.updateTestimonio(
+      testimonioId,
+      updateTestimonioDto,
+    );
+  }
 
-    deleteTestimonio(id_usuario: string, id_testimonio: string): Promise<void> {
-        return this.testimoniosDatasource.deleteTestimonio(id_usuario, id_testimonio);
-    }
+  deleteTestimonio(usuarioId: string, testimonioId: string): Promise<void> {
+    return this.testimoniosDatasource.deleteTestimonio(usuarioId, testimonioId);
+  }
 
-    // ---- public -----------------------------------------------------------
+  // ---- public -----------------------------------------------------------
 
-    getSecTestimoniosPublic(id_proyecto: string): Promise<TestimoniosEntity | null> {
-        return this.testimoniosDatasource.getSecTestimoniosPublic(id_proyecto);
-    }
+  getSecTestimoniosPublic(
+    proyectoId: string,
+  ): Promise<TestimoniosEntity | null> {
+    return this.testimoniosDatasource.getSecTestimoniosPublic(proyectoId);
+  }
 
-    createTestimonioPublic(id_proyecto: string, createTestimonioDto: CreateTestimonioDto): Promise<TestimonioEntity> {
-        return this.testimoniosDatasource.createTestimonioPublic(id_proyecto, createTestimonioDto);
-    }
+  createTestimonioPublic(
+    proyectoId: string,
+    createTestimonioDto: CreateTestimonioDto,
+  ): Promise<TestimonioEntity> {
+    return this.testimoniosDatasource.createTestimonioPublic(
+      proyectoId,
+      createTestimonioDto,
+    );
+  }
 }

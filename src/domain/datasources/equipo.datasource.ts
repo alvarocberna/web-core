@@ -1,16 +1,44 @@
-import { EquipoEntity, EmpleadoEntity, CreateEquipoDto, UpdateEquipoDto, CreateEmpleadoDto, UpdateEmpleadoDto, UpdateEmpleadoOrdenDto } from 'src/domain';
+import {
+  EquipoEntity,
+  EmpleadoEntity,
+  CreateEquipoDto,
+  UpdateEquipoDto,
+  CreateEmpleadoDto,
+  UpdateEmpleadoDto,
+  UpdateEmpleadoOrdenDto,
+} from 'src/domain';
 
 export abstract class EquipoDatasource {
-    abstract createEquipo(id_usuario: string, createEquipoDto: CreateEquipoDto): Promise<EquipoEntity>;
-    abstract getEquipo(id_usuario: string): Promise<EquipoEntity | null>;
-    abstract updateEquipo(id_usuario: string, updateEquipoDto: UpdateEquipoDto): Promise<EquipoEntity>;
+  abstract createEquipo(
+    usuarioId: string,
+    createEquipoDto: CreateEquipoDto,
+  ): Promise<EquipoEntity>;
+  abstract getEquipo(usuarioId: string): Promise<EquipoEntity | null>;
+  abstract updateEquipo(
+    usuarioId: string,
+    updateEquipoDto: UpdateEquipoDto,
+  ): Promise<EquipoEntity>;
 
-    abstract createEmpleado(id_usuario: string, createEmpleadoDto: CreateEmpleadoDto): Promise<EmpleadoEntity>;
-    abstract getEmpleado(id_usuario: string, id_empleado: string): Promise<EmpleadoEntity>;
-    abstract updateEmpleado(id_usuario: string, id_empleado: string, updateEmpleadoDto: UpdateEmpleadoDto): Promise<EmpleadoEntity>;
-    abstract updateEmpleadoOrden(id_usuario: string, id_empleado: string, updateEmpleadoOrdenDto: UpdateEmpleadoOrdenDto): Promise<EmpleadoEntity>;
-    abstract deleteEmpleado(id_usuario: string, id_empleado: string): Promise<void>;
+  abstract createEmpleado(
+    usuarioId: string,
+    createEmpleadoDto: CreateEmpleadoDto,
+  ): Promise<EmpleadoEntity>;
+  abstract getEmpleado(
+    usuarioId: string,
+    empleadoId: string,
+  ): Promise<EmpleadoEntity>;
+  abstract updateEmpleado(
+    usuarioId: string,
+    empleadoId: string,
+    updateEmpleadoDto: UpdateEmpleadoDto,
+  ): Promise<EmpleadoEntity>;
+  abstract updateEmpleadoOrden(
+    usuarioId: string,
+    empleadoId: string,
+    updateEmpleadoOrdenDto: UpdateEmpleadoOrdenDto,
+  ): Promise<EmpleadoEntity>;
+  abstract deleteEmpleado(usuarioId: string, empleadoId: string): Promise<void>;
 
-    // public 
-    abstract getEquipoPublic(id_proyecto: string): Promise<EquipoEntity | null>;
+  // public
+  abstract getEquipoPublic(proyectoId: string): Promise<EquipoEntity | null>;
 }

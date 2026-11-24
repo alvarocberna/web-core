@@ -22,9 +22,9 @@ describe('DeleteServicioUseCase', () => {
     password: 'hashed-password',
     hashedRt: null,
     rol: 'ADMIN',
-    img_url: null,
-    img_alt: null,
-    proyecto_id: '12345proyecto678910',
+    imgUrl: null,
+    imgAlt: null,
+    proyectoId: '12345proyecto678910',
   };
 
   beforeEach(() => {
@@ -68,32 +68,36 @@ describe('DeleteServicioUseCase', () => {
   });
 
   describe('execute', () => {
-
     //1: caso feliz
     it('should delete the image and delete servicio successfully', async () => {
       // Arrange
-      const id_usuario = '12345test678910';
-      const id_servicio = '12345servicio678910';
+      const usuarioId = '12345test678910';
+      const servicioId = '12345servicio678910';
 
       mockUsuarioRepository.getUsuarioById.mockResolvedValue(mockUsuario);
       mockImageStorageRepository.deleteImage.mockResolvedValue(undefined);
       mockServiciosRepository.deleteServicio.mockResolvedValue(undefined);
 
       // Act
-      const result = await useCase.execute(id_usuario, id_servicio);
+      const result = await useCase.execute(usuarioId, servicioId);
 
       // Assert
-      expect(mockUsuarioRepository.getUsuarioById).toHaveBeenCalledWith(id_usuario);
+      expect(mockUsuarioRepository.getUsuarioById).toHaveBeenCalledWith(
+        usuarioId,
+      );
 
       expect(mockImageStorageRepository.deleteImage).toHaveBeenCalledTimes(1);
       expect(mockImageStorageRepository.deleteImage).toHaveBeenCalledWith(
-        mockUsuario.proyecto_id,
-        id_servicio,
+        mockUsuario.proyectoId,
+        servicioId,
         'servicio',
       );
 
       expect(mockServiciosRepository.deleteServicio).toHaveBeenCalledTimes(1);
-      expect(mockServiciosRepository.deleteServicio).toHaveBeenCalledWith(id_usuario, id_servicio);
+      expect(mockServiciosRepository.deleteServicio).toHaveBeenCalledWith(
+        usuarioId,
+        servicioId,
+      );
 
       expect(result).toBeUndefined();
     });
@@ -101,13 +105,15 @@ describe('DeleteServicioUseCase', () => {
     //2: usuario no encontrado
     it('should throw NotFoundException and not touch other repositories if usuario does not exist', async () => {
       // Arrange
-      const id_usuario = 'usuario-inexistente';
-      const id_servicio = '12345servicio678910';
+      const usuarioId = 'usuario-inexistente';
+      const servicioId = '12345servicio678910';
 
       mockUsuarioRepository.getUsuarioById.mockResolvedValue(null);
 
       // Act & Assert
-      await expect(useCase.execute(id_usuario, id_servicio)).rejects.toThrow(NotFoundException);
+      await expect(useCase.execute(usuarioId, servicioId)).rejects.toThrow(
+        NotFoundException,
+      );
 
       expect(mockImageStorageRepository.deleteImage).not.toHaveBeenCalled();
       expect(mockServiciosRepository.deleteServicio).not.toHaveBeenCalled();
@@ -116,15 +122,17 @@ describe('DeleteServicioUseCase', () => {
     //3: fallo al borrar la imagen no debe borrar el servicio
     it('should propagate the error and not delete the servicio if image deletion fails', async () => {
       // Arrange
-      const id_usuario = '12345test678910';
-      const id_servicio = '12345servicio678910';
+      const usuarioId = '12345test678910';
+      const servicioId = '12345servicio678910';
       const expectedError = new Error('Storage error');
 
       mockUsuarioRepository.getUsuarioById.mockResolvedValue(mockUsuario);
       mockImageStorageRepository.deleteImage.mockRejectedValue(expectedError);
 
       // Act & Assert
-      await expect(useCase.execute(id_usuario, id_servicio)).rejects.toThrow('Storage error');
+      await expect(useCase.execute(usuarioId, servicioId)).rejects.toThrow(
+        'Storage error',
+      );
 
       expect(mockServiciosRepository.deleteServicio).not.toHaveBeenCalled();
     });

@@ -3,8 +3,13 @@ import { CreateProyectoDtoImpl } from './dto/create-proyecto.dto';
 import { UpdateProyectoDtoImpl } from './dto/update-proyecto.dto';
 import { ProyectoRepositoryService } from 'src/infrastructure';
 import { CreateProyectoUseCase } from '../../domain/use-cases/proyecto/create-proyecto.use-case';
-import { EquipoRepositoryService, ServiciosRepositoryService, ArticuloRepositoryService, TestimoniosRepositoryService, UsuarioRepositoryService } from 'src/infrastructure';
-
+import {
+  EquipoRepositoryService,
+  ServiciosRepositoryService,
+  ArticuloRepositoryService,
+  TestimoniosRepositoryService,
+  UsuarioRepositoryService,
+} from 'src/infrastructure';
 
 @Injectable()
 export class ProyectoService {
@@ -25,23 +30,26 @@ export class ProyectoService {
       this.serviciosRepository,
       this.articuloRepository,
       this.testimoniosRepository,
-      this.usuarioRepository
-    ).execute(createProyectoDto); 
+      this.usuarioRepository,
+    ).execute(createProyectoDto);
   }
 
   findAll() {
     return this.proyectoRepository.getAllProyectos();
   }
 
-  findOne(proyecto_id: string) {
-    return this.proyectoRepository.getProyectoById(proyecto_id);
+  findOne(proyectoId: string) {
+    return this.proyectoRepository.getProyectoById(proyectoId);
   }
 
-  update(proyecto_id: string, updateProyectoDto: UpdateProyectoDtoImpl) {
-    return this.proyectoRepository.updateProyecto(proyecto_id, updateProyectoDto)
+  update(proyectoId: string, updateProyectoDto: UpdateProyectoDtoImpl) {
+    return this.proyectoRepository.updateProyecto(
+      proyectoId,
+      updateProyectoDto,
+    );
   }
 
-  remove(proyecto_id: string) {
-    return this.proyectoRepository.deleteProyecto(proyecto_id);
+  remove(proyectoId: string) {
+    return this.proyectoRepository.deleteProyecto(proyectoId);
   }
 }

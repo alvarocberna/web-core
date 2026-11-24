@@ -84,8 +84,8 @@ Se mockean los `*RepositoryService` (y `ImageStorageRepositoryService`/`UsuarioR
 |---|---|---|
 | `auth.service.spec.ts` | 11 | `validateUserByPassword` (usuario inexistente, password incorrecto, credenciales válidas), `login` (firma de tokens, hash y persistencia del refresh token), `logout`, `verifyRefreshToken` (secret no configurado → `UnauthorizedException`), `refresh` (usuario inexistente, sin `hashedRt`, rt inválido, rotación exitosa de tokens). `bcryptjs` mockeado con `jest.mock('bcryptjs')`. |
 | `articulo.service.spec.ts` | 17 | Pass-through de métodos simples + **lógica real de manejo de imágenes**: subida de imagen principal, subida de imágenes de secciones por índice, `size === 0` se salta sin llamar al storage, en `updateArticulo` reemplazo de imagen principal (borra la vieja, sube la nueva) y borrado de imágenes de secciones eliminadas del DTO. |
-| `equipo.service.spec.ts` | 14 | Mismo foco que `articulo.service` pero para empleados (`sec_empleado`, `img_url`). |
-| `servicios.service.spec.ts` | 14 | Mismo foco que `articulo.service` pero para servicios (`sec_servicio`, `img_url`). Incluye un test que **documenta explícitamente** el código muerto de `removeServicio` (ver [`technical-debt.md`](../technical-debt.md)): confirma que `deleteServicio` solo se invoca a través del use case y no por la segunda línea inalcanzable. |
+| `equipo.service.spec.ts` | 14 | Mismo foco que `articulo.service` pero para empleados (`secEmpleado`, `imgUrl`). |
+| `servicios.service.spec.ts` | 14 | Mismo foco que `articulo.service` pero para servicios (`secServicio`, `imgUrl`). Incluye un test que **documenta explícitamente** el código muerto de `removeServicio` (ver [`technical-debt.md`](../technical-debt.md)): confirma que `deleteServicio` solo se invoca a través del use case y no por la segunda línea inalcanzable. |
 | `proyecto.service.spec.ts` | 5 | `create` (delega en `CreateProyectoUseCase` con habilitación selectiva de secciones) + pass-through de `findAll`/`findOne`/`update`/`remove`. |
 | `testimonios.service.spec.ts` | 8 | Pass-through de los 8 métodos (no tiene lógica propia más allá de delegar al repositorio). |
 | `usuario.service.spec.ts` | 7 | Pass-through de 5 métodos + 2 tests sobre `create`, uno de los cuales **documenta un bug**: el método no retorna el usuario creado (`await this.usuarioService.createUsuario(...)` sin `return`), así que el controller siempre recibe `undefined`. No se corrigió — está señalado explícitamente para que se decida si se arregla. |
@@ -107,6 +107,6 @@ Ver el análisis completo de priorización en la conversación de diseño de est
 - **Controllers** (`src/presentation/*/*.controller.ts`): bajo valor unitario (solo reenvían al service ya testeado). Mejor cubiertos por un test e2e HTTP con `supertest`.
 - **DTOs con `class-validator`**: no hay tests que verifiquen que `class-validator` rechaza/acepta payloads según las reglas declaradas (`@MaxLength`, `@IsEnum`, etc.).
 - **`http-exception.filter.ts`**: pendiente.
-- **Multi-tenancy / aislamiento por `proyecto_id`**, flujos HTTP completos, `local-storage`/`aws-storage` datasource: requieren infraestructura real o emulada (Postgres, filesystem temporal, LocalStack/MinIO) — están fuera del alcance de tests unitarios.
+- **Multi-tenancy / aislamiento por `proyectoId`**, flujos HTTP completos, `local-storage`/`aws-storage` datasource: requieren infraestructura real o emulada (Postgres, filesystem temporal, LocalStack/MinIO) — están fuera del alcance de tests unitarios.
 
 Estos quedaron fuera porque se priorizó primero lo marcado como "prioridad alta" en unitarios; son candidatos naturales para la siguiente ronda (integración/e2e).
